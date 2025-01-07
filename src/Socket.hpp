@@ -29,7 +29,7 @@ public:
     //~Socket();
     //getters
     struct sockaddr_in get_address();
-    int get_sock();
+    int get_sock() const;
     int get_conn();
     std::vector<pollfd> *get_fds();
 

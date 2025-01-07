@@ -16,7 +16,7 @@ int Socket::get_conn()///?
 }
 
 
-int Socket::get_sock()
+int Socket::get_sock() const
 {
     return sock;
 }
