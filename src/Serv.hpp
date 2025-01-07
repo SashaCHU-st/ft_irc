@@ -18,4 +18,6 @@ class Serv
 
         ///functions
         void creating_socket();
+        int get_port() const;
+        void launch();
 };

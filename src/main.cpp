@@ -2,7 +2,7 @@
 
 int check_port(int port)
 {
-    if(port < 0 && port > 9999)
+    if(port < 1024 || port > 9999)///???
         return(1);
     return(0);
 }
@@ -19,7 +19,7 @@ int main(int argc, char **argv)
             return(1);
         }
         int port = std::atoi(argv[1]);
-        if(check_port(port) == 1);
+        if(check_port(port) == 1)
         {
             std::cout<<"Error! Port must be from !!!!!! to !!!!!!"<<std::endl;
             return(1);

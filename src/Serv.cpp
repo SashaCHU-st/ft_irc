@@ -6,28 +6,32 @@ Serv::Serv(int port, std::string pass) : port(port), pass(pass), sock(nullptr)
     creating_socket();
 }
 
+// Destructor
+Serv::~Serv()
+{
+    // Clean up the allocated socket
+    delete sock;
+}
+
+
+int Serv::get_port() const
+{
+    return port;
+}
 // Creating a socket
 void Serv::creating_socket()
 {
-    int domain = AF_INET;
-    int type = SOCK_STREAM;
-    int protocol = 0;
-    u_long interface = INADDR_ANY;
-    int backlog = 10;
-
-    // Allocate memory for the Socket object
-    sock = new Socket(domain, type, protocol, interface, port, backlog);
+    sock = new Socket(AF_INET, SOCK_STREAM, 0,port);
 
     if (!sock || sock->get_sock() < 0)
     {
         std::cerr << "Failed to create socket" << std::endl;
         exit(EXIT_FAILURE);
     }
+    std::cout << "\033[32m" << "ALL GOOD we can continue with launching" << "\033[0m" << std::endl; 
 }
 
-// Destructor
-Serv::~Serv()
+void Serv::launch()
 {
-    // Clean up the allocated socket
-    delete sock;
+
 }

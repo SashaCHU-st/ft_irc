@@ -18,12 +18,12 @@ private:
     int domain;
     int type;
     int protocol;
-    int backlog;
+    int port;
     // std::vector<struct pollfd> *fds;/// for dinamcalyy fds
 
 public:
     // consctructors
-    Socket(int domain, int type, int protocol, u_long interface, int port, int backlog);
+    Socket(int domain, int type, int protocol, int port);
 
     //desctruc
     //~Socket();
@@ -37,8 +37,8 @@ public:
     void set_conn(int conn);
 
 //functuons
-    void socketing();
-    void binding();
-    void listening();
-    void run();
+    int socketing(int port);
+    int binding();
+    int listening();
+    int run(int port);
 };
