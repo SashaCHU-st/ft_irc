@@ -25,7 +25,7 @@ int main(int argc, char **argv)
             return(1);
         }
         Serv serv(port, argv[2]);
-        // serv.launch();
+        serv.launch();
 
     }
     catch(const std::exception& e)
