@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sys/wait.h>
+#include <Client.hpp>
 #include <netinet/in.h>
 #include <stdio.h>
 #include <iostream>
@@ -20,6 +21,7 @@ private:
     int protocol;
     int port;
     // std::vector<struct pollfd> *fds;/// for dinamcalyy fds
+	std::vector<Client> _clients;
 
 public:
     // consctructors
@@ -29,7 +31,7 @@ public:
     //~Socket();
     //getters
     struct sockaddr_in get_address();
-    int get_sock();
+    int get_sock() const;
     int get_conn();
     std::vector<pollfd> *get_fds();
 
