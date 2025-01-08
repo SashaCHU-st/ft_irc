@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/08 11:46:25 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/08 13:40:20 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ void Serv::parse_command(int fd, const std::string& line) {
 	}
 	else if (cmd == "PING")
 	{
-		std::string pong = std::string("PONG") + "/r/n";
-		//send(client_fd, pong.c_str(), pong.size(), 0);
+		std::string pong = std::string("PONG") + "\r\n";
+		send(fd, pong.c_str(), pong.size(), 0);
 	}
 	if (tokens.empty())
 	{
@@ -48,8 +48,10 @@ void Serv::parse_command(int fd, const std::string& line) {
 		std::cout << "password " << std::endl;
 		if (authenticate_password(fd, tokens) == true)
 		{
+			
 			Client client;
-			clients.push_back(client);
+			client.setFd(fd);
+			clients.push_back(client); //create client later once password is correct
 			return;
 		}
 		else
@@ -57,10 +59,13 @@ void Serv::parse_command(int fd, const std::string& line) {
 			return;
 		}
 	}
-	// if (cmd == "NICK")
-	// {
-	// 	//addNickname
-	// }
+	if (cmd == "NICK")
+	{
+		if (addNickname(fd, tokens) == true)
+		{
+			
+		}
+	}
 	// if (cmd == "USER")
 	// {
 	// 	//addUser

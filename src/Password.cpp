@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ServPassword.cpp                                   :+:      :+:    :+:   */
+/*   Password.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:54:52 by alli              #+#    #+#             */
-/*   Updated: 2025/01/08 11:32:42 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/08 11:52:11 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ bool Serv::authenticate_password(int fd, std::vector<std::string> tokens)
 		std::string pass = get_pass();
 		if (pass == token)
 		{
+			//have a flag to check client?
 			return true;
 		}
 		else

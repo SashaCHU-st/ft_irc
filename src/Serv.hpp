@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <sstream>
 #include <map>
+// #include <algorithm>
 
 class Serv
 {
@@ -19,7 +20,7 @@ class Serv
         std::string pass;
         Socket* sock;
          std::vector<pollfd> fds;
-		 std::vector<pollfd> client_fd;
+		//  std::vector<pollfd> client_fd;
 		 std::vector<Client> clients;
     public:
         //construc
@@ -33,6 +34,9 @@ class Serv
         void set_non_blocking(int sock_fd);
         void accepter();
         void launch();
+
 		void parse_command(int client_fd, const std::string& line);
 		bool authenticate_password(int client_fd, std::vector<std::string> tokens);
+		bool addNickname(int client_fd, std::vector<std::string> tokens);
+		bool uniqueNickname(const std::string& nickname);
 };
