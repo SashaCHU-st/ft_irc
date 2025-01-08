@@ -6,13 +6,13 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/08 13:40:20 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/08 15:31:54 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Serv.hpp"
 
-void Serv::parse_command(int fd, const std::string& line) {
+int Serv::parse_command(int fd, const std::string& line) {
 	std::cout << line << std::endl;
 	std::istringstream lss(line);
 	std::vector<std::string> tokens;
@@ -45,7 +45,7 @@ void Serv::parse_command(int fd, const std::string& line) {
 	}
 	if (cmd == "PASS")
 	{
-		std::cout << "password " << std::endl;
+		// std::cout << "password " << std::endl;
 		if (authenticate_password(fd, tokens) == true)
 		{
 			
