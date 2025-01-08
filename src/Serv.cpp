@@ -29,6 +29,9 @@ void Serv::creating_socket()
     }
     std::cout << "\033[32m" << "ALL GOOD we can continue with launching" << "\033[0m" << std::endl; 
 }
+std::string Serv::get_pass() {
+	return pass;
+}
 
 ///NON BLOCKING-
 void Serv::set_non_blocking(int sock_fd)
@@ -132,6 +135,19 @@ void Serv::launch()
                         buffer[bytes_read] = '\0';
                         std::cout << "\033[36mReceived from FD " << fds[i].fd << ": " << buffer << "\033[0m" << std::endl;
                         send(fds[i].fd, buffer, bytes_read, 0);
+						
+						std::string client_input(buffer);
+						std::stringstream ss(client_input);
+						std::string line;
+						
+						while (getline(ss, line))
+						{
+							if (line.empty())
+								continue;
+							else
+								parse_command(fds[i].fd, line);
+						}
+
                     }
                 }
             }
