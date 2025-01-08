@@ -20,7 +20,7 @@ class Serv
         Socket* sock;
          std::vector<pollfd> fds;
 		 std::vector<pollfd> client_fd;
-		 std::vector<Client> Clients;
+		 std::vector<Client> clients;
     public:
         //construc
         Serv(int port, std::string pass);
@@ -29,6 +29,7 @@ class Serv
         ///functions
         void creating_socket();
         int get_port() const;
+		std::string get_pass();
         void set_non_blocking(int sock_fd);
         void accepter();
         void launch();
