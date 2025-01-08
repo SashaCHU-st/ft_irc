@@ -6,64 +6,82 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/07 16:10:12 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/08 10:53:06 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Serv.hpp"
 
-void parse_command(int fd, std::string line) {
+void Serv::parse_command(int fd, const std::string& line) {
 	std::cout << line << std::endl;
-	if (line == "CAP")
+	std::istringstream lss(line);
+	std::vector<std::string> tokens;
+	
+	std::string token;
+	std::string cmd;
+	
+	if (lss)
+		lss >> cmd;
+	while (lss >> token)
+		tokens.push_back(token);
+	if (cmd == "QUIT")
+	{
+		std::cout << "Thank you for using irSEE" << std::endl;
+		exit(0); //close fds and exit function
+	}
+	else if (cmd == "PING")
+	{
+		std::string pong = "PONG" + "/r/n";
+		//send(client_fd, pong.c_str(), pong.size(), 0);
+	}
+	if (tokens.empty())
+	{
+		std::cerr << "Please add another parameter" << std::endl;
+		return ;
+	}
+	if (cmd == "CAP")
 	{
 		std::cout << "CAP" << std::endl;
 	}
-	if (line == "PASS")
+	if (cmd == "PASS")
 	{
 		std::cout << "password " << std::endl;
-		//checkPassword(line);
+		if (authenticate_password(fd, tokens) == true)
 	}
-	if (line == "NICK")
+	if (cmd == "NICK")
 	{
 		//addNickname
 	}
-	if (line == "USER")
+	if (cmd == "USER")
 	{
 		//addUser
 	}
-	if (line == "JOIN")
+	if (cmd == "JOIN")
 	{
 		
 	}
-	if (line == "PING")
+	
+	if (cmd == "PRVMSG")
 	{
 		
 	}
-	if (line == "PRVMSG")
+	if (cmd == "TOPIC")
 	{
 		
 	}
-	if (line == "QUIT")
+	if (cmd == "MODE")
 	{
 		
 	}
-	if (line == "TOPIC")
+	if (cmd == "KICK")
 	{
 		
 	}
-	if (line == "MODE")
+	if (cmd == "INVITE")
 	{
 		
 	}
-	if (line == "KICK")
-	{
-		
-	}
-	if (line == "INVITE")
-	{
-		
-	}
-	if (line == "PART")
+	if (cmd == "PART")
 	{
 		//leaving the channel
 	}

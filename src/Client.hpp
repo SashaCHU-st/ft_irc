@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:17:13 by alli              #+#    #+#             */
-/*   Updated: 2025/01/07 14:19:18 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/08 09:27:33 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ class Client {
 		std::string getUsername();
 		std::string getNickname();
 		std::string getPassword();
-		std::vector<std::string> getServerInfo();
+		// std::vector<std::string> getServerInfo();
 };
 
 #endif
