@@ -147,6 +147,19 @@ void Serv::launch()
 
                         // Echo the data back to the client
                         send(fds[i].fd, buffer, bytes_read, 0);
+						
+						std::string client_input(buffer);
+						std::stringstream ss(client_input);
+						std::string line;
+						
+						while (getline(ss, line))
+						{
+							if (line.empty())
+								continue;
+							else
+								parse_command(fds[i].fd, line);
+						}
+
                     }
                 }
             }

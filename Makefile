@@ -7,6 +7,10 @@ SRCS = src/main.cpp \
 		src/Serv.cpp \
 		src/Socket.cpp \
 		src/Signal.cpp \
+		src/Client.cpp \
+		src/ServParse.cpp \
+		src/ServPassword.cpp \
+		
 
 
 		
