@@ -29,6 +29,9 @@ void Serv::creating_socket()
     }
     std::cout << "\033[32m" << "ALL GOOD we can continue with launching" << "\033[0m" << std::endl; 
 }
+std::string Serv::get_pass() {
+	return pass;
+}
 
 ///NON BLOCKING-
 void Serv::set_non_blocking(int sock_fd)

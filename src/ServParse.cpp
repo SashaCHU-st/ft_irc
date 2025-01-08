@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/08 10:53:06 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/08 11:46:25 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void Serv::parse_command(int fd, const std::string& line) {
 	}
 	else if (cmd == "PING")
 	{
-		std::string pong = "PONG" + "/r/n";
+		std::string pong = std::string("PONG") + "/r/n";
 		//send(client_fd, pong.c_str(), pong.size(), 0);
 	}
 	if (tokens.empty())
@@ -47,42 +47,51 @@ void Serv::parse_command(int fd, const std::string& line) {
 	{
 		std::cout << "password " << std::endl;
 		if (authenticate_password(fd, tokens) == true)
+		{
+			Client client;
+			clients.push_back(client);
+			return;
+		}
+		else
+		{
+			return;
+		}
 	}
-	if (cmd == "NICK")
-	{
-		//addNickname
-	}
-	if (cmd == "USER")
-	{
-		//addUser
-	}
-	if (cmd == "JOIN")
-	{
+	// if (cmd == "NICK")
+	// {
+	// 	//addNickname
+	// }
+	// if (cmd == "USER")
+	// {
+	// 	//addUser
+	// }
+	// if (cmd == "JOIN")
+	// {
 		
-	}
+	// }
 	
-	if (cmd == "PRVMSG")
-	{
+	// if (cmd == "PRVMSG")
+	// {
 		
-	}
-	if (cmd == "TOPIC")
-	{
+	// }
+	// if (cmd == "TOPIC")
+	// {
 		
-	}
-	if (cmd == "MODE")
-	{
+	// }
+	// if (cmd == "MODE")
+	// {
 		
-	}
-	if (cmd == "KICK")
-	{
+	// }
+	// if (cmd == "KICK")
+	// {
 		
-	}
-	if (cmd == "INVITE")
-	{
+	// }
+	// if (cmd == "INVITE")
+	// {
 		
-	}
-	if (cmd == "PART")
-	{
-		//leaving the channel
-	}
+	// }
+	// if (cmd == "PART")
+	// {
+	// 	//leaving the channel
+	// }
 }
