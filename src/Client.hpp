@@ -22,12 +22,15 @@ class Client {
 		std::string _username;
 		std::string _nickname;
 		std::string _password;
+		int _fd;
 	public:
-		Client();
+	//	Client(); 
+		Client(int fd);  
 		~Client();
 		std::string getUsername();
 		std::string getNickname();
 		std::string getPassword();
+		int get_fd() const;
 		// std::vector<std::string> getServerInfo();
 };
 

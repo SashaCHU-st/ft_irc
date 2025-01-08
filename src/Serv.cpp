@@ -29,6 +29,9 @@ void Serv::creating_socket()
     }
     std::cout << "\033[32m" << "ALL GOOD we can continue with launching" << "\033[0m" << std::endl; 
 }
+std::string Serv::get_pass() {
+	return pass;
+}
 
 ///NON BLOCKING-
 void Serv::set_non_blocking(int sock_fd)
@@ -79,6 +82,16 @@ void Serv::accepter() {
         return;
     }
     set_non_blocking(_new_socket); // new sockecke to non blocking
+
+    ///////SASHA's NEW
+    // Create a new Client object and add it to the clients list
+    clients.push_back(Client(_new_socket));
+
+    // Add the new socket to the poll list
+    pollfd client_poll;
+    client_poll.fd = _new_socket;
+    client_poll.events = POLLIN;
+    fds.push_back(client_poll);
 
 }
 
@@ -137,6 +150,15 @@ void Serv::launch()
                         // close CLient socket and remove i form the poll list
                         close(fds[i].fd);
                         fds.erase(fds.begin() + i);
+                        // Find and remove client from the `clients` vector
+                        for (size_t j = 0; j < clients.size(); ++j)
+                        {
+                            if (clients[j].get_fd() == fds[i].fd)
+                            {
+                                clients.erase(clients.begin() + j);
+                                break;
+                            }
+                        }
                         --i;// adjust index to account
                     }
                     else
