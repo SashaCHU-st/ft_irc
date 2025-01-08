@@ -15,7 +15,8 @@ class Serv
         int _new_socket;
         std::string pass;
         Socket* sock;
-         std::vector<pollfd> fds;
+        std::vector<pollfd> fds;
+        
     public:
         //construc
         Serv(int port, std::string pass);

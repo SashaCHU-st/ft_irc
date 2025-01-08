@@ -59,8 +59,11 @@ void Serv::accepter() {
     int sock_fd = socket->get_sock();
     if (sock_fd < 0)
         return;
+        //prepare to accept new connection
     struct sockaddr_in address = socket->get_address();
     socklen_t adrlen = sizeof(address);
+
+    // accept new CLIENT connect
     _new_socket = accept(sock_fd, (struct sockaddr*)&address, &adrlen);
     // listen socket to accept incom conn req from CLIENT
     // creates newsocket and return a fd for new socket
@@ -68,6 +71,7 @@ void Serv::accepter() {
 
     if (_new_socket < 0)
     {
+        /// No pending connections (expected in non-blocking mode)
         if (errno == EWOULDBLOCK || errno == EAGAIN)
             std::cout << "No pending connections. Non-blocking accept returned." << std::endl;
         else
@@ -80,29 +84,34 @@ void Serv::accepter() {
 
 void Serv::launch()
 {
+    // main server socket ... added to the iist of monitored fd
     pollfd server_poll;
     server_poll.fd = sock->get_sock(); 
-    server_poll.events = POLLIN;
+    server_poll.events = POLLIN;/// monitore for incoom data
     fds.push_back(server_poll);
 
      while (true)
     {
+        // wait fr vents on the monitored sockets
         int poll_res = poll(fds.data(), fds.size(), -1); // Wait indefinitely for events
 
         if (poll_res < 0)
         {
             perror("Poll failed");
-            break;///????
+            break;///if error exit the loop
         }
         for (size_t i = 0; i < fds.size(); ++i)
         {
-            if (fds[i].revents & POLLIN) // If there is data to read
+            if (fds[i].revents & POLLIN) // If there is data to read in curr fd
             {
+                //handle the server socket(new conn request)
                 if (fds[i].fd == sock->get_sock())
                 {
-                    accepter();
+                    accepter();// accept new client conn
+                    // if all good
                     if (_new_socket >= 0)
                     {
+                        //add new client socket to the poll list
                         pollfd client_poll;
                         client_poll.fd = _new_socket;
                         client_poll.events = POLLIN;
@@ -111,26 +120,32 @@ void Serv::launch()
                 }
                 else
                 {
+                    //handle data for exist client
                     char buffer[1024];
                     int bytes_read = recv(fds[i].fd, buffer, sizeof(buffer), 0);
                     if (bytes_read <= 0)
                     {
                         if (bytes_read == 0)//  nothing to read
                         {
+                            // disconneted
                             std::cout << "\033[33mClient disconnected: FD " << fds[i].fd << "\033[0m" << std::endl;
                         }
                         else
                         {
                             perror("Recv failed");// connot be -
                         }
+                        // close CLient socket and remove i form the poll list
                         close(fds[i].fd);
                         fds.erase(fds.begin() + i);
-                        --i;
+                        --i;// adjust index to account
                     }
                     else
                     {
+                        // process recived data
                         buffer[bytes_read] = '\0';
                         std::cout << "\033[36mReceived from FD " << fds[i].fd << ": " << buffer << "\033[0m" << std::endl;
+
+                        // Echo the data back to the client
                         send(fds[i].fd, buffer, bytes_read, 0);
                     }
                 }
