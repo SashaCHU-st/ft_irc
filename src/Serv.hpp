@@ -41,4 +41,5 @@ class Serv
 		bool authenticate_password(int client_fd, std::vector<std::string> tokens);
 		bool addNickname(int client_fd, std::vector<std::string> tokens);
 		bool uniqueNickname(const std::string& nickname);
+        void send_message(int client_fd, const std::string& message);
 };

@@ -28,9 +28,9 @@ class Client {
 		Client(int fd);  
 		~Client();
 		std::string getUsername();
-		std::string getNickname();
+		std::string getNickname() const;
 		std::string getPassword();
-		int 		getFd();
+		int 		getFd () const;
 		
 		//setters
 		void setFd(int fd);

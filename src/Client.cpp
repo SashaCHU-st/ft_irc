@@ -21,13 +21,13 @@ std::string Client::getUsername() {
 	return this->_username;
 }
 
-std::string Client::getNickname() {
+std::string Client::getNickname() const {
 	return this->_nickname;
 }
 std::string Client::getPassword() {
 	return this->_password;
 }
-int	Client::getFd() {
+int	Client::getFd() const {
 	return this->_fd;
 }
 
@@ -50,10 +50,10 @@ void Client::setUsername(std::string username) {
 void Client::setFd(int fd) {
 	_fd = fd;
 }
-int Client::get_fd() const 
-{ 
-	return _fd;
-}
+// int Client::get_fd() const 
+// { 
+// 	return _fd;
+// }
 // std::vector<std::string> Client::getServerInfo() {
 	
 // }

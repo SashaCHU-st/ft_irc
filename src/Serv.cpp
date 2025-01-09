@@ -53,6 +53,13 @@ void Serv::set_non_blocking(int sock_fd)
     }
 }
 
+void Serv::send_message(int client_fd, const std::string& message)
+{
+   std::string messages = message + "\r\n";
+    send(client_fd, messages.c_str(), messages.length(), 0);
+}
+
+
 void Serv::accepter() {
   //  std::cout << "Accepter" << std::endl;
 
@@ -81,17 +88,45 @@ void Serv::accepter() {
             perror("Failed to accept connection");
         return;
     }
-    set_non_blocking(_new_socket); // new sockecke to non blocking
+    if(_new_socket >=0)
+    {
+        set_non_blocking(_new_socket); // new sockecke to non blocking
 
-    ///////SASHA's NEW
-    // Create a new Client object and add it to the clients list
-    clients.push_back(Client(_new_socket));
+        Client new_cl(_new_socket);
+// std::cout << "Sending welcome message to: " << nick << std::endl;
 
-    // Add the new socket to the poll list
-    pollfd client_poll;
-    client_poll.fd = _new_socket;
-    client_poll.events = POLLIN;
-    fds.push_back(client_poll);
+     //   new_cl.setNickname("wwww");
+
+        ///////SASHA's NEW
+        // Create a new Client object and add it to the clients list
+        // clients.push_back(Client(_new_socket));
+         clients.push_back(new_cl);
+
+        // Add the new socket to the poll list
+        pollfd client_poll;
+        client_poll.fd = _new_socket;
+        client_poll.events = POLLIN;
+        fds.push_back(client_poll);
+
+        std::string server_name = "ircserv";
+       // Retrieve the nickname
+        std::string nick = "Guest";  // Default fallback nickname
+        for (const Client& client : clients) {
+            if (client.getFd() == _new_socket) {
+                nick = client.getNickname();  // Retrieve client nickname
+            std::cout << "Sending welcome message to: " << nick << std::endl;
+
+                break;
+            }
+        }
+
+
+        // Construct the welcome message
+        std::string message = ":" + server_name + " 001 " + nick + " :Welcome to the IRC Network, " + nick + "!";
+        send_message(_new_socket, message);  // Send the message
+
+
+    }
 
 }
 
@@ -115,7 +150,7 @@ void Serv::launch()
         }
         for (size_t i = 0; i < fds.size(); ++i)
         {
-            if (fds[i].revents & POLLIN) // If there is data to read in curr fd
+            if (fds[i].revents & POLLIN)   // If there is data to read in curr fd
             {
                 //handle the server socket(new conn request)
                 if (fds[i].fd == sock->get_sock())
@@ -136,31 +171,60 @@ void Serv::launch()
                     //handle data for exist client
                     char buffer[1024];
                     int bytes_read = recv(fds[i].fd, buffer, sizeof(buffer), 0);
-                    if (bytes_read <= 0)
+                    // if (bytes_read <= 0)
+                    // {
+                    //     if (bytes_read == 0)//  nothing to read
+                    //     {
+                    //         // disconneted
+                    //         std::cout << "\033[33mClient disconnected: FD " << fds[i].fd << "\033[0m" << std::endl;
+                    //     }
+                    //     else
+                    //     {
+                    //         perror("Recv failed");// connot be -
+                    //     }
+                    //     // close CLient socket and remove i form the poll list
+                    //     close(fds[i].fd);
+                    //     fds.erase(fds.begin() + i);
+                    //     // Find and remove client from the `clients` vector
+                    //     for (size_t j = 0; j < clients.size(); ++j)
+                    //     {
+                    //         if (clients[j].getFd() == fds[i].fd)
+                    //         {
+                    //             clients.erase(clients.begin() + j);
+                    //             break;
+                    //         }
+                    //     }
+                    //     --i;// adjust index to account
+                    // }
+                    if (bytes_read < 0)
                     {
-                        if (bytes_read == 0)//  nothing to read
-                        {
-                            // disconneted
-                            std::cout << "\033[33mClient disconnected: FD " << fds[i].fd << "\033[0m" << std::endl;
+                        // Check for EAGAIN or EWOULDBLOCK
+                        if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                            std::cout << "No data available yet for FD " << fds[i].fd << ".\n";
+                            continue; // Non-fatal, just wait for the next poll event
+                        } else {
+                            // Recv error
+                            perror("Recv failed");
+                            close(fds[i].fd);
+                            fds.erase(fds.begin() + i);
+                            --i; // Adjust index
+                            continue;
                         }
-                        else
-                        {
-                            perror("Recv failed");// connot be -
-                        }
-                        // close CLient socket and remove i form the poll list
+                    } else if (bytes_read == 0) {
+                        // Connection closed by the client
+                        std::cout << "Client disconnected: FD " << fds[i].fd << "\n";
                         close(fds[i].fd);
                         fds.erase(fds.begin() + i);
-                        // Find and remove client from the `clients` vector
                         for (size_t j = 0; j < clients.size(); ++j)
                         {
-                            if (clients[j].get_fd() == fds[i].fd)
+                            if (clients[j].getFd() == fds[i].fd)
                             {
                                 clients.erase(clients.begin() + j);
                                 break;
-                            }
                         }
-                        --i;// adjust index to account
                     }
+                        --i; // Adjust index
+                    } 
                     else
                     {
                         // process recived data
@@ -188,4 +252,5 @@ void Serv::launch()
             }
         }
     }
+    std::cout<< "KUku"<<std::endl;
 }

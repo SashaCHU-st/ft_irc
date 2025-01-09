@@ -20,6 +20,9 @@ int Serv::parse_command(int fd, const std::string& line) {
 	std::string token;
 	std::string cmd;
 	
+
+
+	
 	if (lss)
 		lss >> cmd;
 	while (lss >> token)
