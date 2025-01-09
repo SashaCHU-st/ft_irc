@@ -176,12 +176,13 @@ void Serv::launch()
 						
 						while (getline(ss, line))
 						{
+							// std::cout << line << std::endl;
 							if (line.empty())
 								continue;
 							else
 								parse_command(fds[i].fd, line);
 						}
-
+						std::cout << "left getline loop" << std::endl;
                     }
                 }
             }
