@@ -101,7 +101,6 @@ void Serv::launch()
         {
             if (fds[i].revents & POLLIN) // If there is data to read
             {
-				std::cout << "event happened" << std::endl;
                 if (fds[i].fd == sock->get_sock())
                 {
                     accepter();
@@ -151,7 +150,7 @@ void Serv::launch()
 							else
 								parse_command(fds[i].fd, line);
 						}
-						std::cout << "left getline loop" << std::endl;
+						
                     }
                 }
             }

@@ -5,14 +5,25 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/07 13:14:42 by alli              #+#    #+#             */
-/*   Updated: 2025/01/07 13:14:45 by alli             ###   ########.fr       */
+/*   Created: 2025/01/09 12:36:38 by alli              #+#    #+#             */
+/*   Updated: 2025/01/09 13:32:54 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Utils.hpp"
+#include "Serv.hpp"
 
-std::vector<std::string> Utils::splitStr(const std::string& str, std::string delim) {
+int Serv::findClient(int client_fd)
+{
+	for (unsigned long i = 0; i < clients.size(); i++)
+	{
+		if (client_fd == clients[i].getFd())
+			return (clients[i].getFd());
+		else
+			return -1;
+	}
+	return -1;
+}
+std::vector<std::string> Serv::splitStr(const std::string& str, std::string delim) {
 	std::vector<std::string> newList;
 	// std::string item;
 	int length = str.length();

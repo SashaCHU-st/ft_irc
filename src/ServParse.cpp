@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/09 11:04:27 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/09 13:41:40 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,6 @@ int Serv::parse_command(int fd, const std::string& line) {
 		std::cout << "Thank you for using irSEE" << std::endl;
 		exit(0); //close fds and exit function
 	}
-	else if (cmd == "PING")
-	{
-		std::string pong = std::string("PONG") + "\r\n";
-		send(fd, pong.c_str(), pong.size(), 0);
-	}
 	if (tokens.empty())
 	{
 		std::cerr << "Please add another parameter" << std::endl;
@@ -41,7 +36,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 	}
 	if (cmd == "CAP")
 	{
-		// std::cout << "CAP" << std::endl;
+		std::string cap = tokens[0] + "\r\n";
 		return 0;
 	}
 	if (cmd == "PASS")
@@ -65,9 +60,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 	{
 		if (addNickname(fd, tokens) == true)
 		{
-			std::string nick = std::string("nickname added") + "\r\n";
-			std::cout << "fd: " << fd << std::endl;
-			std::cout << "nickname " << clients[fd].getNickname() << std::endl;
+			std::string nick = "nickname " + tokens[0] + " added \r\n";
 			send(fd, nick.c_str(), nick.size(), 0);
 			return 0;
 		}
@@ -81,8 +74,26 @@ int Serv::parse_command(int fd, const std::string& line) {
 	return 0;
 	if (cmd == "USER")
 	{
-		//addUser
+		if (addUser(fd, tokens) == true)
+		{
+			std::string user = "Username added" + tokens[0] + "\r\n";
+			send(fd, user.c_str(), user.size(), 0);
+		}
+		else
+		{
+			std::string error_username = "No username added \r\n";
+			send(fd, error_username.c_str(), error_username.size(), 0);
+			return 1;
+		}
 	}
+	if (cmd == "PING")
+	{
+		std::string pong = std::string("PONG") + "\r\n";
+		send(fd, pong.c_str(), pong.size(), 0);
+	}
+	if (!clients[fd].getUsername().empty() && !clients[fd].getNickname().empty())
+		clients[fd].allSet = true;
+	
 	// if (cmd == "JOIN")
 	// {
 		

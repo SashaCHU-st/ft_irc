@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 13:17:19 by alli              #+#    #+#             */
-/*   Updated: 2025/01/09 10:47:30 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/09 11:52:37 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,13 @@ bool Serv::addNickname(int fd, std::vector<std::string> tokens)
 		if (tmpFd == fd)
 		{
 			std::string nickname = tokens[0];
-			std::cout << "fd in addnickname" << fd << std::endl;
+			// std::cout << "fd in addnickname" << fd << std::endl;
 			if (clients[fd].getNickname().empty()) // new nickname if there's no nickname
 			{
 				if (uniqueNickname(nickname) == true)
 				{
 					clients[fd].setNickname(nickname);
-					std::cout << "empty nickname " << clients[fd].getNickname() << std::endl;
+					// std::cout << "empty nickname " << clients[fd].getNickname() << std::endl;
 					return true;
 				}
 				else
@@ -41,7 +41,7 @@ bool Serv::addNickname(int fd, std::vector<std::string> tokens)
 			if (uniqueNickname(nickname) == true) //replacing nickname
 			{
 				clients[fd].setNickname(nickname);
-				std::cout << "Client nickname: " << clients[fd].getNickname() << std::endl;
+				// std::cout << "Client nickname: " << clients[fd].getNickname() << std::endl;
 				return true;
 			}
 			else
