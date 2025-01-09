@@ -6,14 +6,14 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/08 16:14:54 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/09 11:04:27 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Serv.hpp"
 
 int Serv::parse_command(int fd, const std::string& line) {
-	std::cout << line << std::endl;
+	// std::cout << line << std::endl;
 	std::istringstream lss(line);
 	std::vector<std::string> tokens;
 	
@@ -41,18 +41,20 @@ int Serv::parse_command(int fd, const std::string& line) {
 	}
 	if (cmd == "CAP")
 	{
-		std::cout << "CAP" << std::endl;
+		// std::cout << "CAP" << std::endl;
+		return 0;
 	}
 	if (cmd == "PASS")
 	{
 		// std::cout << "password " << std::endl;
 		if (authenticate_password(fd, tokens) == true)
 		{
-			
 			Client client;
 			client.setFd(fd);
+			client.setNickname("");
+			client.setUsername("");
 			clients.push_back(client); //create client later once password is correct
-			return 1;
+			return 0;
 		}
 		else
 		{
@@ -63,18 +65,24 @@ int Serv::parse_command(int fd, const std::string& line) {
 	{
 		if (addNickname(fd, tokens) == true)
 		{
-			std::string nick = std::string("nickname added: ") + "\r\n";
+			std::string nick = std::string("nickname added") + "\r\n";
+			std::cout << "fd: " << fd << std::endl;
+			std::cout << "nickname " << clients[fd].getNickname() << std::endl;
 			send(fd, nick.c_str(), nick.size(), 0);
 			return 0;
 		}
 		else
+		{
+			std::string ERR_NICKNAMEINUSE = std::string("No nickname or in use") + "\r\n";
+			send(fd, ERR_NICKNAMEINUSE.c_str(), ERR_NICKNAMEINUSE.size(), 0);
 			return 1;
+		}
 	}
 	return 0;
-	// if (cmd == "USER")
-	// {
-	// 	//addUser
-	// }
+	if (cmd == "USER")
+	{
+		//addUser
+	}
 	// if (cmd == "JOIN")
 	// {
 		

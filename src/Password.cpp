@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:54:52 by alli              #+#    #+#             */
-/*   Updated: 2025/01/08 11:52:11 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/09 08:27:41 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ bool Serv::authenticate_password(int fd, std::vector<std::string> tokens)
 		send(fd, error_msg.c_str(), error_msg.size(), 0);
 	}
 	else {
-		std::cout << "token: " << tokens[0] << std::endl;
+		// std::cout << "token: " << tokens[0] << std::endl;
 		std::string token = tokens[0];
 		std::string pass = get_pass();
 		if (pass == token)

@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:17:16 by alli              #+#    #+#             */
-/*   Updated: 2025/01/08 13:53:23 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/09 10:35:20 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,11 @@ int	Client::getFd() {
 }
 
 void Client::setNickname(std::string nickname) {
-	if (nickname.empty())
-	{
-		std::cerr << "Please input a nickname" << std::endl;
-		return;
-	}
+	// if (nickname.empty())
+	// {
+	// 	std::cerr << "Please input a nickname" << std::endl;
+	// 	return;
+	// }
 	_nickname = nickname;
 }
 void Client::setUsername(std::string username) {

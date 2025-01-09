@@ -101,6 +101,7 @@ void Serv::launch()
         {
             if (fds[i].revents & POLLIN) // If there is data to read
             {
+				std::cout << "event happened" << std::endl;
                 if (fds[i].fd == sock->get_sock())
                 {
                     accepter();
@@ -140,7 +141,9 @@ void Serv::launch()
 						std::stringstream ss(client_input);
 						std::string line;
 						
-						while (getline(ss, line))
+						// std::cout << "buffer" << buffer << std::endl;
+						// std::cout << "---------" << std::endl;
+						while (getline(ss, line)) // waiting 
 						{
 							// std::cout << line << std::endl;
 							if (line.empty())

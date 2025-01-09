@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 13:17:19 by alli              #+#    #+#             */
-/*   Updated: 2025/01/08 16:11:22 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/09 10:47:30 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 bool Serv::addNickname(int fd, std::vector<std::string> tokens)
 {
-	std::cout << "nickname token: " << tokens[0] << std::endl;
+	// std::cout << "nickname token: " << tokens[0] << std::endl;
 	if (tokens.size() > 1)
 	{
-		std::string error_nick= std::string("please only input 1 nickname ") + "\r\n";
+		std::string error_nick = std::string("please only input 1 nickname ") + "\r\n";
 		send(fd, error_nick.c_str(), error_nick.size(), 0);
 	}
 	for (unsigned long i = 0; i < clients.size(); i++)
@@ -26,11 +26,13 @@ bool Serv::addNickname(int fd, std::vector<std::string> tokens)
 		if (tmpFd == fd)
 		{
 			std::string nickname = tokens[0];
-			if (clients[i].getNickname().empty()) // new nickname if there's no nickname
+			std::cout << "fd in addnickname" << fd << std::endl;
+			if (clients[fd].getNickname().empty()) // new nickname if there's no nickname
 			{
 				if (uniqueNickname(nickname) == true)
 				{
-					clients[i].setNickname(nickname);
+					clients[fd].setNickname(nickname);
+					std::cout << "empty nickname " << clients[fd].getNickname() << std::endl;
 					return true;
 				}
 				else
@@ -38,8 +40,8 @@ bool Serv::addNickname(int fd, std::vector<std::string> tokens)
 			}
 			if (uniqueNickname(nickname) == true) //replacing nickname
 			{
-				clients[i].setNickname(nickname);
-				// std::cout << "Client nickname: " << clients[i].getNickname() << std::endl;
+				clients[fd].setNickname(nickname);
+				std::cout << "Client nickname: " << clients[fd].getNickname() << std::endl;
 				return true;
 			}
 			else
