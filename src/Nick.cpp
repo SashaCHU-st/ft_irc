@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 13:17:19 by alli              #+#    #+#             */
-/*   Updated: 2025/01/08 15:34:21 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/08 16:11:22 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ bool Serv::addNickname(int fd, std::vector<std::string> tokens)
 			std::string nickname = tokens[0];
 			if (clients[i].getNickname().empty()) // new nickname if there's no nickname
 			{
-				if (uniqueNickname(name) == true)
+				if (uniqueNickname(nickname) == true)
 				{
 					clients[i].setNickname(nickname);
 					return true;

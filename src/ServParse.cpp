@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/08 15:31:54 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/08 16:14:54 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 	if (tokens.empty())
 	{
 		std::cerr << "Please add another parameter" << std::endl;
-		return ;
+		return 1;
 	}
 	if (cmd == "CAP")
 	{
@@ -52,20 +52,25 @@ int Serv::parse_command(int fd, const std::string& line) {
 			Client client;
 			client.setFd(fd);
 			clients.push_back(client); //create client later once password is correct
-			return;
+			return 1;
 		}
 		else
 		{
-			return;
+			return 1;
 		}
 	}
 	if (cmd == "NICK")
 	{
 		if (addNickname(fd, tokens) == true)
 		{
-			
+			std::string nick = std::string("nickname added: ") + "\r\n";
+			send(fd, nick.c_str(), nick.size(), 0);
+			return 0;
 		}
+		else
+			return 1;
 	}
+	return 0;
 	// if (cmd == "USER")
 	// {
 	// 	//addUser

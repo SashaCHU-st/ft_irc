@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:17:13 by alli              #+#    #+#             */
-/*   Updated: 2025/01/08 13:48:04 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/08 16:06:01 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 class Client {
 	private:
 		std::string _username;
-		std::string _nickname;
+		std::string _nickname = "";
 		std::string _password;
 		int _fd;
 	public:
