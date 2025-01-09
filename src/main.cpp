@@ -21,7 +21,7 @@ int main(int argc, char **argv)
         int port = std::atoi(argv[1]);
         if(check_port(port) == 1)
         {
-            std::cout<<"Error! Port must be from !!!!!! to !!!!!!"<<std::endl;
+            std::cout << "Error! Port must be from !!!!!! to !!!!!!"<<std::endl;
             return(1);
         }
         Serv serv(port, argv[2]);

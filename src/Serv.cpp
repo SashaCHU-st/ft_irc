@@ -29,6 +29,9 @@ void Serv::creating_socket()
     }
     std::cout << "\033[32m" << "ALL GOOD we can continue with launching" << "\033[0m" << std::endl; 
 }
+std::string Serv::get_pass() {
+	return pass;
+}
 
 ///NON BLOCKING-
 void Serv::set_non_blocking(int sock_fd)
@@ -50,6 +53,13 @@ void Serv::set_non_blocking(int sock_fd)
     }
 }
 
+void Serv::send_message(int client_fd, const std::string& message)
+{
+   std::string messages = message + "\r\n";
+    send(client_fd, messages.c_str(), messages.length(), 0);
+}
+
+
 void Serv::accepter() {
   //  std::cout << "Accepter" << std::endl;
 
@@ -59,8 +69,11 @@ void Serv::accepter() {
     int sock_fd = socket->get_sock();
     if (sock_fd < 0)
         return;
+        //prepare to accept new connection
     struct sockaddr_in address = socket->get_address();
     socklen_t adrlen = sizeof(address);
+
+    // accept new CLIENT connect
     _new_socket = accept(sock_fd, (struct sockaddr*)&address, &adrlen);
     // listen socket to accept incom conn req from CLIENT
     // creates newsocket and return a fd for new socket
@@ -68,41 +81,85 @@ void Serv::accepter() {
 
     if (_new_socket < 0)
     {
+        /// No pending connections (expected in non-blocking mode)
         if (errno == EWOULDBLOCK || errno == EAGAIN)
             std::cout << "No pending connections. Non-blocking accept returned." << std::endl;
         else
             perror("Failed to accept connection");
         return;
     }
-    set_non_blocking(_new_socket); // new sockecke to non blocking
+    if(_new_socket >=0)
+    {
+        set_non_blocking(_new_socket); // new sockecke to non blocking
+
+        Client new_cl(_new_socket);
+// std::cout << "Sending welcome message to: " << nick << std::endl;
+
+     //   new_cl.setNickname("wwww");
+
+        ///////SASHA's NEW
+        // Create a new Client object and add it to the clients list
+        // clients.push_back(Client(_new_socket));
+         clients.push_back(new_cl);
+
+        // Add the new socket to the poll list
+        pollfd client_poll;
+        client_poll.fd = _new_socket;
+        client_poll.events = POLLIN;
+        fds.push_back(client_poll);
+
+        std::string server_name = "ircserv";
+       // Retrieve the nickname
+        std::string nick = "Guest";  // Default fallback nickname
+        for (const Client& client : clients) {
+            if (client.getFd() == _new_socket) {
+                nick = client.getNickname();  // Retrieve client nickname
+            std::cout << "Sending welcome message to: " << nick << std::endl;
+
+                break;
+            }
+        }
+
+
+        // Construct the welcome message
+        std::string message = ":" + server_name + " 001 " + nick + " :Welcome to the IRC Network, " + nick + "!";
+        send_message(_new_socket, message);  // Send the message
+
+
+    }
 
 }
 
 void Serv::launch()
 {
+    // main server socket ... added to the iist of monitored fd
     pollfd server_poll;
     server_poll.fd = sock->get_sock(); 
-    server_poll.events = POLLIN;
+    server_poll.events = POLLIN;/// monitore for incoom data
     fds.push_back(server_poll);
 
      while (true)
     {
+        // wait fr vents on the monitored sockets
         int poll_res = poll(fds.data(), fds.size(), -1); // Wait indefinitely for events
 
         if (poll_res < 0)
         {
             perror("Poll failed");
-            break;///????
+            break;///if error exit the loop
         }
         for (size_t i = 0; i < fds.size(); ++i)
         {
-            if (fds[i].revents & POLLIN) // If there is data to read
+            if (fds[i].revents & POLLIN)   // If there is data to read in curr fd
             {
+                //handle the server socket(new conn request)
                 if (fds[i].fd == sock->get_sock())
                 {
-                    accepter();
+                    accepter();// accept new client conn
+                    // if all good
                     if (_new_socket >= 0)
                     {
+                        //add new client socket to the poll list
                         pollfd client_poll;
                         client_poll.fd = _new_socket;
                         client_poll.events = POLLIN;
@@ -111,30 +168,89 @@ void Serv::launch()
                 }
                 else
                 {
+                    //handle data for exist client
                     char buffer[1024];
                     int bytes_read = recv(fds[i].fd, buffer, sizeof(buffer), 0);
-                    if (bytes_read <= 0)
+                    // if (bytes_read <= 0)
+                    // {
+                    //     if (bytes_read == 0)//  nothing to read
+                    //     {
+                    //         // disconneted
+                    //         std::cout << "\033[33mClient disconnected: FD " << fds[i].fd << "\033[0m" << std::endl;
+                    //     }
+                    //     else
+                    //     {
+                    //         perror("Recv failed");// connot be -
+                    //     }
+                    //     // close CLient socket and remove i form the poll list
+                    //     close(fds[i].fd);
+                    //     fds.erase(fds.begin() + i);
+                    //     // Find and remove client from the `clients` vector
+                    //     for (size_t j = 0; j < clients.size(); ++j)
+                    //     {
+                    //         if (clients[j].getFd() == fds[i].fd)
+                    //         {
+                    //             clients.erase(clients.begin() + j);
+                    //             break;
+                    //         }
+                    //     }
+                    //     --i;// adjust index to account
+                    // }
+                    if (bytes_read < 0)
                     {
-                        if (bytes_read == 0)//  nothing to read
-                        {
-                            std::cout << "\033[33mClient disconnected: FD " << fds[i].fd << "\033[0m" << std::endl;
+                        // Check for EAGAIN or EWOULDBLOCK
+                        if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                            std::cout << "No data available yet for FD " << fds[i].fd << ".\n";
+                            continue; // Non-fatal, just wait for the next poll event
+                        } else {
+                            // Recv error
+                            perror("Recv failed");
+                            close(fds[i].fd);
+                            fds.erase(fds.begin() + i);
+                            --i; // Adjust index
+                            continue;
                         }
-                        else
-                        {
-                            perror("Recv failed");// connot be -
-                        }
+                    } else if (bytes_read == 0) {
+                        // Connection closed by the client
+                        std::cout << "Client disconnected: FD " << fds[i].fd << "\n";
                         close(fds[i].fd);
                         fds.erase(fds.begin() + i);
-                        --i;
+                        for (size_t j = 0; j < clients.size(); ++j)
+                        {
+                            if (clients[j].getFd() == fds[i].fd)
+                            {
+                                clients.erase(clients.begin() + j);
+                                break;
+                        }
                     }
+                        --i; // Adjust index
+                    } 
                     else
                     {
+                        // process recived data
                         buffer[bytes_read] = '\0';
                         std::cout << "\033[36mReceived from FD " << fds[i].fd << ": " << buffer << "\033[0m" << std::endl;
+
+                        // Echo the data back to the client
                         send(fds[i].fd, buffer, bytes_read, 0);
+						
+						std::string client_input(buffer);
+						std::stringstream ss(client_input);
+						std::string line;
+						
+						while (getline(ss, line))
+						{
+							// std::cout << line << std::endl;
+							if (line.empty())
+								continue;
+							else
+								parse_command(fds[i].fd, line);
+						}
+						std::cout << "left getline loop" << std::endl;
                     }
                 }
             }
         }
     }
+    std::cout<< "KUku"<<std::endl;
 }
