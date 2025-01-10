@@ -238,7 +238,9 @@ void Serv::launch()
 						std::stringstream ss(client_input);
 						std::string line;
 						
-						while (getline(ss, line))
+						// std::cout << "buffer" << buffer << std::endl;
+						// std::cout << "---------" << std::endl;
+						while (getline(ss, line)) // waiting 
 						{
 							// std::cout << line << std::endl;
 							if (line.empty())
@@ -246,7 +248,7 @@ void Serv::launch()
 							else
 								parse_command(fds[i].fd, line);
 						}
-						std::cout << "left getline loop" << std::endl;
+						
                     }
                 }
             }
