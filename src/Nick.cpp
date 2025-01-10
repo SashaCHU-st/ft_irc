@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 13:17:19 by alli              #+#    #+#             */
-/*   Updated: 2025/01/09 11:52:37 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/09 16:09:06 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ bool Serv::addNickname(int fd, std::vector<std::string> tokens)
 				if (uniqueNickname(nickname) == true)
 				{
 					clients[fd].setNickname(nickname);
-					// std::cout << "empty nickname " << clients[fd].getNickname() << std::endl;
+					
 					return true;
 				}
 				else
@@ -41,6 +41,7 @@ bool Serv::addNickname(int fd, std::vector<std::string> tokens)
 			if (uniqueNickname(nickname) == true) //replacing nickname
 			{
 				clients[fd].setNickname(nickname);
+				//changed the name send message
 				// std::cout << "Client nickname: " << clients[fd].getNickname() << std::endl;
 				return true;
 			}
