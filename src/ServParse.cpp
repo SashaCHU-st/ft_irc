@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/09 16:22:36 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/10 09:48:01 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 			// std::ostringstream oss;
 			std::string nick = " :ircserver 001 " + clients[fd].getNickname() + " :Welcome to network, " + clients[fd].getNickname() + "@localhost" + "\r\n";
 			// std::string nick = ":IRCserver " + std::string("001 ") + tokens[0] + " :Welcome to network, " + tokens[0] + "\r\n";
-			std::cout << "sending to fd: " << fd << std::endl;
+			// std::cout << "sending to fd: " << fd << std::endl;
 			if (send(fd, nick.c_str(), nick.size(), 0) == -1)
 				std::cerr << "Error sending message" << std::endl;
 		}
