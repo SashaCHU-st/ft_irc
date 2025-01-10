@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:17:13 by alli              #+#    #+#             */
-/*   Updated: 2025/01/09 13:40:55 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/10 12:40:54 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ class Client {
 		std::string _hostname;
 		std::string _servername;
 		std::vector<std::string> _realname;
-		
 		int _fd;
 	public:
 		Client(); 
@@ -38,6 +37,7 @@ class Client {
 		std::string getHostName();
 		// int 		getFd();
 		bool allSet = false;
+		bool welcomeSent = false;
 		
 		//setters
 		void setFd(int fd);

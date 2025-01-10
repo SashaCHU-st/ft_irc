@@ -21,8 +21,6 @@ class Serv
         Socket* sock;
          std::vector<pollfd> fds;
 		 std::vector<Client> clients;
-
-
          
     public:
         //construc

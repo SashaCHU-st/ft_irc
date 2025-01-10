@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/10 12:21:49 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/10 12:50:31 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,15 @@ int Serv::parse_command(int fd, const std::string& line) {
 	std::string cmd;
 	
 	if (lss)
+	{
 		lss >> cmd;
+		std::cout << cmd << std::endl;
+	}
 	while (lss >> token)
+	{
 		tokens.push_back(token);
+		std::cout << token << std::endl;
+	}
 	if (cmd == "QUIT")
 	{
 		std::cout << "Thank you for using irSEE" << std::endl;
