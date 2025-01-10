@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/10 09:48:01 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/10 10:11:17 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 		if (addNickname(fd, tokens) == true)
 		{
 			// std::ostringstream oss;
-			std::string nick = " :ircserver 001 " + clients[fd].getNickname() + " :Welcome to network, " + clients[fd].getNickname() + "@localhost" + "\r\n";
+			std::string nick = " :ircserver 001 " + clients[fd].getNickname() + " added to network " + "\r\n";
 			// std::string nick = ":IRCserver " + std::string("001 ") + tokens[0] + " :Welcome to network, " + tokens[0] + "\r\n";
 			// std::cout << "sending to fd: " << fd << std::endl;
 			if (send(fd, nick.c_str(), nick.size(), 0) == -1)
@@ -102,7 +102,11 @@ int Serv::parse_command(int fd, const std::string& line) {
 		send(fd, pong.c_str(), pong.size(), 0);
 	}
 	if (!clients[fd].getUsername().empty() && !clients[fd].getNickname().empty())
+	{
 		clients[fd].allSet = true;
+		std::string nick = " :ircserver 001 " + clients[fd].getNickname() + " :Welcome to network, " + clients[fd].getNickname() + "@localhost" + "\r\n";
+		//welcome message
+	}
 	
 	// if (cmd == "JOIN")
 	// {
