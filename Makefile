@@ -13,6 +13,7 @@ SRCS = src/main.cpp \
 		src/ServParse.cpp \
 		src/User.cpp \
 		src/Utils.cpp \
+		src/WelcomeMsg.cpp \
 
 OBJS = $(SRCS:.cpp=.o)
 
