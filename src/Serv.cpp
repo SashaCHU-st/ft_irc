@@ -122,7 +122,7 @@ void Serv::accepter() {
 
 
         // Construct the welcome message
-        std::string message = ":" + server_name + " 001 " + nick + " :Welcome to the IRC Network, " + nick + "!";
+        std::string message = ":" + server_name + " 001 " + clients[sock_fd].getNickname() + " :Welcome to the IRC Network, " + nick + "!";
         send_message(_new_socket, message);  // Send the message
 
 
@@ -137,7 +137,7 @@ void Serv::launch()
     server_poll.fd = sock->get_sock(); 
     server_poll.events = POLLIN;/// monitore for incoom data
     fds.push_back(server_poll);
-
+	char buffer[1024];
      while (true)
     {
         // wait fr vents on the monitored sockets
@@ -169,7 +169,7 @@ void Serv::launch()
                 else
                 {
                     //handle data for exist client
-                    char buffer[1024];
+                    // char buffer[1024];
                     int bytes_read = recv(fds[i].fd, buffer, sizeof(buffer), 0);
                     // if (bytes_read <= 0)
                     // {
@@ -237,22 +237,22 @@ void Serv::launch()
 						std::string client_input(buffer);
 						std::stringstream ss(client_input);
 						std::string line;
-						
-						// std::cout << "buffer" << buffer << std::endl;
-						// std::cout << "---------" << std::endl;
+
 						while (getline(ss, line)) // waiting 
 						{
 							// std::cout << line << std::endl;
 							if (line.empty())
 								continue;
 							else
+							{
 								parse_command(fds[i].fd, line);
+							}
 						}
-						
-                    }
-                }
-            }
-        }
-    }
-    std::cout<< "KUku"<<std::endl;
+						sendWelcomeMsg(fds[i].fd);
+					}
+				}
+			}
+		}
+		std::cout<< "KUku"<<std::endl;
+	}
 }

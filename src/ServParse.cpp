@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/09 13:41:40 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/10 12:21:49 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,6 @@ int Serv::parse_command(int fd, const std::string& line) {
 	
 	std::string token;
 	std::string cmd;
-	
-
-
 	
 	if (lss)
 		lss >> cmd;
@@ -53,8 +50,8 @@ int Serv::parse_command(int fd, const std::string& line) {
 			
 			Client client;
 			client.setFd(fd);
-			client.setNickname("");
-			client.setUsername("");
+			// client.setNickname("");
+			// client.setUsername("");
 			clients.push_back(client); //create client later once password is correct
 			return 0;
 		}
@@ -67,8 +64,8 @@ int Serv::parse_command(int fd, const std::string& line) {
 	{
 		if (addNickname(fd, tokens) == true)
 		{
-			std::string nick = "nickname " + tokens[0] + " added \r\n";
-			send(fd, nick.c_str(), nick.size(), 0);
+			
+			// 	std::cerr << "Error sending message" << std::endl;
 			return 0;
 		}
 		else
@@ -98,8 +95,6 @@ int Serv::parse_command(int fd, const std::string& line) {
 		std::string pong = std::string("PONG") + "\r\n";
 		send(fd, pong.c_str(), pong.size(), 0);
 	}
-	if (!clients[fd].getUsername().empty() && !clients[fd].getNickname().empty())
-		clients[fd].allSet = true;
 	
 	// if (cmd == "JOIN")
 	// {

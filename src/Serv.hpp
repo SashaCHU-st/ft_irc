@@ -44,6 +44,7 @@ class Serv
 		bool uniqueNickname(const std::string& nickname);
         void send_message(int client_fd, const std::string& message);
 		int findClient(int client_fd);
+		void sendWelcomeMsg(int client_fd);
 
 		static std::vector<std::string> splitStr (const std::string& str, std::string delim);
 };
