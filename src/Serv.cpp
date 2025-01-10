@@ -114,14 +114,14 @@ void Serv::accepter() {
         for (const Client& client : clients) {
             if (client.getFd() == _new_socket) {
                 nick = client.getNickname();  // Retrieve client nickname
-            std::cout << "Sending welcome message to: " << nick << std::endl;
+            // std::cout << "Sending welcome message to: " << nick << std::endl;
 
                 break;
             }
         }
 
 
-        // Construct the welcome message
+        // welcome message
         std::string message = ":" + server_name + " 001 " + clients[sock_fd].getNickname() + " :Welcome to the IRC Network, " + nick + "!";
         send_message(_new_socket, message);  // Send the message
 
@@ -200,7 +200,7 @@ void Serv::launch()
                     {
                         // Check for EAGAIN or EWOULDBLOCK
                         if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                            std::cout << "No data available yet for FD " << fds[i].fd << ".\n";
+                            // std::cout << "No data available yet for FD " << fds[i].fd << ".\n";
                             continue; // Non-fatal, just wait for the next poll event
                         } else {
                             // Recv error
@@ -232,7 +232,7 @@ void Serv::launch()
                         std::cout << "\033[36mReceived from FD " << fds[i].fd << ": " << buffer << "\033[0m" << std::endl;
 
                         // Echo the data back to the client
-                        send(fds[i].fd, buffer, bytes_read, 0);
+                     //   send(fds[i].fd, buffer, bytes_read, 0);
 						
 						std::string client_input(buffer);
 						std::stringstream ss(client_input);
@@ -248,6 +248,7 @@ void Serv::launch()
 								parse_command(fds[i].fd, line);
 							}
 						}
+                        // std::cout<< "11"<<std::endl;
 						sendWelcomeMsg(fds[i].fd);
 					}
 				}
