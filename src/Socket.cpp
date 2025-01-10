@@ -72,7 +72,7 @@ int Socket::binding()
 }
 int Socket::listening()
 {
-    int listening_status = listen(sock, 3); // backlog is the max number of pending connections
+    int listening_status = listen(sock, 10); // backlog is the max number of pending connections
     //listening incoming con  from client
     if (listening_status < 0)
     {

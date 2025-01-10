@@ -8,8 +8,11 @@ SRCS = src/main.cpp \
 		src/Socket.cpp \
 		src/Signal.cpp \
 		src/Client.cpp \
-		src/ServPassword.cpp \
+		src/Nick.cpp \
+		src/Password.cpp \
 		src/ServParse.cpp \
+		src/User.cpp \
+		src/Utils.cpp \
 
 OBJS = $(SRCS:.cpp=.o)
 

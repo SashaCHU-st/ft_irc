@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ServPassword.cpp                                   :+:      :+:    :+:   */
+/*   Password.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:54:52 by alli              #+#    #+#             */
-/*   Updated: 2025/01/08 11:32:42 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/09 08:27:41 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 bool Serv::authenticate_password(int fd, std::vector<std::string> tokens)
 {
+	(void) fd;
 	if (tokens.size() > 1)
 	{
 		// std::cerr << "please only put /pass "
@@ -21,11 +22,12 @@ bool Serv::authenticate_password(int fd, std::vector<std::string> tokens)
 		send(fd, error_msg.c_str(), error_msg.size(), 0);
 	}
 	else {
-		std::cout << "token: " << tokens[0] << std::endl;
+		// std::cout << "token: " << tokens[0] << std::endl;
 		std::string token = tokens[0];
 		std::string pass = get_pass();
 		if (pass == token)
 		{
+			//have a flag to check client?
 			return true;
 		}
 		else
