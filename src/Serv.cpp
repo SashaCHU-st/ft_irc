@@ -108,6 +108,7 @@ void Serv::accepter() {
         client_poll.events = POLLIN;
         fds.push_back(client_poll);
 
+<<<<<<< HEAD
     //     std::string server_name = "ircserv";
     //    // Retrieve the nickname
     //     std::string nick = "Guest";  // Default fallback nickname
@@ -115,15 +116,30 @@ void Serv::accepter() {
     //         if (client.getFd() == _new_socket) {
     //             nick = client.getNickname();  // Retrieve client nickname
     //         std::cout << "Sending welcome message to: " << nick << std::endl;
+=======
+        std::string server_name = "ircserv";
+       // Retrieve the nickname
+        std::string nick = "Guest";  // Default fallback nickname
+        for (const Client& client : clients) {
+            if (client.getFd() == _new_socket) {
+                nick = client.getNickname();  // Retrieve client nickname
+            // std::cout << "Sending welcome message to: " << nick << std::endl;
+>>>>>>> origin/server
 
     //             break;
     //         }
     //     }
 
 
+<<<<<<< HEAD
     //     // Construct the welcome message
     //     std::string message = ":" + server_name + " 001 " + clients[sock_fd].getNickname() + " :Welcome to the IRC Network, " + nick + "!";
     //     send_message(_new_socket, message);  // Send the message
+=======
+        // welcome message
+        std::string message = ":" + server_name + " 001 " + clients[sock_fd].getNickname() + " :Welcome to the IRC Network, " + nick + "!";
+        send_message(_new_socket, message);  // Send the message
+>>>>>>> origin/server
 
 
     }
@@ -248,6 +264,7 @@ void Serv::launch()
 								parse_command(fds[i].fd, line);
 							}
 						}
+                        // std::cout<< "11"<<std::endl;
 						sendWelcomeMsg(fds[i].fd);
 					}
 				}

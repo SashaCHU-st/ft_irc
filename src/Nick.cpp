@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 13:17:19 by alli              #+#    #+#             */
-/*   Updated: 2025/01/10 13:13:28 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/10 13:19:38 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,6 @@ bool Serv::addNickname(int fd, std::vector<std::string> tokens)
 				std::string nick = oldName + " changed their nickname to " + clients[fd].getNickname() +  "\r\n";
 				if (send(fd, nick.c_str(), nick.size(), 0) == -1)
 						return false;
-				//changed the name send message
-				// std::cout << "Client nickname: " << clients[fd].getNickname() << std::endl;
 				return true;
 			}
 			else

@@ -30,6 +30,7 @@ class Client {
 		Client(); 
 		Client(int fd);  
 		~Client();
+		bool welcomeSent = false;
 		std::string getUsername();
 		std::string getNickname() const;
 		std::string getPassword();
