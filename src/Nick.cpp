@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 13:17:19 by alli              #+#    #+#             */
-/*   Updated: 2025/01/10 13:19:38 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/10 14:56:16 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ bool Serv::addNickname(int fd, std::vector<std::string> tokens)
 
 bool Serv::uniqueNickname(const std::string& nickname)
 {
+	std::cout << clients.size() << std::endl;
 	for (unsigned long i = 0; i < clients.size(); i++)
 	{
 		std::string tmpnick = clients[i].getNickname();

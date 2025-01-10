@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:17:13 by alli              #+#    #+#             */
-/*   Updated: 2025/01/10 12:40:54 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/10 13:22:03 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ class Client {
 		Client(); 
 		Client(int fd);  
 		~Client();
-		bool welcomeSent = false;
+
 		std::string getUsername();
 		std::string getNickname() const;
 		std::string getPassword();

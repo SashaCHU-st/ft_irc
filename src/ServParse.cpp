@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/10 13:16:34 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/10 14:11:36 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 		
 	// }
 	
-	// if (cmd == "PRVMSG")
+	// if (cmd == "PRIVMSG")
 	// {
 		
 	// }
