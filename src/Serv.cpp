@@ -1,5 +1,4 @@
 #include "Serv.hpp"
-
 // Constructor
 Serv::Serv(int port, std::string pass) : port(port), pass(pass), sock(nullptr)
 {
@@ -232,7 +231,7 @@ void Serv::launch()
                         std::cout << "\033[36mReceived from FD " << fds[i].fd << ": " << buffer << "\033[0m" << std::endl;
 
                         // Echo the data back to the client
-                        send(fds[i].fd, buffer, bytes_read, 0);
+                        // send(fds[i].fd, buffer, bytes_read, 0);
 						
 						std::string client_input(buffer);
 						std::stringstream ss(client_input);

@@ -65,3 +65,5 @@ void Client::setFd(int fd) {
 // std::vector<std::string> Client::getServerInfo() {
 	
 // }
+
+

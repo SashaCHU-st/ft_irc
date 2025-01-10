@@ -20,9 +20,6 @@ int Serv::parse_command(int fd, const std::string& line) {
 	std::string token;
 	std::string cmd;
 	
-
-
-	
 	if (lss)
 		lss >> cmd;
 	while (lss >> token)
@@ -78,7 +75,6 @@ int Serv::parse_command(int fd, const std::string& line) {
 			return 1;
 		}
 	}
-	return 0;
 	if (cmd == "USER")
 	{
 		if (addUser(fd, tokens) == true)
@@ -101,10 +97,11 @@ int Serv::parse_command(int fd, const std::string& line) {
 	if (!clients[fd].getUsername().empty() && !clients[fd].getNickname().empty())
 		clients[fd].allSet = true;
 	
-	// if (cmd == "JOIN")
-	// {
-		
-	// }
+	if (cmd == "JOIN")
+	{
+		if (cmdJOIN(fd, token) == 1)
+			return 1;
+	}
 	
 	// if (cmd == "PRVMSG")
 	// {

@@ -40,3 +40,12 @@ std::vector<std::string> Serv::splitStr(const std::string& str, std::string deli
 	newList.push_back(str.substr(start)); // adds the last element from the string
 	return newList;
 }
+
+Client* Serv::getClientByFd(int fd) {
+    for (std::vector<Client>::iterator it = clients.begin(); it != clients.end(); ++it) {
+        if (it->getFd() == fd) {
+            return &(*it);
+        }
+    }
+    return nullptr;
+}

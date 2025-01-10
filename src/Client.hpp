@@ -27,6 +27,9 @@ class Client {
 		std::vector<std::string> _realname;
 		
 		int _fd;
+
+		std::vector<std::string> _joinedChannels;
+		
 	public:
 		Client(); 
 		Client(int fd);  

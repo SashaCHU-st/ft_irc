@@ -11,6 +11,7 @@
 #include <sstream>
 #include <map>
 // #include <algorithm>
+#include "Channel.hpp"
 
 class Serv
 {
@@ -22,8 +23,8 @@ class Serv
          std::vector<pollfd> fds;
 		 std::vector<Client> clients;
 
+        static std::map<std::string, Channel> _channels;
 
-         
     public:
         //construc
         Serv(int port, std::string pass);
@@ -46,4 +47,16 @@ class Serv
 		int findClient(int client_fd);
 
 		static std::vector<std::string> splitStr (const std::string& str, std::string delim);
+
+        //Channel CMDs Handler
+        int cmdJOIN(int fd, std::string name);
+        Client* getClientByFd(int fd);
+
 };
+
+
+        // Channel Management
+        // void handle_join(int client_fd, const std::string& channel_name);
+        // void handle_kick(int client_fd, const std::vector<std::string>& tokens);
+        // void handle_invite(int client_fd, const std::vector<std::string>& tokens);
+        // void handle_topic(int client_fd, const std::vector<std::string>& tokens);
