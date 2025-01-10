@@ -20,8 +20,10 @@ class Serv
         std::string pass;
         Socket* sock;
          std::vector<pollfd> fds;
-		//  std::vector<pollfd> client_fd;
 		 std::vector<Client> clients;
+
+
+         
     public:
         //construc
         Serv(int port, std::string pass);
@@ -40,6 +42,7 @@ class Serv
 		bool addNickname(int client_fd, std::vector<std::string> tokens);
 		bool addUser(int client_fd, std::vector<std::string> tokens);
 		bool uniqueNickname(const std::string& nickname);
+        void send_message(int client_fd, const std::string& message);
 		int findClient(int client_fd);
 
 		static std::vector<std::string> splitStr (const std::string& str, std::string delim);

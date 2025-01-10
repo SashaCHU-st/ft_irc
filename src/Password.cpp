@@ -14,6 +14,7 @@
 
 bool Serv::authenticate_password(int fd, std::vector<std::string> tokens)
 {
+	(void) fd;
 	if (tokens.size() > 1)
 	{
 		// std::cerr << "please only put /pass "

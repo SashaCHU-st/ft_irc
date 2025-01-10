@@ -20,6 +20,9 @@ int Serv::parse_command(int fd, const std::string& line) {
 	std::string token;
 	std::string cmd;
 	
+
+
+	
 	if (lss)
 		lss >> cmd;
 	while (lss >> token)
@@ -44,6 +47,10 @@ int Serv::parse_command(int fd, const std::string& line) {
 		// std::cout << "password " << std::endl;
 		if (authenticate_password(fd, tokens) == true)
 		{
+			// Client client(fd);
+			// clients.push_back(client);
+			// return 0;
+			
 			Client client;
 			client.setFd(fd);
 			// client.setNickname("");
