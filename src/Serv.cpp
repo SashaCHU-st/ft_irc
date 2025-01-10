@@ -108,22 +108,22 @@ void Serv::accepter() {
         client_poll.events = POLLIN;
         fds.push_back(client_poll);
 
-        std::string server_name = "ircserv";
-       // Retrieve the nickname
-        std::string nick = "Guest";  // Default fallback nickname
-        for (const Client& client : clients) {
-            if (client.getFd() == _new_socket) {
-                nick = client.getNickname();  // Retrieve client nickname
-            std::cout << "Sending welcome message to: " << nick << std::endl;
+    //     std::string server_name = "ircserv";
+    //    // Retrieve the nickname
+    //     std::string nick = "Guest";  // Default fallback nickname
+    //     for (const Client& client : clients) {
+    //         if (client.getFd() == _new_socket) {
+    //             nick = client.getNickname();  // Retrieve client nickname
+    //         std::cout << "Sending welcome message to: " << nick << std::endl;
 
-                break;
-            }
-        }
+    //             break;
+    //         }
+    //     }
 
 
-        // Construct the welcome message
-        std::string message = ":" + server_name + " 001 " + clients[sock_fd].getNickname() + " :Welcome to the IRC Network, " + nick + "!";
-        send_message(_new_socket, message);  // Send the message
+    //     // Construct the welcome message
+    //     std::string message = ":" + server_name + " 001 " + clients[sock_fd].getNickname() + " :Welcome to the IRC Network, " + nick + "!";
+    //     send_message(_new_socket, message);  // Send the message
 
 
     }
@@ -200,7 +200,7 @@ void Serv::launch()
                     {
                         // Check for EAGAIN or EWOULDBLOCK
                         if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                            std::cout << "No data available yet for FD " << fds[i].fd << ".\n";
+                            // std::cout << "No data available yet for FD " << fds[i].fd << ".\n";
                             continue; // Non-fatal, just wait for the next poll event
                         } else {
                             // Recv error
@@ -253,6 +253,5 @@ void Serv::launch()
 				}
 			}
 		}
-		std::cout<< "KUku"<<std::endl;
 	}
 }
