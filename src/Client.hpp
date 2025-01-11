@@ -16,6 +16,8 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <memory>
+#include "Channel.hpp"
 
 class Client {
 	private:
@@ -28,7 +30,7 @@ class Client {
 		
 		int _fd;
 
-		std::vector<std::string> _joinedChannels;
+		std::vector<std::shared_ptr<Channel>> _joinedChannels;
 		
 	public:
 		Client(); 
@@ -51,6 +53,12 @@ class Client {
 		void setRealname(std::string names);
 		
 		// std::vector<std::string> getServerInfo();
+
+		//Channel Handler for Client
+		void joinChannel(std::shared_ptr<Channel> channel);
+		void leaveChannel(std::shared_ptr<Channel> channel);
+		//bool isInChannel(Channel *channel)const;
+		const std::vector<std::shared_ptr<Channel>>& getJoinedChannels()const;
 };
 
 #endif

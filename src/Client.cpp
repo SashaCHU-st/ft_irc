@@ -67,3 +67,28 @@ void Client::setFd(int fd) {
 // }
 
 
+// Channel Part
+
+void Client::joinChannel(std::shared_ptr<Channel> channel) {
+    if (std::find(_joinedChannels.begin(), _joinedChannels.end(), channel) == _joinedChannels.end()) {
+        _joinedChannels.push_back(channel);
+        std::cout << "Client "<< _username<<" joined the channel:  " << channel->getName() << std::endl;
+    } else {
+        std::cout << "Client is already in the channel: " << channel->getName() << std::endl;
+    }
+}
+
+void Client::leaveChannel(std::shared_ptr<Channel> channel) {
+    auto it = std::find(_joinedChannels.begin(), _joinedChannels.end(), channel);
+    if (it != _joinedChannels.end()) {
+        _joinedChannels.erase(it);
+        std::cout << "You leaved the channel: " << channel->getName() << std::endl;
+    } else {
+        std::cout << "Channel not found in client's joined channels.\n";
+    }
+}
+
+const std::vector<std::shared_ptr<Channel>>& Client::getJoinedChannels() const {
+    return _joinedChannels;
+}
+

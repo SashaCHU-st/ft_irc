@@ -15,8 +15,9 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
-#include "Client.hpp"
-#include "Serv.hpp"
+
+//#include "Client.hpp"
+class Client;
 
 class Channel
 {

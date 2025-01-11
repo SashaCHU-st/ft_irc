@@ -1,16 +1,19 @@
 #include "Serv.hpp"
+#include "Channel.hpp" 
+
 // Constructor
 Serv::Serv(int port, std::string pass) : port(port), pass(pass), sock(nullptr)
 {
     creating_socket();
 }
 
+std::map<std::string, std::shared_ptr<Channel>> Serv::_channels;
+
 // Destructor
 Serv::~Serv()
 {
     delete sock;
 }
-
 
 int Serv::get_port() const
 {

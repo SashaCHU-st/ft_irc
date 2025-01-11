@@ -12,6 +12,7 @@
 #include <map>
 // #include <algorithm>
 #include "Channel.hpp"
+#include <memory>  // for shared_ptr
 
 class Serv
 {
@@ -23,7 +24,7 @@ class Serv
          std::vector<pollfd> fds;
 		 std::vector<Client> clients;
 
-        static std::map<std::string, Channel> _channels;
+        static std::map<std::string, std::shared_ptr<Channel>> _channels;
 
     public:
         //construc
@@ -49,7 +50,9 @@ class Serv
 		static std::vector<std::string> splitStr (const std::string& str, std::string delim);
 
         //Channel CMDs Handler
+        std::shared_ptr<Channel> createChannel(const std::string &name);
         int cmdJOIN(int fd, std::string name);
+        int cmdPART(int fd, std::vector<std::string> line);
         Client* getClientByFd(int fd);
 
 };

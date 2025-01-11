@@ -49,3 +49,16 @@ Client* Serv::getClientByFd(int fd) {
     }
     return nullptr;
 }
+
+std::shared_ptr<Channel> Serv::createChannel(const std::string& name)
+{
+	if (_channels.find(name) != _channels.end()) {
+            std::cout << "Channel already exists.\n";
+            return _channels[name]; // Return the existing channel
+        }
+
+        std::shared_ptr<Channel> newChannel = std::make_shared< Channel>(name);
+        _channels[name] = newChannel;
+        std::cout << "Channel " << name << " created.\n";
+        return newChannel;
+}

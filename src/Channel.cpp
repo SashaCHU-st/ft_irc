@@ -11,15 +11,15 @@
 /* ************************************************************************** */
 
 #include "Channel.hpp"
+#include "Client.hpp" 
 
-// Constructor
 Channel::Channel(const std::string& name)
 	: _name(name), _userLimit(0), _exist(false), _inviteOnly(false), _topicRestricted(false) {}
 
-// Destructor
+
 Channel::~Channel() {}
 
-// Getters
+
 std::string Channel::getName() const {
 	return _name;
 }
