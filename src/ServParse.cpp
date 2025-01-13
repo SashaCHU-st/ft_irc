@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/10 10:11:17 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/13 13:06:54 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,13 @@ int Serv::parse_command(int fd, const std::string& line) {
 	std::string cmd;
 	
 	if (lss)
+	{
 		lss >> cmd;
+	}
 	while (lss >> token)
+	{
 		tokens.push_back(token);
+	}
 	if (cmd == "QUIT")
 	{
 		std::cout << "Thank you for using irSEE" << std::endl;
@@ -44,15 +48,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 		// std::cout << "password " << std::endl;
 		if (authenticate_password(fd, tokens) == true)
 		{
-			// Client client(fd);
-			// clients.push_back(client);
-			// return 0;
-			
-			Client client;
-			client.setFd(fd);
-			// client.setNickname("");
-			// client.setUsername("");
-			clients.push_back(client); //create client later once password is correct
+			// clients[fd].setFd(fd);
 			return 0;
 		}
 		else
@@ -64,12 +60,8 @@ int Serv::parse_command(int fd, const std::string& line) {
 	{
 		if (addNickname(fd, tokens) == true)
 		{
-			// std::ostringstream oss;
-			std::string nick = " :ircserver 001 " + clients[fd].getNickname() + " added to network " + "\r\n";
-			// std::string nick = ":IRCserver " + std::string("001 ") + tokens[0] + " :Welcome to network, " + tokens[0] + "\r\n";
-			// std::cout << "sending to fd: " << fd << std::endl;
-			if (send(fd, nick.c_str(), nick.size(), 0) == -1)
-				std::cerr << "Error sending message" << std::endl;
+			// std::cout << "nick added" << std::endl;
+			return 0;
 		}
 		else
 		{
@@ -82,6 +74,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 	{
 		if (addUser(fd, tokens) == true)
 		{
+			std::cout << "User added" << std::endl;
 			std::string user = "Username added" + tokens[0] + "\r\n";
 			send(fd, user.c_str(), user.size(), 0);
 		}
@@ -109,8 +102,13 @@ int Serv::parse_command(int fd, const std::string& line) {
 		if (cmdJOIN(fd, token) == 1)
 			return 1;
 	}
+	return 0;
+	// if (cmd == "JOIN")
+	// {
+		
+	// }
 	
-	// if (cmd == "PRVMSG")
+	// if (cmd == "PRIVMSG")
 	// {
 		
 	// }

@@ -102,7 +102,7 @@ void Serv::accepter() {
         ///////SASHA's NEW
         // Create a new Client object and add it to the clients list
         // clients.push_back(Client(_new_socket));
-         clients.push_back(new_cl);
+         clients[_new_socket] = new_cl;
 
         // Add the new socket to the poll list
         pollfd client_poll;
@@ -113,24 +113,26 @@ void Serv::accepter() {
         std::string server_name = "ircserv";
        // Retrieve the nickname
         std::string nick = "Guest";  // Default fallback nickname
-        for (const Client& client : clients) {
-            if (client.getFd() == _new_socket) {
-                nick = client.getNickname();  // Retrieve client nickname
-            std::cout << "Sending welcome message to: " << nick << std::endl;
+		if (clients.find(_new_socket) != clients.end()) {
+			Client& client = clients[_new_socket];
+        // for (const Client& client : clients) {
+        //     if (client.getFd() == _new_socket) {
+                nick = client.getNickname(); 
+				} // Retrieve client nickname
+            // std::cout << "Sending welcome message to: " << nick << std::endl;
 
-                break;
+    //             break;
+			// std::string message = " :ircserver 001 " + clients[sock_fd].getNickname() + " :Welcome to the IRC Network, " + nick + "!";
+        	// send_message(_new_socket, message);  // Send the message
             }
+
         }
 
+        // welcome message
 
-        // Construct the welcome message
-        std::string message = ":" + server_name + " 001 " + clients[sock_fd].getNickname() + " :Welcome to the IRC Network, " + nick + "!";
-        send_message(_new_socket, message);  // Send the message
+    // }
 
 
-    }
-
-}
 
 void Serv::launch()
 {
@@ -139,7 +141,7 @@ void Serv::launch()
     server_poll.fd = sock->get_sock(); 
     server_poll.events = POLLIN;/// monitore for incoom data
     fds.push_back(server_poll);
-
+	char buffer[1024];
      while (true)
     {
         // wait fr vents on the monitored sockets
@@ -171,38 +173,13 @@ void Serv::launch()
                 else
                 {
                     //handle data for exist client
-                    char buffer[1024];
+                    // char buffer[1024];
                     int bytes_read = recv(fds[i].fd, buffer, sizeof(buffer), 0);
-                    // if (bytes_read <= 0)
-                    // {
-                    //     if (bytes_read == 0)//  nothing to read
-                    //     {
-                    //         // disconneted
-                    //         std::cout << "\033[33mClient disconnected: FD " << fds[i].fd << "\033[0m" << std::endl;
-                    //     }
-                    //     else
-                    //     {
-                    //         perror("Recv failed");// connot be -
-                    //     }
-                    //     // close CLient socket and remove i form the poll list
-                    //     close(fds[i].fd);
-                    //     fds.erase(fds.begin() + i);
-                    //     // Find and remove client from the `clients` vector
-                    //     for (size_t j = 0; j < clients.size(); ++j)
-                    //     {
-                    //         if (clients[j].getFd() == fds[i].fd)
-                    //         {
-                    //             clients.erase(clients.begin() + j);
-                    //             break;
-                    //         }
-                    //     }
-                    //     --i;// adjust index to account
-                    // }
                     if (bytes_read < 0)
                     {
                         // Check for EAGAIN or EWOULDBLOCK
                         if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                            std::cout << "No data available yet for FD " << fds[i].fd << ".\n";
+                            // std::cout << "No data available yet for FD " << fds[i].fd << ".\n";
                             continue; // Non-fatal, just wait for the next poll event
                         } else {
                             // Recv error
@@ -221,7 +198,7 @@ void Serv::launch()
                         {
                             if (clients[j].getFd() == fds[i].fd)
                             {
-                                clients.erase(clients.begin() + j);
+                                clients.erase(fds[i].fd);
                                 break;
                         }
                     }
@@ -239,22 +216,22 @@ void Serv::launch()
 						std::string client_input(buffer);
 						std::stringstream ss(client_input);
 						std::string line;
-						
-						// std::cout << "buffer" << buffer << std::endl;
-						// std::cout << "---------" << std::endl;
+
 						while (getline(ss, line)) // waiting 
 						{
 							// std::cout << line << std::endl;
 							if (line.empty())
 								continue;
 							else
+							{
 								parse_command(fds[i].fd, line);
+							}
 						}
-						
-                    }
-                }
-            }
-        }
-    }
-    std::cout<< "KUku"<<std::endl;
+                        // std::cout<< "11"<<std::endl;
+						sendWelcomeMsg(fds[i].fd);
+					}
+				}
+			}
+		}
+	}
 }

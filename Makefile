@@ -1,7 +1,7 @@
 NAME = ircserv
 CC = c++
 
-CFLAGS = -Wall -Wextra -Werror -std=c++11
+CFLAGS = -Wall -Wextra -Werror -std=c++17
 
 SRCS = src/main.cpp \
 		src/Serv.cpp \
@@ -15,6 +15,7 @@ SRCS = src/main.cpp \
 		src/Utils.cpp \
 		src/ChannelCMDs.cpp\
 		src/Channel.cpp
+		src/WelcomeMsg.cpp \
 
 OBJS = $(SRCS:.cpp=.o)
 
