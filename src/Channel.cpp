@@ -14,7 +14,7 @@
 #include "Client.hpp" 
 
 Channel::Channel(const std::string& name)
-	: _name(name), _userLimit(0), _exist(false), _inviteOnly(false), _topicRestricted(false) {}
+	: _name(name), _password(""),_userLimit(0), _exist(false), _inviteOnly(false), _topicRestricted(false) {}
 
 
 Channel::~Channel() {}
@@ -32,6 +32,9 @@ int Channel::getUserCount() const {
 	return _users.size();
 }
 
+std::string Channel::getPassword() const {
+    return _password;
+}
 bool Channel::doesExist() const {
 	return _exist;
 }
@@ -82,6 +85,11 @@ void Channel::broadcastMessage(const std::string& sender, const std::string& mes
 	for (size_t i = 0; i < _users.size(); ++i) {
 		std::cout << "Message to " << _users[i]->getNickname() << ": [" << sender << "] " << message << std::endl;
 	}
+}
+
+void Channel::setPassword(const std::string& password)
+{
+	_password = password;
 }
 
 // Set Modes (i, t, k, l)

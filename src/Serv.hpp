@@ -104,7 +104,7 @@ void sendWelcomeMsg(int client_fd);
 
         //Channel CMDs Handler
         std::shared_ptr<Channel> createChannel(const std::string &name);
-        int cmdJOIN(int fd, std::string name);
+        int cmdJOIN(int fd, std::vector<std::string> line);
         int cmdPART(int fd, std::vector<std::string> line);
         int cmdINVITE(int fd, std::vector<std::string> line);
         Client* getClientByFd(int fd);

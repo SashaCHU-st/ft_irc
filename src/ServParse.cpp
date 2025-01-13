@@ -99,14 +99,9 @@ int Serv::parse_command(int fd, const std::string& line) {
 	
 	if (cmd == "JOIN")
 	{
-		if (cmdJOIN(fd, token) == 1)
+		if (cmdJOIN(fd, tokens) == 1)
 			return 1;
 	}
-	// if (cmd == "JOIN")
-	// {
-		
-	// }
-	
 	// if (cmd == "PRIVMSG")
 	// {
 		
@@ -123,7 +118,6 @@ int Serv::parse_command(int fd, const std::string& line) {
 	// {
 		
 	// }
-	std::cout << cmd << std::endl;
 	if (cmd == "INVITE")
 	{
 		if (cmdINVITE(fd, tokens) == 1)

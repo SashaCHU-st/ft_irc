@@ -12,47 +12,87 @@
 
 #include "Serv.hpp"
 
-int Serv::cmdJOIN(int fd, std::string name)
+int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 {
-	std::cout << "entered cmdJOIN" << std::endl;
-	if (name.empty())
+	if (line.empty())
 	{
 		std::cout<<"No parameter after JOIN"<< std::endl;// ERR_NEEDMOREPARAMS (461)
 		return 1;
 	}
-	if (name[0] != '#')
+	if (line.size() > 2)
 	{
-		std::cout<< "Channel name must start with #."<< std::endl;// ERR_NOSUCHCHANNEL(403)
+		std::cout<< "Too many parameters for the PART command."<< std::endl;
 		return 1;
 	}
-	if (_channels.find(name) != _channels.end())
+	std::string chanCheck = line[0];
+	std::string keyCheck = "";
+	if (line.size() > 1)
 	{
-		std::cout<< "Channel already exists." << std::endl;
-		return 1;
+		keyCheck = line[1];
 	}
-	
-	if (_channels.find(name) != _channels.end()) {
-        std::cout << "Channel creation failed." << std::endl;
-        return 1;
-    }
-	std::shared_ptr<Channel> newChannel = createChannel(name);
-	
-	std::string defaultTopic = "No topic set";
-	newChannel->setTopic(defaultTopic, nullptr);
-
+	std::vector<std::string> channels;
+	std::vector<std::string> keys;
+	if (chanCheck.find(',') != std::string::npos)
+	{
+		channels = splitStr(chanCheck, ",");
+	}
+	else{
+		channels.push_back(chanCheck);
+	}
+	if (keyCheck.find(',') != std::string::npos)
+	{
+		keys = splitStr(keyCheck, ",");
+	}
+	else{
+		keys.push_back(keyCheck);
+	}
 	Client* client = getClientByFd(fd);
 	if (!client) {
         std::cout << "Client not found for fd: " << fd << std::endl;
         return 1;
     }
-	if (newChannel->isUserInChannel(client)) {
-        std::cout << "User is already in the channel." << std::endl;
-        return 1;
-    }
-	newChannel->addUser(client);
-	client->joinChannel(newChannel);
-	newChannel->broadcastMessage(client->getNickname(), "has joined the channel");
-
+	for (size_t i = 0; i < channels.size(); ++i)
+	{
+		const std::string& chan = channels[i];
+		if (chan.empty() || chan[0] != '#')
+		{
+			std::cout<< "Invalid channel name: "<< chan<< ": it should start with #"<<std::endl;
+			continue ;
+		}
+		auto findChan = _channels.find(chan);
+		std::shared_ptr<Channel> newChannel;
+		if (findChan == _channels.end())
+		{
+			newChannel = createChannel(chan);
+			std::string defaultTopic = "No topic set";
+			newChannel->setTopic(defaultTopic, nullptr);
+			if (i < keys.size() && !keys.empty())
+			{
+				newChannel->setPassword(keys[i]);
+				std::cout << "Password set for channel " << chan << ": " << keys[i] << std::endl;
+			}
+		}
+		else
+		{
+			std::cout<< "Channel: "<< chan <<" already exists." << std::endl;
+			newChannel = findChan->second;
+			if (!newChannel->getPassword().empty())
+			{
+				if (i < keys.size() && !keys[i].empty() && !newChannel->checkPassword(keys[i]))
+				{
+					std::cout << "Incorrect password for channel: " << chan << std::endl;
+            		continue;
+				}
+			}
+		}
+		if (newChannel->isUserInChannel(client)) {
+        	std::cout << "User " << client<< " is already in the channel: "<< newChannel->getName() << std::endl;
+        	continue ;
+    	}
+		newChannel->addUser(client);
+		client->joinChannel(newChannel);
+		newChannel->broadcastMessage(client->getNickname(), "has joined the channel");
+	}
 	return  0;
 }
 
@@ -79,7 +119,7 @@ int Serv::cmdPART(int fd, std::vector<std::string> line)
 			if (channel.empty() || channel[0] != '#') // Check if the channel is valid
         	{
             std::cout << "Invalid channel name: " << channel << std::endl;
-            return 1; // Exit if any channel is invalid
+            return 1;
         	}
 		}
 	}
@@ -192,7 +232,7 @@ int Serv::cmdINVITE(int fd, std::vector<std::string> line)
     }
 	channel->addUser(invitee);
 	invitee->joinChannel(channel);
-	std::string message = "INVITE" + invitee->getNickname() + " " + channel->getName();
+	std::string message = "INVITE " + invitee->getNickname() + " " + channel->getName();
 	channel->broadcastMessage(client->getNickname(), message);
 	std::cout << "User " << newUser << " successfully invited to channel " << chanToAdd << "." << std::endl;
 	return 0;

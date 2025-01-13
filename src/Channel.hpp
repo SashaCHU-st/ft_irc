@@ -40,6 +40,8 @@ class Channel
 		std::string getName() const;
 		std::string getTopic() const;
 		int getUserCount() const;
+		std::string getPassword() const;
+
 		bool doesExist() const;
 		bool isInviteOnly() const;
 
@@ -57,5 +59,6 @@ class Channel
 		// Channel Modes
 		void setMode(char mode, bool enable, const std::string& param = "");
 		void setTopic(const std::string& topic, Client* client);
+		void setPassword(const std::string& password);
 		bool checkPassword(const std::string& password) const;
 };
