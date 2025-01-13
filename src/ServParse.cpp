@@ -102,7 +102,6 @@ int Serv::parse_command(int fd, const std::string& line) {
 		if (cmdJOIN(fd, token) == 1)
 			return 1;
 	}
-	return 0;
 	// if (cmd == "JOIN")
 	// {
 		
@@ -124,6 +123,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 	// {
 		
 	// }
+	std::cout << cmd << std::endl;
 	if (cmd == "INVITE")
 	{
 		if (cmdINVITE(fd, tokens) == 1)

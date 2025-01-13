@@ -14,6 +14,7 @@
 
 int Serv::cmdJOIN(int fd, std::string name)
 {
+	std::cout << "entered cmdJOIN" << std::endl;
 	if (name.empty())
 	{
 		std::cout<<"No parameter after JOIN"<< std::endl;// ERR_NEEDMOREPARAMS (461)
@@ -30,7 +31,7 @@ int Serv::cmdJOIN(int fd, std::string name)
 		return 1;
 	}
 	
-	if (_channels.find(name) == _channels.end()) {
+	if (_channels.find(name) != _channels.end()) {
         std::cout << "Channel creation failed." << std::endl;
         return 1;
     }
@@ -139,6 +140,7 @@ int Serv::cmdPART(int fd, std::vector<std::string> line)
 
 int Serv::cmdINVITE(int fd, std::vector<std::string> line)
 {
+	std::cout<< "I am in invite"<< std::endl;
 	if (line.empty())
 	{
 		std::cout<<"Not enough parameters for INVITE command"<< std::endl; // ERR_NEEDMOREARAMS(461)
@@ -151,7 +153,7 @@ int Serv::cmdINVITE(int fd, std::vector<std::string> line)
 	}
 	std::string newUser = line[0];
 	std::string chanToAdd =line[1];
-	if (chanToAdd[0] != '#')
+	if (chanToAdd[0] != '#' || chanToAdd.empty())
 	{
 		std::cout<< "Invalid channel name."<<std::endl;
 		return 1;
@@ -184,10 +186,15 @@ int Serv::cmdINVITE(int fd, std::vector<std::string> line)
 		std::cout<< "User "<<newUser<< " not found."<< std::endl;
 		return 1;
 	}
+	if (channel->isUserInChannel(invitee)) {
+        std::cout << "User " << newUser << " is already in channel " << chanToAdd << "." << std::endl;
+        return 1;
+    }
 	channel->addUser(invitee);
 	invitee->joinChannel(channel);
-	std::string message = "INVITE" + invitee->getNickname() + channel->getName();
+	std::string message = "INVITE" + invitee->getNickname() + " " + channel->getName();
 	channel->broadcastMessage(client->getNickname(), message);
+	std::cout << "User " << newUser << " successfully invited to channel " << chanToAdd << "." << std::endl;
 	return 0;
 }
 

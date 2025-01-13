@@ -175,6 +175,7 @@ void Serv::launch()
                     //handle data for exist client
                     // char buffer[1024];
                     int bytes_read = recv(fds[i].fd, buffer, sizeof(buffer), 0);
+
                     if (bytes_read < 0)
                     {
                         // Check for EAGAIN or EWOULDBLOCK
@@ -208,6 +209,7 @@ void Serv::launch()
                     {
                         // process recived data
                         buffer[bytes_read] = '\0';
+                        std::cout<<"recv: "<< buffer <<std::endl;
                         std::cout << "\033[36mReceived from FD " << fds[i].fd << ": " << buffer << "\033[0m" << std::endl;
 
                         // Echo the data back to the client

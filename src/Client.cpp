@@ -128,7 +128,7 @@ void Client::setFd(int fd) {
 void Client::joinChannel(std::shared_ptr<Channel> channel) {
     if (std::find(_joinedChannels.begin(), _joinedChannels.end(), channel) == _joinedChannels.end()) {
         _joinedChannels.push_back(channel);
-        std::cout << "Client "<< _username<<" joined the channel:  " << channel->getName() << std::endl;
+        std::cout << "Client "<< _nickname<<" joined the channel:  " << channel->getName() << std::endl;
     } else {
         std::cout << "Client is already in the channel: " << channel->getName() << std::endl;
     }
