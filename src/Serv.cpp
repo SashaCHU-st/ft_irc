@@ -124,7 +124,7 @@ void Serv::accepter() {
 
 
         // Construct the welcome message
-        std::string message = ":" + server_name + " 001 " + nick + " :Welcome to the IRC Network, " + nick + "!";
+        std::string message = ":" + server_name + " 001 " + clients[sock_fd].getNickname() + " :Welcome to the IRC Network, " + nick + "!";
         send_message(_new_socket, message);  // Send the message
 
 
