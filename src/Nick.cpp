@@ -44,7 +44,7 @@ bool Serv::addNickname(int fd, std::vector<std::string> tokens)
 			{
 				std::string oldName = clients[fd].getNickname();
 				clients[fd].setNickname(nickname);
-				std::string nick = oldName + " change their nickname to " + clients[fd].getNickname() +  "\r\n";
+				std::string nick = ":" + oldName + " NICK " + clients[fd].getNickname() +  "\r\n";
 				if (send(fd, nick.c_str(), nick.size(), 0) == -1)
 						return false;
 				//changed the name send message

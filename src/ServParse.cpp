@@ -48,11 +48,11 @@ int Serv::parse_command(int fd, const std::string& line) {
 			// clients.push_back(client);
 			// return 0;
 			
-			Client client;
-			client.setFd(fd);
+			//Client client;
+			// client.setFd(fd);
 			// client.setNickname("");
 			// client.setUsername("");
-			clients.push_back(client); //create client later once password is correct
+			//clients.push_back(client); //create client later once password is correct
 			return 0;
 		}
 		else
@@ -75,12 +75,12 @@ int Serv::parse_command(int fd, const std::string& line) {
 			return 1;
 		}
 	}
-	return 0;
 	if (cmd == "USER")
 	{
 		if (addUser(fd, tokens) == true)
 		{
-			std::string user = "Username added" + tokens[0] + "\r\n";
+			std::string user = "Username added " + tokens[0] + "\r\n";
+			std::cout<< "!!!!=>"<<user<<std::endl;
 			send(fd, user.c_str(), user.size(), 0);
 		}
 		else
@@ -95,6 +95,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 		std::string pong = std::string("PONG") + "\r\n";
 		send(fd, pong.c_str(), pong.size(), 0);
 	}
+	return 0;
 	
 	// if (cmd == "JOIN")
 	// {

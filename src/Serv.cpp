@@ -100,7 +100,7 @@ void Serv::accepter() {
         ///////SASHA's NEW
         // Create a new Client object and add it to the clients list
         // clients.push_back(Client(_new_socket));
-         clients.push_back(new_cl);
+         clients[_new_socket] = new_cl;
 
         // Add the new socket to the poll list
         pollfd client_poll;
@@ -111,24 +111,26 @@ void Serv::accepter() {
         std::string server_name = "ircserv";
        // Retrieve the nickname
         std::string nick = "Guest";  // Default fallback nickname
-        for (const Client& client : clients) {
-            if (client.getFd() == _new_socket) {
-                nick = client.getNickname();  // Retrieve client nickname
+		if (clients.find(_new_socket) != clients.end()) {
+			Client& client = clients[_new_socket];
+        // for (const Client& client : clients) {
+        //     if (client.getFd() == _new_socket) {
+                nick = client.getNickname(); 
+				} // Retrieve client nickname
             // std::cout << "Sending welcome message to: " << nick << std::endl;
 
-                break;
+    //             break;
+			// std::string message = " :ircserver 001 " + clients[sock_fd].getNickname() + " :Welcome to the IRC Network, " + nick + "!";
+        	// send_message(_new_socket, message);  // Send the message
             }
+
         }
 
-
         // welcome message
-        std::string message = ":" + server_name + " 001 " + clients[sock_fd].getNickname() + " :Welcome to the IRC Network, " + nick + "!";
-        send_message(_new_socket, message);  // Send the message
+
+    // }
 
 
-    }
-
-}
 
 void Serv::launch()
 {
@@ -171,31 +173,6 @@ void Serv::launch()
                     //handle data for exist client
                     // char buffer[1024];
                     int bytes_read = recv(fds[i].fd, buffer, sizeof(buffer), 0);
-                    // if (bytes_read <= 0)
-                    // {
-                    //     if (bytes_read == 0)//  nothing to read
-                    //     {
-                    //         // disconneted
-                    //         std::cout << "\033[33mClient disconnected: FD " << fds[i].fd << "\033[0m" << std::endl;
-                    //     }
-                    //     else
-                    //     {
-                    //         perror("Recv failed");// connot be -
-                    //     }
-                    //     // close CLient socket and remove i form the poll list
-                    //     close(fds[i].fd);
-                    //     fds.erase(fds.begin() + i);
-                    //     // Find and remove client from the `clients` vector
-                    //     for (size_t j = 0; j < clients.size(); ++j)
-                    //     {
-                    //         if (clients[j].getFd() == fds[i].fd)
-                    //         {
-                    //             clients.erase(clients.begin() + j);
-                    //             break;
-                    //         }
-                    //     }
-                    //     --i;// adjust index to account
-                    // }
                     if (bytes_read < 0)
                     {
                         // Check for EAGAIN or EWOULDBLOCK
@@ -219,7 +196,7 @@ void Serv::launch()
                         {
                             if (clients[j].getFd() == fds[i].fd)
                             {
-                                clients.erase(clients.begin() + j);
+                                clients.erase(fds[i].fd);
                                 break;
                         }
                     }
@@ -232,7 +209,7 @@ void Serv::launch()
                         std::cout << "\033[36mReceived from FD " << fds[i].fd << ": " << buffer << "\033[0m" << std::endl;
 
                         // Echo the data back to the client
-                     //   send(fds[i].fd, buffer, bytes_read, 0);
+                        // send(fds[i].fd, buffer, bytes_read, 0);
 						
 						std::string client_input(buffer);
 						std::stringstream ss(client_input);
@@ -254,6 +231,5 @@ void Serv::launch()
 				}
 			}
 		}
-		std::cout<< "KUku"<<std::endl;
 	}
 }
