@@ -64,7 +64,7 @@ int Serv::cmdPART(int fd, std::vector<std::string> line)
 	}
 	if (line.size() > 2)
 	{
-		std::cout<< "Too many parameters fir the PART command."<< std::endl;
+		std::cout<< "Too many parameters for the PART command."<< std::endl;
 		return 1;
 	}
 	std::string chanCheck = line[0];
@@ -133,8 +133,61 @@ int Serv::cmdPART(int fd, std::vector<std::string> line)
 		else{
 			channel->broadcastMessage(client->getNickname(), message);
 		}
-
-
 	}
 	return 0;
 }
+
+int Serv::cmdINVITE(int fd, std::vector<std::string> line)
+{
+	if (line.empty())
+	{
+		std::cout<<"Not enough parameters for INVITE command"<< std::endl; // ERR_NEEDMOREARAMS(461)
+		return 1;
+	}
+	if (line.size() != 2)
+	{
+		std::cout<< "Too many parameters for the INVITE command."<< std::endl;
+		return 1;
+	}
+	std::string newUser = line[0];
+	std::string chanToAdd =line[1];
+	if (chanToAdd[0] != '#')
+	{
+		std::cout<< "Invalid channel name."<<std::endl;
+		return 1;
+	}
+	Client* client = getClientByFd(fd);
+	if (!client) {
+        std::cout << "Client not found for fd: " << fd << std::endl;
+        return 1;
+    }
+	auto chanToFind = _channels.find(chanToAdd);
+	if (chanToFind == _channels.end())
+	{
+		std::cout<< "Channel "<< chanToAdd<< " doesn't exist."<< std::endl;//ERR_NOSUCHCHANNEL(403)
+		return 1;	
+	}
+	std::shared_ptr<Channel> channel = chanToFind->second;
+	if (!channel->isUserInChannel(client))
+	{
+		std::cout<< "Client "<< client->getNickname()<< " not on channel."<<std::endl;// ERR_NOTONCHANNEL(403)
+		return 1;
+	}
+	if (!channel->isOperator(client))
+	{
+		std::cout<<"Client is not an operator."<<std::endl;// ERR_CHANOPRIVSNEEDED(482)
+		return 1;
+	}
+	Client* invitee = getClientByNickname(newUser);
+	if (!invitee)
+	{
+		std::cout<< "User "<<newUser<< " not found."<< std::endl;
+		return 1;
+	}
+	channel->addUser(invitee);
+	invitee->joinChannel(channel);
+	std::string message = "INVITE" + invitee->getNickname() + channel->getName();
+	channel->broadcastMessage(client->getNickname(), message);
+	return 0;
+}
+

@@ -41,13 +41,31 @@ std::vector<std::string> Serv::splitStr(const std::string& str, std::string deli
 	return newList;
 }
 
-Client* Serv::getClientByFd(int fd) {
-    for (std::vector<Client>::iterator it = clients.begin(); it != clients.end(); ++it) {
-        if (it->getFd() == fd) {
-            return &(*it);
+Client* Serv::getClientByFd(int client_fd) {
+	for(const auto& [fd, client] : clients)
+	{        
+		if (client.getFd() == client_fd) {
+            return const_cast<Client*>(&client);
         }
     }
     return nullptr;
+}
+
+Client* Serv::getClientByNickname(const std::string& nickname) {
+    
+	for(const auto& [fd, client] : clients)
+	{
+		if (client.getNickname() == nickname)
+		{
+		
+			return const_cast<Client*>(&client);
+		}
+	// for (Client& client : clients) {
+    //     if (client.getNickname() == nickname) {
+    //         return &client; // Return a pointer to the matching client
+    //     }
+	}
+    return nullptr; // Return nullptr if no client matches the nickname
 }
 
 std::shared_ptr<Channel> Serv::createChannel(const std::string& name)

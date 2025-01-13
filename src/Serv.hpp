@@ -106,9 +106,10 @@ void sendWelcomeMsg(int client_fd);
         std::shared_ptr<Channel> createChannel(const std::string &name);
         int cmdJOIN(int fd, std::string name);
         int cmdPART(int fd, std::vector<std::string> line);
+        int cmdINVITE(int fd, std::vector<std::string> line);
         Client* getClientByFd(int fd);
+        Client* getClientByNickname(const std::string& nickname);
 
-        static std::vector<std::string> splitStr (const std::string& str, std::string delim);
 };
 
 
