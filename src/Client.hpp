@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:17:13 by alli              #+#    #+#             */
-/*   Updated: 2025/01/09 13:40:55 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/13 13:04:09 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,15 +62,15 @@
 class Client {
 	private:
 		std::string _username;
-		std::string _nickname;
+		std::string _nickname; //unique
 		std::string _password;
 		std::string _hostname;
 		std::string _servername;
 		std::vector<std::string> _realname;
-		int _fd;
+		int _fd;//unqiue
 	public:
 		Client(); 
-		Client(int fd);  
+		Client(int fd);
 		~Client();
 
 		std::string getUsername();

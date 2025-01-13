@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/10 12:21:49 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/13 13:04:49 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,13 @@ int Serv::parse_command(int fd, const std::string& line) {
 	std::string cmd;
 	
 	if (lss)
+	{
 		lss >> cmd;
+	}
 	while (lss >> token)
+	{
 		tokens.push_back(token);
+	}
 	if (cmd == "QUIT")
 	{
 		std::cout << "Thank you for using irSEE" << std::endl;
@@ -44,15 +48,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 		// std::cout << "password " << std::endl;
 		if (authenticate_password(fd, tokens) == true)
 		{
-			// Client client(fd);
-			// clients.push_back(client);
-			// return 0;
-			
-			//Client client;
-			// client.setFd(fd);
-			// client.setNickname("");
-			// client.setUsername("");
-			//clients.push_back(client); //create client later once password is correct
+			// clients[fd].setFd(fd);
 			return 0;
 		}
 		else
@@ -64,8 +60,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 	{
 		if (addNickname(fd, tokens) == true)
 		{
-			
-			// 	std::cerr << "Error sending message" << std::endl;
+			// std::cout << "nick added" << std::endl;
 			return 0;
 		}
 		else
@@ -79,8 +74,13 @@ int Serv::parse_command(int fd, const std::string& line) {
 	{
 		if (addUser(fd, tokens) == true)
 		{
+<<<<<<< HEAD
 			std::string user = "Username added " + tokens[0] + "\r\n";
 			std::cout<< "!!!!=>"<<user<<std::endl;
+=======
+			std::cout << "User added" << std::endl;
+			std::string user = "Username added" + tokens[0] + "\r\n";
+>>>>>>> parseClientInput
 			send(fd, user.c_str(), user.size(), 0);
 		}
 		else
@@ -96,13 +96,16 @@ int Serv::parse_command(int fd, const std::string& line) {
 		send(fd, pong.c_str(), pong.size(), 0);
 	}
 	return 0;
+<<<<<<< HEAD
 	
+=======
+>>>>>>> parseClientInput
 	// if (cmd == "JOIN")
 	// {
 		
 	// }
 	
-	// if (cmd == "PRVMSG")
+	// if (cmd == "PRIVMSG")
 	// {
 		
 	// }
