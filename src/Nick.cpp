@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 13:17:19 by alli              #+#    #+#             */
-/*   Updated: 2025/01/09 16:09:06 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/10 12:24:03 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,9 @@ bool Serv::addNickname(int fd, std::vector<std::string> tokens)
 				if (uniqueNickname(nickname) == true)
 				{
 					clients[fd].setNickname(nickname);
-					
+					std::string nick = " :ircserver 001 " + clients[fd].getNickname() + " added to network " + "\r\n";
+					if (send(fd, nick.c_str(), nick.size(), 0) == -1)
+						return false;
 					return true;
 				}
 				else
@@ -40,7 +42,11 @@ bool Serv::addNickname(int fd, std::vector<std::string> tokens)
 			}
 			if (uniqueNickname(nickname) == true) //replacing nickname
 			{
+				std::string oldName = clients[fd].getNickname();
 				clients[fd].setNickname(nickname);
+				std::string nick = ":" + oldName + " NICK " + clients[fd].getNickname() +  "\r\n";
+				if (send(fd, nick.c_str(), nick.size(), 0) == -1)
+						return false;
 				//changed the name send message
 				// std::cout << "Client nickname: " << clients[fd].getNickname() << std::endl;
 				return true;
