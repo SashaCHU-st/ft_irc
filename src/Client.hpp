@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:17:13 by alli              #+#    #+#             */
-/*   Updated: 2025/01/10 13:22:03 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/13 11:12:19 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ class Client {
 		// int 		getFd();
 		bool allSet = false;
 		bool welcomeSent = false;
+		bool passwordCheck = false;
 		
 		//setters
 		void setFd(int fd);

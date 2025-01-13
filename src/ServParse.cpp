@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/10 14:11:36 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/13 10:52:54 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,18 +45,10 @@ int Serv::parse_command(int fd, const std::string& line) {
 	}
 	if (cmd == "PASS")
 	{
-		// std::cout << "password " << std::endl;
+		std::cout << "password " << std::endl;
 		if (authenticate_password(fd, tokens) == true)
 		{
-			// Client client(fd);
-			// clients.push_back(client);
-			// return 0;
-			
-			Client client;
-			client.setFd(fd);
-			// client.setNickname("");
-			// client.setUsername("");
-			clients.push_back(client); //create client later once password is correct
+			// clients[fd].setFd(fd);
 			return 0;
 		}
 		else
@@ -68,8 +60,8 @@ int Serv::parse_command(int fd, const std::string& line) {
 	{
 		if (addNickname(fd, tokens) == true)
 		{
-			
-			// 	std::cerr << "Error sending message" << std::endl;
+			// std::cout << "nick added" << std::endl;
+			std::cout << "client size after the addNickname function" << clients.size() << std::endl;
 			return 0;
 		}
 		else
@@ -84,6 +76,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 	{
 		if (addUser(fd, tokens) == true)
 		{
+			std::cout << "User added" << std::endl;
 			std::string user = "Username added" + tokens[0] + "\r\n";
 			send(fd, user.c_str(), user.size(), 0);
 		}

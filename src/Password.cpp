@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:54:52 by alli              #+#    #+#             */
-/*   Updated: 2025/01/09 08:27:41 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/13 10:47:08 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 bool Serv::authenticate_password(int fd, std::vector<std::string> tokens)
 {
-	(void) fd;
+	// (void) fd;
 	if (tokens.size() > 1)
 	{
 		// std::cerr << "please only put /pass "
@@ -27,7 +27,8 @@ bool Serv::authenticate_password(int fd, std::vector<std::string> tokens)
 		std::string pass = get_pass();
 		if (pass == token)
 		{
-			//have a flag to check client?
+			std::cout << "client size: " << clients.size() << std::endl;
+			clients[fd].passwordCheck = true;
 			return true;
 		}
 		else
