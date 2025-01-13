@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/13 10:52:54 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/13 11:17:11 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 	}
 	if (cmd == "PASS")
 	{
-		std::cout << "password " << std::endl;
+		// std::cout << "password " << std::endl;
 		if (authenticate_password(fd, tokens) == true)
 		{
 			// clients[fd].setFd(fd);
@@ -61,7 +61,6 @@ int Serv::parse_command(int fd, const std::string& line) {
 		if (addNickname(fd, tokens) == true)
 		{
 			// std::cout << "nick added" << std::endl;
-			std::cout << "client size after the addNickname function" << clients.size() << std::endl;
 			return 0;
 		}
 		else
@@ -71,7 +70,6 @@ int Serv::parse_command(int fd, const std::string& line) {
 			return 1;
 		}
 	}
-	return 0;
 	if (cmd == "USER")
 	{
 		if (addUser(fd, tokens) == true)
@@ -92,7 +90,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 		std::string pong = std::string("PONG") + "\r\n";
 		send(fd, pong.c_str(), pong.size(), 0);
 	}
-	
+	return 0;
 	// if (cmd == "JOIN")
 	// {
 		
