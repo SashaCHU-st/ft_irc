@@ -4,6 +4,7 @@
 #include "Client.hpp"
 #include <vector>
 #include <poll.h>
+#include <unistd.h>
 #include <iostream>
 #include <exception>
 #include <fcntl.h>
