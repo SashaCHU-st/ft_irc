@@ -1,11 +1,7 @@
 NAME = ircserv
 CC = c++
 
-<<<<<<< HEAD
-CFLAGS = -Wall -Wextra -Werror -std=c++11
-=======
 CFLAGS = -Wall -Wextra -Werror -std=c++17
->>>>>>> parseClientInput
 
 SRCS = src/main.cpp \
 		src/Serv.cpp \

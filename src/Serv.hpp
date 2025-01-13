@@ -90,7 +90,7 @@ int parse_command(int client_fd, const std::string& line);
 bool authenticate_password(int client_fd, std::vector<std::string> tokens);
 bool addNickname(int client_fd, std::vector<std::string> tokens);
 bool addUser(int client_fd, std::vector<std::string> tokens);
-bool uniqueNickname(const std::string& nickname);
+bool uniqueNickname(std::string nickname);
         void send_message(int client_fd, const std::string& message);
 int findClient(int client_fd);
 void sendWelcomeMsg(int client_fd);

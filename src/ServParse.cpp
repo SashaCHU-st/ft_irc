@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/13 13:04:49 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/13 13:06:54 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,13 +74,8 @@ int Serv::parse_command(int fd, const std::string& line) {
 	{
 		if (addUser(fd, tokens) == true)
 		{
-<<<<<<< HEAD
-			std::string user = "Username added " + tokens[0] + "\r\n";
-			std::cout<< "!!!!=>"<<user<<std::endl;
-=======
 			std::cout << "User added" << std::endl;
 			std::string user = "Username added" + tokens[0] + "\r\n";
->>>>>>> parseClientInput
 			send(fd, user.c_str(), user.size(), 0);
 		}
 		else
@@ -96,10 +91,6 @@ int Serv::parse_command(int fd, const std::string& line) {
 		send(fd, pong.c_str(), pong.size(), 0);
 	}
 	return 0;
-<<<<<<< HEAD
-	
-=======
->>>>>>> parseClientInput
 	// if (cmd == "JOIN")
 	// {
 		
