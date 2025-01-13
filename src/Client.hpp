@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:17:13 by alli              #+#    #+#             */
-/*   Updated: 2025/01/13 11:22:14 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/13 12:18:47 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ class Client {
 		int _fd;//unqiue
 	public:
 		Client(); 
-		Client(int fd);  
+		Client(int fd);
 		~Client();
 
 		std::string getUsername();
