@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:16:25 by alli              #+#    #+#             */
-/*   Updated: 2025/01/13 15:38:44 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/14 10:25:30 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void Serv::sendWelcomeMsg(int fd)
     
     if (!clients[fd].getUsername().empty() && !clients[fd].getNickname().empty())
     {
-        if (uniqueNickname(clients[fd].getNickname()) == true)
+        // if (uniqueNickname(clients[fd].getNickname()) == true)
 		{
 			if(clients[fd].welcomeSent == false)
 			{

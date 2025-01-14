@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/13 11:17:11 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/14 10:29:30 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 		std::string cap = tokens[0] + "\r\n";
 		return 0;
 	}
-	if (cmd == "PASS")
+	else if (cmd == "PASS")
 	{
 		// std::cout << "password " << std::endl;
 		if (authenticate_password(fd, tokens) == true)
@@ -56,7 +56,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 			return 1;
 		}
 	}
-	if (cmd == "NICK")
+	else if (cmd == "NICK")
 	{
 		if (addNickname(fd, tokens) == true)
 		{
@@ -70,11 +70,11 @@ int Serv::parse_command(int fd, const std::string& line) {
 			return 1;
 		}
 	}
-	if (cmd == "USER")
+	else if (cmd == "USER")
 	{
 		if (addUser(fd, tokens) == true)
 		{
-			std::cout << "User added" << std::endl;
+			// std::cout << "User added" << std::endl;
 			std::string user = "Username added" + tokens[0] + "\r\n";
 			send(fd, user.c_str(), user.size(), 0);
 		}
