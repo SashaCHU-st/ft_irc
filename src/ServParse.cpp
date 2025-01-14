@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/14 14:52:32 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/14 14:56:57 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,6 @@ int Serv::parse_command(int fd, const std::string& line) {
 		std::string pong = std::string("PONG") + "\r\n";
 		send(fd, pong.c_str(), pong.size(), 0);
 	}
-	
 	if (cmd == "PRIVMSG")
 	{
 		if (tokens.size() < 2)
@@ -106,11 +105,12 @@ int Serv::parse_command(int fd, const std::string& line) {
 		}
 
 	}
-	return 0;
 	// if (cmd == "JOIN")
-	// {
-		
-	// }
+	if (cmd == "JOIN")
+	{
+		if (cmdJOIN(fd, tokens) == 1)
+			return 1;
+	}
 	// if (cmd == "TOPIC")
 	// {
 		
@@ -123,12 +123,15 @@ int Serv::parse_command(int fd, const std::string& line) {
 	// {
 		
 	// }
-	// if (cmd == "INVITE")
-	// {
-		
-	// }
-	// if (cmd == "PART")
-	// {
-	// 	//leaving the channel
-	// }
+	if (cmd == "INVITE")
+	{
+		if (cmdINVITE(fd, tokens) == 1)
+			return 1;
+	}
+	if (cmd == "PART")
+	{
+		if (cmdPART(fd, tokens) == 1)
+			return(1);
+	}
+	return 0;
 }

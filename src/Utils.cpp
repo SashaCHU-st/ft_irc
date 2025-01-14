@@ -40,3 +40,43 @@ std::vector<std::string> Serv::splitStr(const std::string& str, std::string deli
 	newList.push_back(str.substr(start)); // adds the last element from the string
 	return newList;
 }
+
+Client* Serv::getClientByFd(int client_fd) {
+	for(const auto& [fd, client] : clients)
+	{        
+		if (client.getFd() == client_fd) {
+            return const_cast<Client*>(&client);
+        }
+    }
+    return nullptr;
+}
+
+Client* Serv::getClientByNickname(const std::string& nickname) {
+    
+	for(const auto& [fd, client] : clients)
+	{
+		if (client.getNickname() == nickname)
+		{
+		
+			return const_cast<Client*>(&client);
+		}
+	// for (Client& client : clients) {
+    //     if (client.getNickname() == nickname) {
+    //         return &client; // Return a pointer to the matching client
+    //     }
+	}
+    return nullptr; // Return nullptr if no client matches the nickname
+}
+
+std::shared_ptr<Channel> Serv::createChannel(const std::string& name)
+{
+	if (_channels.find(name) != _channels.end()) {
+            std::cout << "Channel already exists.\n";
+            return _channels[name]; // Return the existing channel
+        }
+
+        std::shared_ptr<Channel> newChannel = std::make_shared< Channel>(name);
+        _channels[name] = newChannel;
+        std::cout << "Channel " << name << " created.\n";
+        return newChannel;
+}

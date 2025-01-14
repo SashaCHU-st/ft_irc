@@ -1,4 +1,5 @@
 #include "Serv.hpp"
+#include "Channel.hpp" 
 
 // Constructor
 Serv::Serv(int port, std::string pass) : port(port), pass(pass), sock(nullptr)
@@ -6,12 +7,13 @@ Serv::Serv(int port, std::string pass) : port(port), pass(pass), sock(nullptr)
     creating_socket();
 }
 
+std::map<std::string, std::shared_ptr<Channel>> Serv::_channels;
+
 // Destructor
 Serv::~Serv()
 {
     delete sock;
 }
-
 
 int Serv::get_port() const
 {
@@ -173,6 +175,7 @@ void Serv::launch()
                     //handle data for exist client
                     // char buffer[1024];
                     int bytes_read = recv(fds[i].fd, buffer, sizeof(buffer), 0);
+
                     if (bytes_read < 0)
                     {
                         // Check for EAGAIN or EWOULDBLOCK
@@ -206,10 +209,11 @@ void Serv::launch()
                     {
                         // process recived data
                         buffer[bytes_read] = '\0';
+                        std::cout<<"recv: "<< buffer <<std::endl;
                         std::cout << "\033[36mReceived from FD " << fds[i].fd << ": " << buffer << "\033[0m" << std::endl;
 
                         // Echo the data back to the client
-                        // send(fds[i].fd, buffer, bytes_read, 0); // causes critical nick error
+                        // send(fds[i].fd, buffer, bytes_read, 0);
 						
 						std::string client_input(buffer);
 						std::stringstream ss(client_input);

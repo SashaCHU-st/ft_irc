@@ -13,6 +13,8 @@ SRCS = src/main.cpp \
 		src/ServParse.cpp \
 		src/User.cpp \
 		src/Utils.cpp \
+		src/ChannelCMDs.cpp\
+		src/Channel.cpp \
 		src/WelcomeMsg.cpp \
 		src/Privmsg.cpp \
 
