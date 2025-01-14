@@ -86,7 +86,7 @@ class Serv
         ///functions
         void creating_socket();
         int get_port() const;
-std::string get_pass();
+        std::string get_pass();
         void set_non_blocking(int sock_fd);
         void accepter();
         void launch();
@@ -101,7 +101,7 @@ std::string get_pass();
 		int findLatestMatch(int client_fd, std::string nickname);
 		void sendWelcomeMsg(int client_fd);
 
-		static std::vector<std::string> splitStr (const std::string& str, std::string delim);
+        static std::vector<std::string> splitStr (const std::string& str, std::string delim);
 
         //Channel CMDs Handler
         std::shared_ptr<Channel> createChannel(const std::string &name);
@@ -112,10 +112,3 @@ std::string get_pass();
         Client* getClientByNickname(const std::string& nickname);
 
 };
-
-
-        // Channel Management
-        // void handle_join(int client_fd, const std::string& channel_name);
-        // void handle_kick(int client_fd, const std::vector<std::string>& tokens);
-        // void handle_invite(int client_fd, const std::vector<std::string>& tokens);
-        // void handle_topic(int client_fd, const std::vector<std::string>& tokens);

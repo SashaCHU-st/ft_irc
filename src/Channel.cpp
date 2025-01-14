@@ -32,6 +32,10 @@ int Channel::getUserCount() const {
 	return _users.size();
 }
 
+ std::vector<Client*> Channel::getUsers() const {
+        return _users;
+    }
+
 std::string Channel::getPassword() const {
     return _password;
 }
@@ -48,7 +52,7 @@ void Channel::addUser(Client* client) {
 	if (std::find(_users.begin(), _users.end(), client) == _users.end()) {
 		_users.push_back(client);
 		if (_users.size() == 1) {
-			addOperator(client);  // First user is an operator
+			addOperator(client);
 		}
 		std::cout << "Added user " << client->getNickname() << " to channel " << _name << "." << std::endl;
     } else {
