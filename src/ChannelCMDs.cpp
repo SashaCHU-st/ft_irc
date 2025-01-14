@@ -17,13 +17,10 @@ int checkChanName(std::string name)
 	std::vector<char> chars = {'!', '@', '$', '%', ' '};
 	for (char c : chars)
 	{
-		if (std::iscntrl(c)) {
-            return 1;
+		if (std::find(chars.begin(), chars.end(), c) != chars.end() || \
+				std::iscntrl(static_cast<unsigned char>(c))) {
+            return 1;  // Invalid: contains forbidden character or control character
         }
-		if (name.find(c) != std::string::npos)
-		{
-			return 1;
-		}
 	}
 	return 0;
 }
