@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:16:25 by alli              #+#    #+#             */
-/*   Updated: 2025/01/10 12:25:57 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/14 11:10:41 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,16 @@
 
 void Serv::sendWelcomeMsg(int fd)
 {
-	clients[fd].allSet = true;
-		std::cout << "777" << std::endl;
-	std::cout << "FD"<<fd<< std::endl;
-	std::cout << "GetUsername => "<<clients[fd].getUsername() << "<="<< std::endl;
-	std::cout << "GetNicjname"<<clients[fd].getNickname()<< std::endl;
+	
+		// std::cout << "777" << std::endl;
+	// std::cout << "FD"<<fd<< std::endl;
+	// std::cout << "GetUsername => "<<clients[fd].getUsername() << "<="<< std::endl;
+	// std::cout << "GetNicjname"<<clients[fd].getNickname()<< std::endl;
 	
 	if (!clients[fd].getUsername().empty() && !clients[fd].getNickname().empty())
 	{
-		std::cout << "22222" << std::endl;
+		// std::cout << "22222" << std::endl;
+		
 		if(clients[fd].welcomeSent == false  )
 		{
 			std::cout << "8888" << std::endl;
@@ -37,7 +38,7 @@ void Serv::sendWelcomeMsg(int fd)
 				
 			//welcome message
 			clients[fd].welcomeSent = true;
-
+			clients[fd].allSet = true;
+			}
 		}
-	}
 }
