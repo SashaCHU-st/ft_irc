@@ -14,6 +14,7 @@ SRCS = src/main.cpp \
 		src/User.cpp \
 		src/Utils.cpp \
 		src/WelcomeMsg.cpp \
+		src/Privmsg.cpp \
 
 OBJS = $(SRCS:.cpp=.o)
 
