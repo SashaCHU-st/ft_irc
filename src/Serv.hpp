@@ -91,14 +91,15 @@ std::string get_pass();
         void accepter();
         void launch();
 
-int parse_command(int client_fd, const std::string& line);
-bool authenticate_password(int client_fd, std::vector<std::string> tokens);
-bool addNickname(int client_fd, std::vector<std::string> tokens);
-bool addUser(int client_fd, std::vector<std::string> tokens);
-bool uniqueNickname(std::string nickname);
+		int parse_command(int client_fd, const std::string& line);
+		bool authenticate_password(int client_fd, std::vector<std::string> tokens);
+		bool addNickname(int client_fd, std::string name);
+		bool addUser(int client_fd, std::vector<std::string> tokens);
+		bool uniqueNickname(std::string nickname);
         void send_message(int client_fd, const std::string& message);
-int findClient(int client_fd);
-void sendWelcomeMsg(int client_fd);
+		int findClient(int client_fd);
+		int findLatestMatch(int client_fd, std::string nickname);
+		void sendWelcomeMsg(int client_fd);
 
 		static std::vector<std::string> splitStr (const std::string& str, std::string delim);
 

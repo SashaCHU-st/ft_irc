@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/14 11:08:01 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/14 13:47:53 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,12 @@ int Serv::parse_command(int fd, const std::string& line) {
 	}
 	else if (cmd == "NICK")
 	{
-		if (addNickname(fd, tokens) == true)
+		if (tokens.size() > 1)
+		{
+			std::string error_nick = std::string("please only input 1 nickname ") + "\r\n";
+			send(fd, error_nick.c_str(), error_nick.size(), 0);
+    	}
+		else if (addNickname(fd, tokens[0]) == true)
 		{
 			// std::cout << "nick added" << std::endl;
 			return 0;
