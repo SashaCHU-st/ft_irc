@@ -84,6 +84,7 @@ class Client {
 		std::string getPassword();
 		int 		getFd () const;
 		std::string getHostName();
+		std::string getServerName();
 		// int 		getFd();
 		bool allSet = false;
 		bool welcomeSent = false;

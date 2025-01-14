@@ -41,6 +41,7 @@ class Channel
 		std::string getTopic() const;
 		int getUserCount() const;
 		std::string getPassword() const;
+		std::vector<Client*> getUsers() const;
 
 		bool doesExist() const;
 		bool isInviteOnly() const;

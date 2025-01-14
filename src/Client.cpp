@@ -90,6 +90,11 @@ int	Client::getFd()  const {
 	return this->_fd;
 }
 
+std::string Client::getServerName()
+{
+	return _servername;
+}
+
 void Client::setHostName(std::string hostname){
 	_hostname = hostname;
 }

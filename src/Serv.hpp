@@ -86,21 +86,21 @@ class Serv
         ///functions
         void creating_socket();
         int get_port() const;
-std::string get_pass();
+        std::string get_pass();
         void set_non_blocking(int sock_fd);
         void accepter();
         void launch();
 
-int parse_command(int client_fd, const std::string& line);
-bool authenticate_password(int client_fd, std::vector<std::string> tokens);
-bool addNickname(int client_fd, std::vector<std::string> tokens);
-bool addUser(int client_fd, std::vector<std::string> tokens);
-bool uniqueNickname(std::string nickname);
+        int parse_command(int client_fd, const std::string& line);
+        bool authenticate_password(int client_fd, std::vector<std::string> tokens);
+        bool addNickname(int client_fd, std::vector<std::string> tokens);
+        bool addUser(int client_fd, std::vector<std::string> tokens);
+        bool uniqueNickname(std::string nickname);
         void send_message(int client_fd, const std::string& message);
-int findClient(int client_fd);
-void sendWelcomeMsg(int client_fd);
+        int findClient(int client_fd);
+        void sendWelcomeMsg(int client_fd);
 
-		static std::vector<std::string> splitStr (const std::string& str, std::string delim);
+        static std::vector<std::string> splitStr (const std::string& str, std::string delim);
 
         //Channel CMDs Handler
         std::shared_ptr<Channel> createChannel(const std::string &name);
@@ -111,10 +111,3 @@ void sendWelcomeMsg(int client_fd);
         Client* getClientByNickname(const std::string& nickname);
 
 };
-
-
-        // Channel Management
-        // void handle_join(int client_fd, const std::string& channel_name);
-        // void handle_kick(int client_fd, const std::vector<std::string>& tokens);
-        // void handle_invite(int client_fd, const std::vector<std::string>& tokens);
-        // void handle_topic(int client_fd, const std::vector<std::string>& tokens);

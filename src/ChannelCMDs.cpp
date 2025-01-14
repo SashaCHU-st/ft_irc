@@ -84,11 +84,11 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
             		continue;
 				}
 			}
+			if (newChannel->isUserInChannel(client)) {
+				std::cout << "User " << client<< " is already in the channel: "<< newChannel->getName() << std::endl;
+				continue ;
+			}
 		}
-		if (newChannel->isUserInChannel(client)) {
-        	std::cout << "User " << client<< " is already in the channel: "<< newChannel->getName() << std::endl;
-        	continue ;
-    	}
 		newChannel->addUser(client);
 		client->joinChannel(newChannel);
 		newChannel->broadcastMessage(client->getNickname(), "has joined the channel");
@@ -150,18 +150,34 @@ int Serv::cmdPART(int fd, std::vector<std::string> line)
 
 		Client* client = getClientByFd(fd);
 		if (!client) {
-            std::cout << "Client not found for fd: " << fd << std::endl;
+            std::cout << "Client not found by fd: " << fd << std::endl;
             return 1;
         }
 
-		if (channel->isUserInChannel(client))
+		if (channel->isUserInChannel(client) || channel->isOperator(client))
 		{
-			channel->removeUser(client);
-			client->leaveChannel(channel);
+			if (channel->isOperator(client))
+			{
+				channel->removeUser(client);
+				client->leaveChannel(channel);
+				if (!channel->getUsers().empty()) // Check if the channel still has users
+            	{
+               	 	std::vector<Client*> usersInChannel = channel->getUsers();
+                	srand(time(0)); // Seed the random number generator
+                	int randomIndex = rand() % usersInChannel.size(); // Random index in range
+               		Client* randomUser = usersInChannel[randomIndex];
+                	channel->addOperator(randomUser);
+                	std::cout << "Assigned user " << randomUser->getNickname() << " as operator in channel " << channelName << std::endl;
+            	}
+			}
+			else{
+				channel->removeUser(client);
+				client->leaveChannel(channel);
+			}
 		}
 		else
 		{
-			std::cout<< "User is not in channel "<< channelName<< std::endl;//ERR_NOTONCHANNEL(442)
+			std::cout<< "User "<< client->getNickname() <<" is not in channel "<< channelName<< std::endl;//ERR_NOTONCHANNEL(442)
 			//return 1;
 			continue ;
 		}
@@ -180,7 +196,6 @@ int Serv::cmdPART(int fd, std::vector<std::string> line)
 
 int Serv::cmdINVITE(int fd, std::vector<std::string> line)
 {
-	std::cout<< "I am in invite"<< std::endl;
 	if (line.empty())
 	{
 		std::cout<<"Not enough parameters for INVITE command"<< std::endl; // ERR_NEEDMOREARAMS(461)
@@ -227,13 +242,13 @@ int Serv::cmdINVITE(int fd, std::vector<std::string> line)
 		return 1;
 	}
 	if (channel->isUserInChannel(invitee)) {
-        std::cout << "User " << newUser << " is already in channel " << chanToAdd << "." << std::endl;
+        std::cout << "User " << newUser << " is already in channel " << chanToAdd << "." << std::endl;//ERR_USERONCHANNEL(443)
         return 1;
     }
 	channel->addUser(invitee);
 	invitee->joinChannel(channel);
-	std::string message = "INVITE " + invitee->getNickname() + " " + channel->getName();
-	channel->broadcastMessage(client->getNickname(), message);
+	std::string message = invitee->getServerName() + "INVITE " + invitee->getNickname() + " :" + channel->getName();
+	send_message(invitee->getFd(), message);
 	std::cout << "User " << newUser << " successfully invited to channel " << chanToAdd << "." << std::endl;
 	return 0;
 }
