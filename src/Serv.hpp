@@ -108,6 +108,7 @@ class Serv
         int cmdJOIN(int fd, std::vector<std::string> line);
         int cmdPART(int fd, std::vector<std::string> line);
         int cmdINVITE(int fd, std::vector<std::string> line);
+        int cmdMODE(int fd, std::vector<std::string> line);
         Client* getClientByFd(int fd);
         Client* getClientByNickname(const std::string& nickname);
 

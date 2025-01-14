@@ -32,6 +32,10 @@ int Channel::getUserCount() const {
 	return _users.size();
 }
 
+int Channel::getUserLimit() const{
+	return _userLimit;
+}
+
  std::vector<Client*> Channel::getUsers() const {
         return _users;
     }
@@ -97,7 +101,8 @@ void Channel::setPassword(const std::string& password)
 }
 
 // Set Modes (i, t, k, l)
-void Channel::setMode(char mode, bool enable, const std::string& param) {
+void Channel::setMode(char mode, bool enable, const std::string& param, Client* client)
+{
 	switch (mode) {
 		case 'i':
 			_inviteOnly = enable;
@@ -117,17 +122,25 @@ void Channel::setMode(char mode, bool enable, const std::string& param) {
 			else
 				_userLimit = 0;
 			break;
-		case 'r': // Reset all restrictions (default unrestricted state)
-			_inviteOnly = false;
-			_topicRestricted = false;
-			_password = "";
-			_userLimit = 0;
-			std::cout << "All channel restrictions have been reset to default." << std::endl;
-			break;
-		default:
-			std::cout << "Unknown mode: " << mode << std::endl;
-			break;
-
+		case 'o':
+            if (enable) {
+                if (!isOperator(client))
+				{
+                	addOperator(client);
+				}
+				else{
+					std::cout<< "Client "<< client->getNickname()<< "is alredy operator."<< std::endl;
+				}
+            } else {
+                if (isOperator(client))
+				{
+                	removeOperator(client);
+				}
+				else{
+					std::cout << "Client "<< client->getNickname()<< " is not an operator"<< std::endl;
+				}
+            }
+            break;
 	}
 }
 

@@ -12,6 +12,22 @@
 
 #include "Serv.hpp"
 
+int checkChanName(std::string name)
+{
+	std::vector<char> chars = {'!', '@', '$', '%', ' '};
+	for (char c : chars)
+	{
+		if (std::iscntrl(c)) {
+            return 1;
+        }
+		if (name.find(c) != std::string::npos)
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+
 int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 {
 	if (line.empty())
@@ -21,14 +37,17 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 	}
 	if (line.size() > 2)
 	{
-		std::cout<< "Too many parameters for the PART command."<< std::endl;
+		std::cout<< "Too many parameters for the JOIN command."<< std::endl;
 		return 1;
 	}
 	std::string chanCheck = line[0];
-	std::string keyCheck = "";
+	std::string keyCheck;
 	if (line.size() > 1)
 	{
 		keyCheck = line[1];
+	}
+	else{
+		keyCheck = "";
 	}
 	std::vector<std::string> channels;
 	std::vector<std::string> keys;
@@ -51,10 +70,14 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
         std::cout << "Client not found for fd: " << fd << std::endl;
         return 1;
     }
+	if (channels.size() != keys.size() && keys.size() != 1) {
+        std::cout << "Number of keys doesn't match the number of channels." << std::endl;
+        return 1;
+    }
 	for (size_t i = 0; i < channels.size(); ++i)
 	{
 		const std::string& chan = channels[i];
-		if (chan.empty() || chan[0] != '#')
+		if (chan.empty() || chan[0] != '#' || checkChanName(chan) == 1)
 		{
 			std::cout<< "Invalid channel name: "<< chan<< ": it should start with #"<<std::endl;
 			continue ;
@@ -66,10 +89,15 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 			newChannel = createChannel(chan);
 			std::string defaultTopic = "No topic set";
 			newChannel->setTopic(defaultTopic, nullptr);
-			if (i < keys.size() && !keys.empty())
+			if (!keys.empty())
 			{
 				newChannel->setPassword(keys[i]);
 				std::cout << "Password set for channel " << chan << ": " << keys[i] << std::endl;
+			}
+			if (keys.size() == 1)
+			{
+				newChannel->setPassword(keys[0]);
+				std::cout << "Password set for channel " << chan << ": " << keys[0] << std::endl;
 			}
 		}
 		else
@@ -86,6 +114,16 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 			}
 			if (newChannel->isUserInChannel(client)) {
 				std::cout << "User " << client<< " is already in the channel: "<< newChannel->getName() << std::endl;
+				continue ;
+			}
+			if (newChannel->getUserLimit() == newChannel->getUserCount())
+			{
+				std::cout<< "User "<< client->getNickname() << " cannot join the channel as the ammount of users are limited."<< std::endl;
+				continue ;
+			}
+			if (newChannel->isInviteOnly())
+			{
+				std::cout<< "User "<< client->getNickname()<< " tries to join the channel and wait for INVITE." << std::endl;
 				continue ;
 			}
 		}
@@ -116,14 +154,14 @@ int Serv::cmdPART(int fd, std::vector<std::string> line)
 		channels = splitStr(chanCheck, ",");
 		for (const std::string& channel : channels)
 		{
-			if (channel.empty() || channel[0] != '#') // Check if the channel is valid
+			if (channel.empty() || channel[0] != '#' || checkChanName(channel) == 1)
         	{
             std::cout << "Invalid channel name: " << channel << std::endl;
             return 1;
         	}
 		}
 	}
-	if (chanCheck[0] == '#')
+	if (chanCheck[0] == '#' && checkChanName(chanCheck) != 1)
 	{
 		channels.push_back(chanCheck);
 	}
@@ -154,7 +192,7 @@ int Serv::cmdPART(int fd, std::vector<std::string> line)
             return 1;
         }
 
-		if (channel->isUserInChannel(client) || channel->isOperator(client))
+		if (channel->isUserInChannel(client))
 		{
 			if (channel->isOperator(client))
 			{
@@ -208,7 +246,7 @@ int Serv::cmdINVITE(int fd, std::vector<std::string> line)
 	}
 	std::string newUser = line[0];
 	std::string chanToAdd =line[1];
-	if (chanToAdd[0] != '#' || chanToAdd.empty())
+	if (chanToAdd[0] != '#' || chanToAdd.empty() || checkChanName(chanToAdd) == 1)
 	{
 		std::cout<< "Invalid channel name."<<std::endl;
 		return 1;
@@ -247,9 +285,118 @@ int Serv::cmdINVITE(int fd, std::vector<std::string> line)
     }
 	channel->addUser(invitee);
 	invitee->joinChannel(channel);
-	std::string message = invitee->getServerName() + "INVITE " + invitee->getNickname() + " :" + channel->getName();
+	std::string message = client->getServerName() + "INVITE " + invitee->getNickname() + " :" + channel->getName();
 	send_message(invitee->getFd(), message);
 	std::cout << "User " << newUser << " successfully invited to channel " << chanToAdd << "." << std::endl;
+	return 0;
+}
+
+int checkValidMode(char mode)
+{
+	std::vector<char> validModes = {'i', 't', 'k', 'o', 'l'};
+	for (char c : validModes)
+	{
+		if (mode == c)
+		{
+			return 0;
+		}
+	}
+	std::cout << "Invalid mode character: " << mode << std::endl;
+	return 1;
+}
+
+int checkDigit(std::string& str)
+{
+	for (size_t i = 0; i < str.size(); i++)
+	{
+		if (!std::isdigit(str[i]))
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+
+int Serv::cmdMODE(int fd, std::vector<std::string> line)
+{
+	if (line.empty() || line.size() < 2 || line.size() > 3)
+	{
+		std::cout << "Invalid number of parameters for MODE command."<< std::endl;
+		return 1;
+	}
+	std::string chan = line[0];
+	std::string mode = line[1];
+	std::string param;
+	if (!line[2]. empty())
+	{
+		param = line[2];
+	}
+	else{
+		param = "";
+	}
+	auto findChan = _channels.find(chan);
+	if (chan[0] == '#' && checkChanName(chan) != 1)
+	{
+		if (findChan == _channels.end())
+		{
+			std::cout<< "Channel "<< chan<< " doesn't exist."<< std::endl;//ERR_NOSUCHCHANNEL(403)
+			return 1;	
+		}
+	}
+	else{
+		std::cout<<"Invalid channel name."<< std::endl;
+		return 1;
+	}
+	std::shared_ptr<Channel> channel = findChan->second;
+	Client* client = getClientByFd(fd);
+	if (!client) {
+        std::cout << "Client not found for fd: " << fd << std::endl;
+        return 1;
+    }
+	Client* clientToAdd = getClientByNickname(param);
+	if (mode[0] == '+' || mode[0] == '-')
+	{
+		for (size_t i = 0; i <  mode.size(); ++i)
+		{
+			if (checkValidMode(mode[i]) == 0)
+			{
+				if (mode[i] == 'l' && (param.empty() || checkDigit(param) == 1))
+				{
+					std::cout <<"Mode set 'l' should contain only digits as a parameter and always require parameter."<< std::endl;
+				}
+				if (mode[i] == 'k' && param.empty())
+				{
+					std::cout<< "Parameter cannot be empty for the mode set 'k'"<<std::endl;
+					return 1;
+				}
+				if (mode[i] == 'o' && (param.empty() || !channel->isUserInChannel(clientToAdd)))
+				{
+					std::cout<< "Parameter cannot be empty for the mode set 'o' or user is not in channel."<<std::endl;
+					return 1;
+				}
+				if (mode[0] == '+' && channel->isOperator(client))
+				{
+					channel->setMode(mode[i], true, param, clientToAdd);
+				}
+				if (mode[0] == '-' && channel->isOperator(client))
+				{
+					channel->setMode(mode[i], false, param, clientToAdd);
+				}
+				else{
+					std::cout << "Cannot proceed with MODE command." << std::endl;
+                    return 1;
+				}
+			}
+			else{
+				std::cout<< "Mode setting are allowed to be: i, k, l, o, t."<< std::endl;
+				return 1;
+			}
+		}
+	}
+	else{
+		std::cout<< "Incorrect mode settings."<< std::endl;
+		return 1;
+	}
 	return 0;
 }
 

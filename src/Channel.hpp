@@ -42,6 +42,7 @@ class Channel
 		int getUserCount() const;
 		std::string getPassword() const;
 		std::vector<Client*> getUsers() const;
+		int getUserLimit() const;
 
 		bool doesExist() const;
 		bool isInviteOnly() const;
@@ -55,11 +56,11 @@ class Channel
 		void addOperator(Client* client);
 		void removeOperator(Client* client);
 		bool isOperator(Client* client) const;
-		void broadcastMessage(const std::string& sender, const std::string& message);
 
-		// Channel Modes
-		void setMode(char mode, bool enable, const std::string& param = "");
+		
+		void setMode(char mode, bool enable, const std::string& param = "", Client* client);
 		void setTopic(const std::string& topic, Client* client);
 		void setPassword(const std::string& password);
 		bool checkPassword(const std::string& password) const;
+		void broadcastMessage(const std::string& sender, const std::string& message);
 };
