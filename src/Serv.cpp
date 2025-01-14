@@ -173,31 +173,6 @@ void Serv::launch()
                     //handle data for exist client
                     // char buffer[1024];
                     int bytes_read = recv(fds[i].fd, buffer, sizeof(buffer), 0);
-                    // if (bytes_read <= 0)
-                    // {
-                    //     if (bytes_read == 0)//  nothing to read
-                    //     {
-                    //         // disconneted
-                    //         std::cout << "\033[33mClient disconnected: FD " << fds[i].fd << "\033[0m" << std::endl;
-                    //     }
-                    //     else
-                    //     {
-                    //         perror("Recv failed");// connot be -
-                    //     }
-                    //     // close CLient socket and remove i form the poll list
-                    //     close(fds[i].fd);
-                    //     fds.erase(fds.begin() + i);
-                    //     // Find and remove client from the `clients` vector
-                    //     for (size_t j = 0; j < clients.size(); ++j)
-                    //     {
-                    //         if (clients[j].getFd() == fds[i].fd)
-                    //         {
-                    //             clients.erase(clients.begin() + j);
-                    //             break;
-                    //         }
-                    //     }
-                    //     --i;// adjust index to account
-                    // }
                     if (bytes_read < 0)
                     {
                         // Check for EAGAIN or EWOULDBLOCK
@@ -234,7 +209,7 @@ void Serv::launch()
                         std::cout << "\033[36mReceived from FD " << fds[i].fd << ": " << buffer << "\033[0m" << std::endl;
 
                         // Echo the data back to the client
-                        // send(fds[i].fd, buffer, bytes_read, 0);
+                        // send(fds[i].fd, buffer, bytes_read, 0); // causes critical nick error
 						
 						std::string client_input(buffer);
 						std::stringstream ss(client_input);

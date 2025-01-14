@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:16:25 by alli              #+#    #+#             */
-/*   Updated: 2025/01/14 14:07:55 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/14 14:53:06 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,5 +34,5 @@ void Serv::sendWelcomeMsg(int fd)
 				clients[fd].welcomeSent = true;
 			}
 		}
-    }
+	}
 }

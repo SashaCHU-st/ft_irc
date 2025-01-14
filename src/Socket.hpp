@@ -3,6 +3,7 @@
 #include <sys/wait.h>
 #include "Client.hpp"
 #include <netinet/in.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <iostream>
 #include <vector>
