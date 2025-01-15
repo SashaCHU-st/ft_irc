@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/15 09:05:59 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/15 11:01:14 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,6 @@ int Serv::parse_command(int fd, const std::string& line) {
 		{
 			return 0;
 		}
-
 	}
 	// if (cmd == "JOIN")
 	if (cmd == "JOIN")
