@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 13:17:19 by alli              #+#    #+#             */
-/*   Updated: 2025/01/14 13:47:44 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/15 09:09:41 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ bool Serv::addNickname(int fd, std::string name)
 		// std::string nickname = tokens[0];
 		if (clients[fd].getNickname().empty()) // new nickname if there's no nickname
 		{
-			std::cout << "entered empty nickname" << std::endl;
+			// std::cout << "entered empty nickname" << std::endl;
 			if (uniqueNickname(name) == true)
 			{
 				// std::cout << "true" << std::endl;
@@ -33,16 +33,16 @@ bool Serv::addNickname(int fd, std::string name)
 			{
 				if (findLatestMatch(fd, name) > 0)
 				{
-					std::cout << "latest match fd: " << std::endl;
+					// std::cout << "latest match fd: " << std::endl;
 					std::string latest = clients[findLatestMatch(fd, name)].getNickname();
-					std::cout << "latest: " << latest << std::endl;
+					// std::cout << "latest: " << latest << std::endl;
 					if (clients[fd].welcomeSent == false)
 					{
 						// std::cout << "fd: " << fd << std::endl;
 						clients[fd].setNickname(latest + "_");
 						if (findLatestMatch(fd, clients[fd].getNickname()) > 0)
 						{
-							std::cout << "entered addNickname again" << clients[fd].getNickname() << std::endl;
+							// std::cout << "entered addNickname again" << clients[fd].getNickname() << std::endl;
 							addNickname(fd, clients[fd].getNickname());
 							
 						}
@@ -61,7 +61,7 @@ bool Serv::addNickname(int fd, std::string name)
 		}
 		else if (uniqueNickname(name))
 		{
-			std::cout << "unique nickname here" << std::endl;
+			// std::cout << "unique nickname here" << std::endl;
 			std::string oldName = clients[fd].getNickname();
 			std::cout << oldName << std::endl;
 			clients[fd].setNickname(name);
@@ -74,16 +74,16 @@ bool Serv::addNickname(int fd, std::string name)
 		{
 			if (findLatestMatch(fd, name) > 0)
 			{
-				std::cout << "latest match fd: " << std::endl;
+				// std::cout << "latest match fd: " << std::endl;
 				std::string latest = clients[findLatestMatch(fd, name)].getNickname();
-				std::cout << "latest: " << latest << std::endl;
+				// std::cout << "latest: " << latest << std::endl;
 				if (clients[fd].welcomeSent == false)
 				{
 					// std::cout << "fd: " << fd << std::endl;
 					clients[fd].setNickname(latest + "_");
 					if (findLatestMatch(fd, clients[fd].getNickname()) > 0)
 					{
-						std::cout << "2 entered addNickname again" << clients[fd].getNickname() << std::endl;
+						// std::cout << "2 entered addNickname again" << clients[fd].getNickname() << std::endl;
 						addNickname(fd, clients[fd].getNickname());
 					}
 					std::string nick = " :ircserver 001 " + clients[fd].getNickname() + " added to network " + "\r\n";

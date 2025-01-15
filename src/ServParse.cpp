@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/14 14:56:57 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/15 09:05:59 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 	}
 	if (cmd == "PRIVMSG")
 	{
+		std::cout << "entered privmsg" << std::endl;
 		if (tokens.size() < 2)
 		{
 			std::string notEnoughParams = "Not enough parameters: <user> <msg> \r\n";
