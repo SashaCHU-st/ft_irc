@@ -24,7 +24,8 @@ int Serv::findClient(int client_fd)
 	return -1;
 }
 
-std::vector<std::string> Serv::splitStr(const std::string& str, std::string delim) {
+std::vector<std::string> Serv::splitStr(const std::string& str, std::string delim)
+{
 	std::vector<std::string> newList;
 	// std::string item;
 	int length = str.length();
@@ -62,7 +63,7 @@ Client* Serv::getClientByNickname(const std::string& nickname) {
 			return const_cast<Client*>(&client);
 		}
 	}
-    return nullptr; 
+    return nullptr;
 }
 
 std::shared_ptr<Channel> Serv::createChannel(const std::string& name)

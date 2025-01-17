@@ -208,7 +208,7 @@ void Serv::launch()
                     {
                         // process recived data
                         buffer[bytes_read] = '\0';
-                        std::cout<<"recv: "<< buffer <<std::endl;
+                        // std::cout<<"recv: "<< buffer <<std::endl;
                         std::cout << "\033[36mReceived from FD " << fds[i].fd << ": " << buffer << "\033[0m" << std::endl;
 
                         // Echo the data back to the client

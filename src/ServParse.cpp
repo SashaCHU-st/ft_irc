@@ -95,12 +95,12 @@ int Serv::parse_command(int fd, const std::string& line) {
 		std::string pong = std::string("PONG") + "\r\n";
 		send(fd, pong.c_str(), pong.size(), 0);
 	}
-	if (!clients[fd].getUsername().empty() && !clients[fd].getNickname().empty())
-	{
-		clients[fd].allSet = true;
-		std::string nick = " :ircserver 001 " + clients[fd].getNickname() + " :Welcome to network, " + clients[fd].getNickname() + "@localhost" + "\r\n";
-		//welcome message
-	}
+	// if (!clients[fd].getUsername().empty() && !clients[fd].getNickname().empty())
+	// {
+	// 	clients[fd].allSet = true;
+	// 	std::string nick = " :ircserver 001 " + clients[fd].getNickname() + " :Welcome to network, " + clients[fd].getNickname() + "@localhost" + "\r\n";
+	// 	//welcome message
+	// }
 	
 	if (cmd == "JOIN")
 	{
@@ -111,21 +111,25 @@ int Serv::parse_command(int fd, const std::string& line) {
 	// {
 		
 	// }
-	// if (cmd == "TOPIC")
-	// {
+	if (cmd == "TOPIC")
+	{
 		
-	// }
+	}
 	if (cmd == "MODE")
 	{
+		// std::cout << "entered mode " << std::endl;
 		if (cmdMODE(fd, tokens) == 1)
 		{
 			return 1;
 		}
 	}
-	// if (cmd == "KICK")
-	// {
-		
-	// }
+	if (cmd == "KICK")
+	{
+		if (cmdKICK(fd, tokens) == 1)
+		{
+			return 1;
+		}
+	}
 	if (cmd == "INVITE")
 	{
 		if (cmdINVITE(fd, tokens) == 1)

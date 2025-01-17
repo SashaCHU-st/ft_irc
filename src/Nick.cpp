@@ -19,7 +19,7 @@ bool Serv::addNickname(int fd, std::string name)
 		// std::string nickname = tokens[0];
 		if (clients[fd].getNickname().empty()) // new nickname if there's no nickname
 		{
-			std::cout << "entered empty nickname" << std::endl;
+			// std::cout << "entered empty nickname" << std::endl;
 			if (uniqueNickname(name) == true)
 			{
 				// std::cout << "true" << std::endl;

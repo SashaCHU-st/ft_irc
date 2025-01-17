@@ -18,6 +18,7 @@
 
 //#include "Client.hpp"
 class Client;
+class Serv;
 
 class Channel
 {
@@ -31,10 +32,12 @@ class Channel
 		bool _exist;
 		bool _inviteOnly;
 		bool _topicRestricted;
+		//Serv* _serv;
 
 	public:
 		Channel(const std::string &name);
 		~Channel();
+		//Channel(Serv* serv) : _serv(serv) {};
 
 		//Getters
 		std::string getName() const;
@@ -58,7 +61,7 @@ class Channel
 		bool isOperator(Client* client) const;
 
 		
-		void setMode(char mode, bool enable, const std::string& param = "", Client* client);
+		void setMode(char mode, bool enable, const std::string& param = "", Client* client = nullptr);
 		void setTopic(const std::string& topic, Client* client);
 		void setPassword(const std::string& password);
 		bool checkPassword(const std::string& password) const;

@@ -11,7 +11,8 @@
 /* ************************************************************************** */
 
 #include "Channel.hpp"
-#include "Client.hpp" 
+#include "Client.hpp"
+#include "Serv.hpp"
 
 Channel::Channel(const std::string& name)
 	: _name(name), _password(""),_userLimit(0), _exist(false), _inviteOnly(false), _topicRestricted(false) {}
@@ -90,9 +91,27 @@ bool Channel::isOperator(Client* client) const {
 
 // Broadcast Messages
 void Channel::broadcastMessage(const std::string& sender, const std::string& message) {
+	// for (size_t i = 0; i < _users.size(); ++i) {
+	// 	std::cout << "Message to " << _users[i]->getNickname() << ": [" << sender << "] " << message << std::endl;
+	// }
+	std::cout << "Broadcasting message to " << _users.size() << " users." << std::endl;
 	for (size_t i = 0; i < _users.size(); ++i) {
-		std::cout << "Message to " << _users[i]->getNickname() << ": [" << sender << "] " << message << std::endl;
+    	std::cout << "User: " << _users[i]->getNickname() << " fd: " << _users[i]->getFd()<< std::endl;
 	}
+	for (size_t i = 0; i < _users.size(); ++i) {
+        // Get the file descriptor of the user
+        int user_fd = _users[i]->getFd();
+		std::cout<<"Print out user_fd "<< user_fd<< std::endl;
+        // Format the message for the user
+        std::string formattedMessage = "[" + sender + "] " + message + "\r\n";
+
+        // Send the message to the user's file descriptor
+        if (send(user_fd, formattedMessage.c_str(), formattedMessage.size(), 0) == -1) {
+            std::cerr << "Failed to send message to user: " << _users[i]->getNickname() << std::endl;
+        } else {
+            std::cout << "Message sent to " << _users[i]->getNickname() << ": [" << sender << "] " << message << std::endl;
+        }
+    }
 }
 
 void Channel::setPassword(const std::string& password)
@@ -150,7 +169,12 @@ void Channel::setTopic(const std::string& topic, Client* client) {
 	{
 		_topic = topic;
 	}
-	else if (!_topicRestricted || isOperator(client)) {
+	else if (!_topicRestricted)  // If the topic is not restricted, allow any user to set the topic
+    {
+        _topic = topic;
+        broadcastMessage(client->getNickname(), "Topic changed to: " + topic);
+    }
+	else if (isOperator(client)) {
 		_topic = topic;
 		broadcastMessage(client->getNickname(), "Topic changed to: " + topic);
 	} else {

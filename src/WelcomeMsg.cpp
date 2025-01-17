@@ -22,7 +22,7 @@ void Serv::sendWelcomeMsg(int fd)
 	
 	if (!clients[fd].getUsername().empty() && !clients[fd].getNickname().empty())
 	{
-		// std::cout << "22222" << std::endl;
+		
 		
 		if(clients[fd].welcomeSent == false  )
 		{
@@ -39,6 +39,7 @@ void Serv::sendWelcomeMsg(int fd)
 			//welcome message
 			clients[fd].welcomeSent = true;
 			clients[fd].allSet = true;
+			std::cout << "finished printing welcome message" << std::endl;
 			}
 		}
 }
