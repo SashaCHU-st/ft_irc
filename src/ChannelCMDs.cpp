@@ -196,11 +196,11 @@ int Serv::cmdPART(int fd, std::vector<std::string> line)
 			{
 				channel->removeUser(client);
 				client->leaveChannel(channel);
-				if (!channel->getUsers().empty()) // Check if the channel still has users
+				if (!channel->getUsers().empty())
             	{
                	 	std::vector<Client*> usersInChannel = channel->getUsers();
-                	srand(time(0)); // Seed the random number generator
-                	int randomIndex = rand() % usersInChannel.size(); // Random index in range
+                	srand(time(0));
+                	int randomIndex = rand() % usersInChannel.size();
                		Client* randomUser = usersInChannel[randomIndex];
                 	channel->addOperator(randomUser);
                 	std::cout << "Assigned user " << randomUser->getNickname() << " as operator in channel " << channelName << std::endl;
