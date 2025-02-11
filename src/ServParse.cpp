@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/01/14 13:47:53 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/15 11:01:14 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,8 @@ int Serv::parse_command(int fd, const std::string& line) {
 	}
 	else if (cmd == "PASS")
 	{
-		// std::cout << "password " << std::endl;
 		if (authenticate_password(fd, tokens) == true)
 		{
-			// clients[fd].setFd(fd);
 			return 0;
 		}
 		else
@@ -79,8 +77,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 	{
 		if (addUser(fd, tokens) == true)
 		{
-			// std::cout << "User added" << std::endl;
-			std::string user = "Username added" + tokens[0] + "\r\n";
+			std::string user = "Username " + tokens[0] + " added \r\n";
 			send(fd, user.c_str(), user.size(), 0);
 		}
 		else
@@ -95,22 +92,26 @@ int Serv::parse_command(int fd, const std::string& line) {
 		std::string pong = std::string("PONG") + "\r\n";
 		send(fd, pong.c_str(), pong.size(), 0);
 	}
-	// if (!clients[fd].getUsername().empty() && !clients[fd].getNickname().empty())
-	// {
-	// 	clients[fd].allSet = true;
-	// 	std::string nick = " :ircserver 001 " + clients[fd].getNickname() + " :Welcome to network, " + clients[fd].getNickname() + "@localhost" + "\r\n";
-	// 	//welcome message
-	// }
-	
+
+	if (cmd == "PRIVMSG")
+	{
+		std::cout << "entered privmsg" << std::endl;
+		if (tokens.size() < 2)
+		{
+			std::string notEnoughParams = "Not enough parameters: <user> <msg> \r\n";
+			send(fd, notEnoughParams.c_str(), notEnoughParams.size(), 0);
+		}
+		else if (message(fd, tokens) == true)
+		{
+			return 0;
+		}
+	}
+	// if (cmd == "JOIN")
 	if (cmd == "JOIN")
 	{
 		if (cmdJOIN(fd, tokens) == 1)
 			return 1;
 	}
-	// if (cmd == "PRIVMSG")
-	// {
-		
-	// }
 	if (cmd == "TOPIC")
 	{
 		

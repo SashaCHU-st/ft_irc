@@ -202,17 +202,17 @@ void Serv::launch()
                                 break;
                         }
                     }
-                        --i; // Adjust index
+                        --i;
                     } 
                     else
                     {
-                        // process recived data
-                        buffer[bytes_read] = '\0';
-                        // std::cout<<"recv: "<< buffer <<std::endl;
-                        std::cout << "\033[36mReceived from FD " << fds[i].fd << ": " << buffer << "\033[0m" << std::endl;
 
-                        // Echo the data back to the client
-                        // send(fds[i].fd, buffer, bytes_read, 0);
+                        buffer[bytes_read] = '\0';
+// <<<<<<< parseClientInput
+// =======
+//                         // std::cout<<"recv: "<< buffer <<std::endl;
+// >>>>>>> merge
+                        std::cout << "\033[36mReceived from FD " << fds[i].fd << ": " << buffer << "\033[0m" << std::endl;
 						
 						std::string client_input(buffer);
 						std::stringstream ss(client_input);
@@ -220,7 +220,6 @@ void Serv::launch()
 
 						while (getline(ss, line)) // waiting 
 						{
-							// std::cout << line << std::endl;
 							if (line.empty())
 								continue;
 							else
@@ -228,7 +227,6 @@ void Serv::launch()
 								parse_command(fds[i].fd, line);
 							}
 						}
-                        // std::cout<< "11"<<std::endl;
 						sendWelcomeMsg(fds[i].fd);
 					}
 				}
