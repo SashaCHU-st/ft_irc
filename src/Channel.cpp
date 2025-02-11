@@ -174,11 +174,11 @@ void Channel::setTopic(const std::string& topic, Client* client) {
     {
         _topic = topic;
 		std::cout<< "Topic changed to "<< _topic<< std::endl;
-        broadcastMessage(client->getNickname(), "Topic changed to: " + topic);
+        //broadcastMessage(client->getNickname(), "Topic changed to: " + topic);
     }
 	else if (isOperator(client)) {
 		_topic = topic;
-		broadcastMessage(client->getNickname(), "Topic changed to: " + topic);
+		//broadcastMessage(client->getNickname(), "Topic changed to: " + topic);
 	} else {
 		std::cout << "You do not have permission to change the topic.\n";
 	}
