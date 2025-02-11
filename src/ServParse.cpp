@@ -92,6 +92,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 		std::string pong = std::string("PONG") + "\r\n";
 		send(fd, pong.c_str(), pong.size(), 0);
 	}
+
 	if (cmd == "PRIVMSG")
 	{
 		std::cout << "entered privmsg" << std::endl;
@@ -111,18 +112,25 @@ int Serv::parse_command(int fd, const std::string& line) {
 		if (cmdJOIN(fd, tokens) == 1)
 			return 1;
 	}
-	// if (cmd == "TOPIC")
-	// {
+	if (cmd == "TOPIC")
+	{
 		
-	// }
-	// if (cmd == "MODE")
-	// {
-		
-	// }
-	// if (cmd == "KICK")
-	// {
-		
-	// }
+	}
+	if (cmd == "MODE")
+	{
+		// std::cout << "entered mode " << std::endl;
+		if (cmdMODE(fd, tokens) == 1)
+		{
+			return 1;
+		}
+	}
+	if (cmd == "KICK")
+	{
+		if (cmdKICK(fd, tokens) == 1)
+		{
+			return 1;
+		}
+	}
 	if (cmd == "INVITE")
 	{
 		if (cmdINVITE(fd, tokens) == 1)
