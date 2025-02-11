@@ -113,7 +113,8 @@ int Serv::parse_command(int fd, const std::string& line) {
 	// }
 	if (cmd == "TOPIC")
 	{
-		
+		if (cmdTOPIC(fd, tokens) == 1)
+			return 1;
 	}
 	if (cmd == "MODE")
 	{
