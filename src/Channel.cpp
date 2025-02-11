@@ -103,8 +103,9 @@ void Channel::broadcastMessage(const std::string& sender, const std::string& mes
         int user_fd = _users[i]->getFd();
 		std::cout<<"Print out user_fd "<< user_fd<< std::endl;
         // Format the message for the user
-        std::string formattedMessage = "[" + sender + "] " + message + "\r\n";
-
+        //std::string formattedMessage = "[" + sender + "] " + message + "\r\n";
+		std::string formattedMessage = ":" + sender + " PRIVMSG " + _name + " :" + message + "\r\n";
+		std::cout << "Sending message to fd " << user_fd << ": " << formattedMessage;
         // Send the message to the user's file descriptor
         if (send(user_fd, formattedMessage.c_str(), formattedMessage.size(), 0) == -1) {
             std::cerr << "Failed to send message to user: " << _users[i]->getNickname() << std::endl;
