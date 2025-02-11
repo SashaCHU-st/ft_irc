@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:16:25 by alli              #+#    #+#             */
-/*   Updated: 2025/01/14 11:10:41 by alli             ###   ########.fr       */
+/*   Updated: 2025/01/14 14:53:06 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void Serv::sendWelcomeMsg(int fd)
 {
+
 	
 		// std::cout << "777" << std::endl;
 	// std::cout << "FD"<<fd<< std::endl;
@@ -42,4 +43,5 @@ void Serv::sendWelcomeMsg(int fd)
 			std::cout << "finished printing welcome message" << std::endl;
 			}
 		}
+	}
 }
