@@ -196,7 +196,7 @@ void Channel::setTopic(const std::string& topic, Client* client) {
 	else if (!_topicRestricted)  // If the topic is not restricted, allow any user to set the topic
     {
         _topic = topic;
-		std::cout<< "Topic changed to "<< _topic<< std::endl;
+		//std::cout<< "Topic changed to "<< _topic<< std::endl;
         //broadcastMessage(client->getNickname(), "Topic changed to: " + topic);
     }
 	else if (isOperator(client)) {

@@ -129,8 +129,12 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 		client->joinChannel(newChannel);
 		newChannel->broadcastMessage(client->getNickname(), "JOIN", " has joined the channel " + newChannel->getName());
 		std::string topic = newChannel->getTopic();
-        std::string topicMessage = "TOPIC " + newChannel->getName() + " :" + topic + "\r\n";
-		newChannel->broadcastMessage(client->getNickname(), "TOPIC", topicMessage);
+		if (!topic.empty())
+		{
+			std::string topicMessage = "TOPIC " + newChannel->getName() + " :" + topic + "\r\n";
+			newChannel->broadcastMessage(client->getNickname(), "TOPIC", topicMessage);
+
+		}
         // Send the topic to the client
         // ssize_t bytesSent = send(fd, topicMessage.c_str(), topicMessage.size(), 0);
         // if (bytesSent == -1)
@@ -750,7 +754,7 @@ int Serv::cmdTOPIC(int fd, std::vector<std::string> line)
         if (bytesSent == -1) {
             std::cerr << "Error sending TOPIC response to client " << fd << std::endl;
         }
-		channel->broadcastMessage(client->getNickname(), "TOPIC", " topic of a chennel " + channel->getName() + channel->getTopic());
+		//channel->broadcastMessage(client->getNickname(), "TOPIC", " topic of a chennel " + channel->getName() + channel->getTopic());
 	}
 	return 0;
 }
