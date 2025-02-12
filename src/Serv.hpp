@@ -65,5 +65,6 @@ class Serv
         int cmdTOPIC(int fd, std::vector<std::string> line);
         Client* getClientByFd(int fd);
         Client* getClientByNickname(const std::string& nickname);
+        void sendError(int fd, const std::string& message, int errorCode);
 
 };

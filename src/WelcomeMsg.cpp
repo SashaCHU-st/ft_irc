@@ -41,7 +41,7 @@ void Serv::sendWelcomeMsg(int fd)
 			clients[fd].welcomeSent = true;
 			clients[fd].allSet = true;
 			std::cout << "finished printing welcome message" << std::endl;
-			}
 		}
 	}
 }
+

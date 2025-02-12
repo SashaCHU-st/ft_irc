@@ -44,6 +44,7 @@ class Client {
 		int 		getFd () const;
 		std::string getHostName();
 		std::string getServerName();
+		std::vector<std::shared_ptr<Channel>> getChannels();
 		// int 		getFd();
 		bool allSet = false;
 		bool welcomeSent = false;
@@ -61,7 +62,8 @@ class Client {
 
 		//Channel Handler for Client
 		void joinChannel(std::shared_ptr<Channel> channel);
-		void leaveChannel(std::shared_ptr<Channel> channel);
+		//void leaveChannel(std::shared_ptr<Channel> channel);
+		void leaveChannel(const std::string& channelName);
 		//bool isInChannel(Channel *channel)const;
 		const std::vector<std::shared_ptr<Channel>>& getJoinedChannels()const;
 };
