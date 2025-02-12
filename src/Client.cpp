@@ -40,6 +40,10 @@ std::string Client::getServerName()
 	return _servername;
 }
 
+std::vector<std::shared_ptr<Channel>> Client::getChannels() {
+    return _joinedChannels;
+}
+
 void Client::setHostName(std::string hostname){
 	_hostname = hostname;
 }
@@ -84,11 +88,25 @@ void Client::joinChannel(std::shared_ptr<Channel> channel) {
     }
 }
 
-void Client::leaveChannel(std::shared_ptr<Channel> channel) {
-    auto it = std::find(_joinedChannels.begin(), _joinedChannels.end(), channel);
+// void Client::leaveChannel(std::shared_ptr<Channel> channel) {
+//     auto it = std::find(_joinedChannels.begin(), _joinedChannels.end(), channel);
+//     if (it != _joinedChannels.end()) {
+//         _joinedChannels.erase(it);
+//         std::cout << "You leaved the channel: " << channel->getName() << std::endl;
+//     } else {
+//         std::cout << "Channel not found in client's joined channels.\n";
+//     }
+// }
+
+void Client::leaveChannel(const std::string& channelName) {
+    auto it = std::find_if(_joinedChannels.begin(), _joinedChannels.end(),
+        [&channelName](const std::shared_ptr<Channel>& ch) {
+            return ch->getName() == channelName;
+        });
+
     if (it != _joinedChannels.end()) {
+        std::cout << "You left the channel: " << (*it)->getName() << std::endl;
         _joinedChannels.erase(it);
-        std::cout << "You leaved the channel: " << channel->getName() << std::endl;
     } else {
         std::cout << "Channel not found in client's joined channels.\n";
     }
