@@ -74,7 +74,6 @@ bool Channel::isUserInChannel(Client* client) const {
 	return std::find(_users.begin(), _users.end(), client) != _users.end();
 }
 
-// Operator Management
 void Channel::addOperator(Client* client) {
 	if (std::find(_operators.begin(), _operators.end(), client) == _operators.end()) {
 		_operators.push_back(client);
@@ -90,7 +89,32 @@ bool Channel::isOperator(Client* client) const {
 }
 
 // Broadcast Messages
-void Channel::broadcastMessage(const std::string& sender, const std::string& message) {
+// void Channel::broadcastMessage(const std::string& sender, const std::string& message) {
+// 	// for (size_t i = 0; i < _users.size(); ++i) {
+// 	// 	std::cout << "Message to " << _users[i]->getNickname() << ": [" << sender << "] " << message << std::endl;
+// 	// }
+// 	std::cout << "Broadcasting message to " << _users.size() << " users." << std::endl;
+// 	for (size_t i = 0; i < _users.size(); ++i) {
+//     	std::cout << "User: " << _users[i]->getNickname() << " fd: " << _users[i]->getFd()<< std::endl;
+// 	}
+// 	for (size_t i = 0; i < _users.size(); ++i) {
+//         // Get the file descriptor of the user
+//         int user_fd = _users[i]->getFd();
+// 		std::cout<<"Print out user_fd "<< user_fd<< std::endl;
+//         // Format the message for the user
+//         //std::string formattedMessage = "[" + sender + "] " + message + "\r\n";
+// 		std::string formattedMessage = ":" + sender + " PRIVMSG " + _name + " :" + message + "\r\n";
+// 		std::cout << "Sending message to fd " << user_fd << ": " << formattedMessage;
+//         // Send the message to the user's file descriptor
+//         if (send(user_fd, formattedMessage.c_str(), formattedMessage.size(), 0) == -1) {
+//             std::cerr << "Failed to send message to user: " << _users[i]->getNickname() << std::endl;
+//         } else {
+//             std::cout << "Message sent to " << _users[i]->getNickname() << ": [" << sender << "] " << message << std::endl;
+//         }
+//     }
+// }
+
+void Channel::broadcastMessage(const std::string& sender, const std::string& command, const std::string& message) {
 	// for (size_t i = 0; i < _users.size(); ++i) {
 	// 	std::cout << "Message to " << _users[i]->getNickname() << ": [" << sender << "] " << message << std::endl;
 	// }
@@ -104,7 +128,7 @@ void Channel::broadcastMessage(const std::string& sender, const std::string& mes
 		std::cout<<"Print out user_fd "<< user_fd<< std::endl;
         // Format the message for the user
         //std::string formattedMessage = "[" + sender + "] " + message + "\r\n";
-		std::string formattedMessage = ":" + sender + " PRIVMSG " + _name + " :" + message + "\r\n";
+		std::string formattedMessage = ":" + sender + " " + command + " " + _name + " :" + message + "\r\n";
 		std::cout << "Sending message to fd " << user_fd << ": " << formattedMessage;
         // Send the message to the user's file descriptor
         if (send(user_fd, formattedMessage.c_str(), formattedMessage.size(), 0) == -1) {
@@ -114,7 +138,6 @@ void Channel::broadcastMessage(const std::string& sender, const std::string& mes
         }
     }
 }
-
 void Channel::setPassword(const std::string& password)
 {
 	_password = password;

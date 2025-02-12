@@ -77,3 +77,11 @@ std::shared_ptr<Channel> Serv::createChannel(const std::string& name)
     std::cout << "Channel " << name << " created.\n";
     return newChannel;
 }
+
+void Serv::sendError(int fd, const std::string& message, int errorCode) {
+    std::string errorResponse = ":" " " + std::to_string(errorCode) + " " + message + "\r\n";
+    ssize_t bytesSent = send(fd, errorResponse.c_str(), errorResponse.size(), 0);
+    if (bytesSent == -1) {
+        std::cerr << "Error sending error response to client " << fd << std::endl;
+    }
+}
