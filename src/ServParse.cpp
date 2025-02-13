@@ -31,7 +31,8 @@ int Serv::parse_command(int fd, const std::string& line) {
 	if (cmd == "QUIT")
 	{
 		std::cout << "Thank you for using irSEE" << std::endl;
-		exit(0); //close fds and exit function
+		close (fd);
+		//exit(0); //close fds and exit function
 	}
 	if (tokens.empty())
 	{
