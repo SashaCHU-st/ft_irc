@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 14:10:11 by alli              #+#    #+#             */
-/*   Updated: 2025/02/13 11:05:43 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/13 12:30:07 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,32 @@ bool Serv::message(int client_fd, std::vector<std::string> tokens)
 		}
 		std::cout << "message sent" << std::endl;
 		return true;
+	}
+	auto chanToFind = _channels.find(tokens[0]);
+	if (chanToFind == _channels.end())
+	{
+		std::cout << "no channel found" << std::endl;
+	}
+	else
+	{
+		std::vector userList = chanToFind->second->getUsers();
+		for (size_t i = 0; i < userList.size(); i++)
+		{
+			std::cout << "User list "<< std::endl;
+			int tmpFd = userList[i]->getFd();
+			for(unsigned long i = 1; i < tokens.size(); i++)
+			{
+				message += tokens[i] + " "; 
+			}
+			std::string msg = ":" + clients[client_fd].getNickname() + "!" + clients[client_fd].getUsername() + "@" + clients[client_fd].getServerName()
+				+ " PRIVMSG " + clients[tmpFd].getNickname() + " " + message + "\r\n"; 
+			if (send(receiver_fd, msg.c_str(), msg.size(), 0) == -1)
+			{
+				std::cerr << "message failed to send" << std::endl;
+				return false;
+			}
+		}
+		
 	}
 	return false;
 }
