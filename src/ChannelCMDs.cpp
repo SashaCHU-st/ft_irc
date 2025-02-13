@@ -29,7 +29,8 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 {
 	if (line.empty())
 	{
-		std::cout<<"No parameter after JOIN"<< std::endl;// ERR_NEEDMOREPARAMS (461)
+		std::cout<<"No parameter after JOIN"<< std::endl;
+		sendError(fd, "ERR_NEEDMOREPARAMS" , 461);
 		return 1;
 	}
 	if (line.size() > 2)
@@ -64,19 +65,28 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 	}
 	Client* client = getClientByFd(fd);
 	if (!client) {
-        std::cout << "Client not found for fd: " << fd << std::endl;
+        std::cerr << "Client not found for fd: " << fd << std::endl;
+		sendError(fd, "ERR_NOSUCHCLIENT", 4);
         return 1;
     }
 	if (channels.size() != keys.size() && keys.size() != 1) {
-        std::cout << "Number of keys doesn't match the number of channels." << std::endl;
+        std::cerr << "Number of keys doesn't match the number of channels." << std::endl;
+		sendError(fd, "ERR_BADCHANNELKEY: Number of keys doesn't match the number of channels",  475);
         return 1;
     }
 	for (size_t i = 0; i < channels.size(); i++)
 	{
+		int count_joined = 0;
+		if (count_joined > 5)
+		{
+			sendError(fd, "ERR_TOOMANYCHANNELS", 405);
+			return 1;
+		}
 		const std::string& chan = channels[i];
 		if (chan.empty() || chan[0] != '#' || checkChanName(chan) == 1)
 		{
 			std::cout<< "Invalid channel name: "<< chan<< ": it should start with #"<<std::endl;
+			sendError(fd, "ERR_NOSUCHCHANNEL", 403);
 			continue ;
 		}
 		auto findChan = _channels.find(chan);
@@ -86,54 +96,74 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 			newChannel = createChannel(chan);
 			std::string defaultTopic = "";
 			newChannel->setTopic(defaultTopic, nullptr);
-			if (keys.size() > 1)
+			newChannel->addUser(client);
+			client->joinChannel(newChannel);
+			newChannel->broadcastMessage(client->getNickname(), "JOIN", " has joined the channel " + newChannel->getName());
+			std::string topic = newChannel->getTopic();
+			if (!topic.empty())
 			{
-				newChannel->setPassword(keys[i]);
-				std::cout << "Password set for channel " << chan << ": " << keys[i] << std::endl;
+				std::string topicMessage = "TOPIC " + newChannel->getName() + " :" + topic + "\r\n";
+				newChannel->broadcastMessage(client->getNickname(), "TOPIC", topicMessage);
+
 			}
-			if (keys.size() == 1)
-			{
-				newChannel->setPassword(keys[0]);
-				std::cout << "Password set for channel " << chan << ": " << keys[0] << std::endl;
-			}
+			count_joined++;
+			// if (keys.size() > 1)
+			// {
+			// 	newChannel->setPassword(keys[i]);
+			// 	std::cout << "Password set for channel " << chan << ": " << keys[i] << std::endl;
+			// }
+			// if (keys.size() == 1)
+			// {
+			// 	newChannel->setPassword(keys[0]);
+			// 	std::cout << "Password set for channel " << chan << ": " << keys[0] << std::endl;
+			// }
 		}
 		else
 		{
 			std::cout<< "Channel: "<< chan <<" already exists." << std::endl;
 			newChannel = findChan->second;
 			std::cout<< "Invite only mode : " << newChannel->isInviteOnly()<< std::endl;
+			std::cout<< "Pasword : " << newChannel->getPassword()<< std::endl;
 			if (!newChannel->getPassword().empty())
 			{
 				if (i < keys.size() && !keys[i].empty() && !newChannel->checkPassword(keys[i]))
 				{
-					std::cout << "Incorrect password for channel: " << chan << std::endl;
-            		continue;
+					std::cerr << "Incorrect password for channel: " << chan << std::endl;
+					sendError(fd, "ERR_BADCHANNELKEY  " + chan + " :Incorrect password", 475);
+            		continue ;
 				}
 			}
 			if (newChannel->isUserInChannel(client)) {
 				std::cout << "User " << client<< " is already in the channel: "<< newChannel->getName() << std::endl;
+				sendError(fd, "ERR_USER_ALREADY_IN_CHANNEL " + client->getNickname() + " " + newChannel->getName() + " :You are already in the channel", 433);
 				continue ;
 			}
 			if (newChannel->getUserLimit() == newChannel->getUserCount())
 			{
 				std::cout<< "User "<< client->getNickname() << " cannot join the channel as the ammount of users are limited."<< std::endl;
+				sendError(fd, "ERR_CHANNELISFULL" + client->getNickname() + " " + newChannel->getName() + " :Cannot join channel (+l)", 471);
 				continue ;
 			}
 			if (newChannel->isInviteOnly())
 			{
 				std::cout<< "User "<< client->getNickname()<< " tries to join the channel and wait for INVITE." << std::endl;
+				sendError(fd, "ERR_INVITEONLYCHAN" + client->getNickname() + " " + newChannel->getName() + " :Cannot join channel (+i)", 473);
 				continue ;
 			}
-		}
-		newChannel->addUser(client);
-		client->joinChannel(newChannel);
-		newChannel->broadcastMessage(client->getNickname(), "JOIN", " has joined the channel " + newChannel->getName());
-		std::string topic = newChannel->getTopic();
-		if (!topic.empty())
-		{
-			std::string topicMessage = "TOPIC " + newChannel->getName() + " :" + topic + "\r\n";
-			newChannel->broadcastMessage(client->getNickname(), "TOPIC", topicMessage);
+			else
+			{
+				newChannel->addUser(client);
+				client->joinChannel(newChannel);
+				newChannel->broadcastMessage(client->getNickname(), "JOIN", " has joined the channel " + newChannel->getName());
+				std::string topic = newChannel->getTopic();
+				if (!topic.empty())
+				{
+					std::string topicMessage = "TOPIC " + newChannel->getName() + " :" + topic + "\r\n";
+					newChannel->broadcastMessage(client->getNickname(), "TOPIC", topicMessage);
 
+				}
+				count_joined++;
+			}
 		}
         // Send the topic to the client
         // ssize_t bytesSent = send(fd, topicMessage.c_str(), topicMessage.size(), 0);
@@ -495,7 +525,7 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 			}
 			std::cout << "entered mode function" << std::endl;
 			if (checkValidMode(mode[i]) == 0) {
-            	std::cout << "Invalid mode character." << std::endl;
+            	std::cerr << "Invalid mode character." << std::endl;
             	return 1;
         	}
 			if (mode[i] == 'l' && (param.empty() || checkDigit(param) == 1))
@@ -528,7 +558,7 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 				}
 			}
 			else{
-				std::cout << "Client is not an operator." << std::endl;
+				std::cerr << "Client is not an operator." << std::endl;
     			return 1;
 			}	
 		}

@@ -183,7 +183,7 @@ void Serv::launch()
                             continue; // Non-fatal, just wait for the next poll event
                         } else {
                             // Recv error
-                            perror("Recv failed");
+                            //perror("Recv failed");
                             close(fds[i].fd);
                             fds.erase(fds.begin() + i);
                             --i; // Adjust index
