@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: epolkhov <epolkhov@student.42.fr>          #+#  +:+       +#+        */
+/*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025-01-08 16:13:44 by epolkhov          #+#    #+#             */
-/*   Updated: 2025-01-08 16:13:44 by epolkhov         ###   ########.fr       */
+/*   Created: 2025/01/08 16:13:44 by epolkhov          #+#    #+#             */
+/*   Updated: 2025/02/14 16:55:33 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,10 +132,8 @@ void Channel::broadcastMessage(const std::string& sender, const std::string& com
 		std::string formattedMessage;
 		if (isOperator(_users[i]))
 		{
-			
 			formattedMessage = ":@" + sender + " " + command + " " + _name + " :" + message + "\r\n";
 		}
-			
 		else{
 			std::cout<< "Not operator"<< std::endl;
 			formattedMessage = ":" + sender + " " + command + " " + _name + " :" + message + "\r\n";

@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:16:25 by alli              #+#    #+#             */
-/*   Updated: 2025/02/14 14:51:22 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/14 16:41:33 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void Serv::sendWelcomeMsg(int fd)
 
 			std::string nick2 = ":" + clients[fd].getServerName() + " 003 " + clients[fd].getNickname() + " :This server was created today\r\n ";
 			send(fd, nick2.c_str(), nick2.size(), 0);
-			std::string nick3 = ":" + clients[fd].getServerName() + " 004 " + clients[fd].getNickname() + " :localhost 1.0 iow\r\n " + clients[fd].getNickname() + "@localhost" + "\r\n";
+			std::string nick3 = clients[fd].getServerName() + " 004 " + clients[fd].getNickname() + " :localhost 1.0 iow " + clients[fd].getNickname() + "@localhost" + "\r\n";
 			send(fd, nick3.c_str(), nick3.size(), 0);
 			
 				

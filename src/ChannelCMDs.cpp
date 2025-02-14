@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ChannelCMDs.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: epolkhov <epolkhov@student.42.fr>          #+#  +:+       +#+        */
+/*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025-01-10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025-01-10 12:59:50 by epolkhov         ###   ########.fr       */
+/*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
+/*   Updated: 2025/02/14 16:46:16 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,8 +158,9 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 			{
 				// std::string topicMessage = "TOPIC " + newChannel->getName() + " :" + topic + "\r\n";
 				// newChannel->broadcastMessage(client->getNickname(), "TOPIC", topicMessage);
-				std::string topicMessage = ": 332 " + client->getNickname() + " " + newChannel->getName() + " :" + topic + "\r\n";
-                send(fd, topicMessage.c_str(), topicMessage.size(), 0);
+				std::string topicMessage = ":ircserver 332 " + client->getNickname() + " " + newChannel->getName() + " :Welcome to " + topic + "\r\n";
+                std::cout << topicMessage << std::endl;
+				send(fd, topicMessage.c_str(), topicMessage.size(), 0);
 			}
 			count_joined++;
 			
