@@ -103,7 +103,7 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 			newChannel->setTopic(defaultTopic, nullptr);
 			newChannel->addUser(client);
 			client->joinChannel(newChannel);
-			newChannel->broadcastMessage(client->getNickname(), "JOIN", " has joined the channel " + newChannel->getName());
+			newChannel->broadcastMessage(client->getNickname(), "JOIN", " has joined the channel ");
 			count_joined++;
 		}
 		else
@@ -150,14 +150,16 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 				continue ;
 			}		
 			newChannel->addUser(client);
+			std::cout << "User nickname "<< client->getNickname();
 			client->joinChannel(newChannel);
-			newChannel->broadcastMessage(client->getNickname(), "JOIN", " has joined the channel " + newChannel->getName());
+			newChannel->broadcastMessage(client->getNickname(), "JOIN", " has joined the channel ");
 			std::string topic = newChannel->getTopic();
 			if (!topic.empty())
 			{
-				std::string topicMessage = "TOPIC " + newChannel->getName() + " :" + topic + "\r\n";
-				newChannel->broadcastMessage(client->getNickname(), "TOPIC", topicMessage);
-
+				// std::string topicMessage = "TOPIC " + newChannel->getName() + " :" + topic + "\r\n";
+				// newChannel->broadcastMessage(client->getNickname(), "TOPIC", topicMessage);
+				std::string topicMessage = ": 332 " + client->getNickname() + " " + newChannel->getName() + " :" + topic + "\r\n";
+                send(fd, topicMessage.c_str(), topicMessage.size(), 0);
 			}
 			count_joined++;
 			
