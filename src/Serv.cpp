@@ -133,65 +133,63 @@ void Serv::accepter() {
     // }
 
 
+
 void Serv::launch()
 {
-    // main server socket ... added to the iist of monitored fd
+    //     // main server socket ... added to the iist of monitored fd
     pollfd server_poll;
     server_poll.fd = sock->get_sock(); 
-    server_poll.events = POLLIN;/// monitore for incoom data
+    server_poll.events = POLLIN;  /// monitore for incoom data
     fds.push_back(server_poll);
-	char buffer[1024] = {0};
-     while (true)
+
+    while (true)
     {
         // wait fr vents on the monitored sockets
-        int poll_res = poll(fds.data(), fds.size(), -1); // Wait indefinitely for events
-
+        int poll_res = poll(fds.data(), fds.size(), -1);// Wait indefinitely for events
         if (poll_res < 0)
         {
             perror("Poll failed");
             break;///if error exit the loop
         }
+
         for (size_t i = 0; i < fds.size(); ++i)
         {
-            if (fds[i].revents & POLLIN)   // If there is data to read in curr fd
+            if (fds[i].revents & POLLIN)  // If there is data to read in curr fd
             {
                 //handle the server socket(new conn request)
-                if (fds[i].fd == sock->get_sock())
+                if (fds[i].fd == sock->get_sock())  
                 {
-                    accepter();// accept new client conn
+                    accepter();
                     // if all good
                     if (_new_socket >= 0)
                     {
-                        //add new client socket to the poll list
-                        pollfd client_poll;
+                         //add new client socket to the poll list
+                         pollfd client_poll;
                         client_poll.fd = _new_socket;
                         client_poll.events = POLLIN;
                         fds.push_back(client_poll);
                     }
                 }
-                else
+                else  //handle data for exist client
                 {
-                    //handle data for exist client
-                    // char buffer[1024];
-                    int bytes_read = recv(fds[i].fd, buffer, sizeof(buffer), 0);
-
-                    
+                    char buffer[1024] = {0};
+                    int bytes_read = recv(fds[i].fd, buffer, sizeof(buffer) - 1, 0);
 
                     if (bytes_read < 0)
                     {
                         // Check for EAGAIN or EWOULDBLOCK
                         if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                            // std::cout << "No data available yet for FD " << fds[i].fd << ".\n";
-                            continue; // Non-fatal, just wait for the next poll event
+                            continue;  // No data yet, try again later
                         } else {
-                            // Recv error
-                            //perror("Recv failed");
-                            close(fds[i].fd);
+                            // perror("Recv failed");
+                              close(fds[i].fd);
                             fds.erase(fds.begin() + i);
                             --i; // Adjust index
                             continue;
                         }
-                    } else if (bytes_read == 0) {
+                    }
+                    else if (bytes_read == 0)  
+                    {
                         // Connection closed by the client
                         std::cout << "Client disconnected: FD " << fds[i].fd << "\n";
                         close(fds[i].fd);
@@ -205,57 +203,37 @@ void Serv::launch()
                         }
                     }
                         --i;
-                    } 
+                        continue;
+                    }
                     else
                     {
-
                         buffer[bytes_read] = '\0';
-                        std::cout << "\033[36mReceived from FD " << fds[i].fd << ": " << buffer << "\033[0m" << std::endl;
-						std::string client_input(buffer);
-						std::stringstream ss(client_input);
-						std::string line;
+                        std::cout << "Received data from FD " << fds[i].fd << ": " << buffer << std::endl;
+                        _clientBuffers[fds[i].fd] += buffer;
 
-						while (getline(ss, line)) // waiting 
-						{
-							if (line.empty())
-								continue;
-							parse_command(fds[i].fd, line);
-						}
-						sendWelcomeMsg(fds[i].fd);
-					}
-				}
-			}
-		}
-	}
+                        size_t pos;
+                        while ((pos = _clientBuffers[fds[i].fd].find("\n")) != std::string::npos) 
+                        {
+                            std::string command = _clientBuffers[fds[i].fd].substr(0, pos);
+                            _clientBuffers[fds[i].fd].erase(0, pos + 1);
+
+                            if (!command.empty() && command.back() == '\r') {
+                                command.pop_back();
+                            }
+
+                            std::stringstream ss(command);
+                            std::string line;
+                            while (getline(ss, line)) 
+                            {
+                                if (line.empty())
+                                    continue;
+                                parse_command(fds[i].fd, line);
+                            }
+                        }
+                        sendWelcomeMsg(fds[i].fd);
+                    }
+                }
+            }
+        }
+    }
 }
-
-//  else
-//                     {
-
-//                          buffer[bytes_read] = '\0'; 
-//                         _clientBuffers[fds[i].fd] += buffer; 
-
-//                         if (_clientBuffers[fds[i].fd].back() != '\n') {
-//                             return;
-//                         }
-
-//                         size_t pos;
-//                         while ((pos = _clientBuffers[fds[i].fd].find("\n")) != std::string::npos) {
-//                             std::string command = _clientBuffers[fds[i].fd].substr(0, pos);
-
-//                             if (!command.empty() && command.back() == '\r') {
-//                                 command.pop_back();
-//                             }
-
-//                             _clientBuffers[fds[i].fd].erase(0, pos + 1); 
-
-//                             std::stringstream ss(command);
-//                             parse_command(fds[i].fd, command); 
-//                         }
-// 						sendWelcomeMsg(fds[i].fd);
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// }
