@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:16:25 by alli              #+#    #+#             */
-/*   Updated: 2025/02/14 14:51:22 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/14 15:18:50 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@ void Serv::sendWelcomeMsg(int fd)
 
 			std::string nick = ":ircserver 001 " + clients[fd].getNickname() + " :Welcome to network, " + clients[fd].getNickname() + "@localhost\r\n";
 			send(fd, nick.c_str(), nick.size(), 0);
-			std::string nick1 = ":ircserver 002 " + clients[fd].getNickname() + " :Your host is localhost, running version 1.0\r\n ";
+
+			std::string nick1 = " :" + clients[fd].getServerName() + " 002 " + clients[fd].getNickname() + " :Your host is " + clients[fd].getServerName() + ", running version 1.0\r\n";  // 🚀 FIXED: Removed extra space before \r\n
 			send(fd, nick1.c_str(), nick1.size(), 0);
 			std::string nick2 =  clients[fd].getNickname() + " This server was created today\r\n "; //":ircserver 003 " +
 			send(fd, nick2.c_str(), nick2.size(), 0);
