@@ -14,6 +14,13 @@
 
 bool Serv::addNickname(int fd, std::string name)
 {
+	// if(name.size() == 0)
+	// {
+    //     std::cerr << "NO NICK!!!" << std::endl;
+	// 	sendError(fd, "ERR_NONICKNAMEGIVEN: No nick name given",  431);
+    //     return false;
+	// }
+
 	if (clients[fd].getFd() == fd)
 	{
 		// std::string nickname = tokens[0];

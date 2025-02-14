@@ -34,11 +34,11 @@ int Serv::parse_command(int fd, const std::string& line) {
 		close (fd);
 		//exit(0); //close fds and exit function
 	}
-	if (tokens.empty())
-	{
-		std::cerr << "Please add another parameter" << std::endl;
-		return 1;
-	}
+	// if (tokens.empty())
+	// {
+	// 	std::cerr << "Please add another parameter" << std::endl;
+	// 	return 1;
+	// }
 	if (cmd == "CAP")
 	{
 		std::string cap = tokens[0] + "\r\n";
@@ -57,6 +57,12 @@ int Serv::parse_command(int fd, const std::string& line) {
 	}
 	else if (cmd == "NICK")
 	{
+		if (token.empty())
+		{
+ 			std::cerr << "No nick given" << std::endl;
+			sendError(fd, "ERR_NONICKNAMEGIVEN : No nick given",  431);
+        	return 1;
+		}
 		if (tokens.size() > 1)
 		{
 			std::string error_nick = std::string("please only input 1 nickname ") + "\r\n";
@@ -69,9 +75,9 @@ int Serv::parse_command(int fd, const std::string& line) {
 		}
 		else
 		{
-			std::string ERR_NICKNAMEINUSE = std::string("No nickname or in use") + "\r\n";
-			send(fd, ERR_NICKNAMEINUSE.c_str(), ERR_NICKNAMEINUSE.size(), 0);
-			return 1;
+        std::cerr << "Nick in use" << std::endl;
+		sendError(fd, "ERR_NICKNAMEINUSE : Nick name in use",  433);
+        	return 1;
 		}
 	}
 	else if (cmd == "USER")

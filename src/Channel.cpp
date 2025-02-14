@@ -154,19 +154,20 @@ void Channel::setMode(char mode, bool enable, const std::string& param, Client* 
 			_topicRestricted = enable;
 			break;
 		case 'k':
-			if(enable)
+
+			if(enable ==  true)
 				_password = param;
 			else
 				_password = "";
 			break;
 		case 'l':
-			if (enable)
+			if (enable == true)
 				_userLimit = std::stoi(param);
 			else
 				_userLimit = 0;
 			break;
 		case 'o':
-            if (enable) {
+            if (enable == true) {
                 if (!isOperator(client))
 				{
                 	addOperator(client);
