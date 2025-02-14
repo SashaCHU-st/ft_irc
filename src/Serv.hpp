@@ -28,6 +28,8 @@ class Serv
         static std::map<std::string, std::shared_ptr<Channel>> _channels;
 
         std::map<int, Client> clients;
+        std::map<int, std::string> _clientBuffers;
+
          
     public:
         //construc
@@ -66,5 +68,6 @@ class Serv
         Client* getClientByFd(int fd);
         Client* getClientByNickname(const std::string& nickname);
         void sendError(int fd, const std::string& message, int errorCode);
+        
 
 };

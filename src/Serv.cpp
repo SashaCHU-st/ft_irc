@@ -140,7 +140,7 @@ void Serv::launch()
     server_poll.fd = sock->get_sock(); 
     server_poll.events = POLLIN;/// monitore for incoom data
     fds.push_back(server_poll);
-	char buffer[1024];
+	char buffer[1024] = {0};
      while (true)
     {
         // wait fr vents on the monitored sockets
@@ -175,6 +175,8 @@ void Serv::launch()
                     // char buffer[1024];
                     int bytes_read = recv(fds[i].fd, buffer, sizeof(buffer), 0);
 
+                    
+
                     if (bytes_read < 0)
                     {
                         // Check for EAGAIN or EWOULDBLOCK
@@ -208,12 +210,7 @@ void Serv::launch()
                     {
 
                         buffer[bytes_read] = '\0';
-// <<<<<<< parseClientInput
-// =======
-//                         // std::cout<<"recv: "<< buffer <<std::endl;
-// >>>>>>> merge
                         std::cout << "\033[36mReceived from FD " << fds[i].fd << ": " << buffer << "\033[0m" << std::endl;
-						
 						std::string client_input(buffer);
 						std::stringstream ss(client_input);
 						std::string line;
@@ -222,10 +219,7 @@ void Serv::launch()
 						{
 							if (line.empty())
 								continue;
-							else
-							{
-								parse_command(fds[i].fd, line);
-							}
+							parse_command(fds[i].fd, line);
 						}
 						sendWelcomeMsg(fds[i].fd);
 					}
@@ -234,3 +228,34 @@ void Serv::launch()
 		}
 	}
 }
+
+//  else
+//                     {
+
+//                          buffer[bytes_read] = '\0'; 
+//                         _clientBuffers[fds[i].fd] += buffer; 
+
+//                         if (_clientBuffers[fds[i].fd].back() != '\n') {
+//                             return;
+//                         }
+
+//                         size_t pos;
+//                         while ((pos = _clientBuffers[fds[i].fd].find("\n")) != std::string::npos) {
+//                             std::string command = _clientBuffers[fds[i].fd].substr(0, pos);
+
+//                             if (!command.empty() && command.back() == '\r') {
+//                                 command.pop_back();
+//                             }
+
+//                             _clientBuffers[fds[i].fd].erase(0, pos + 1); 
+
+//                             std::stringstream ss(command);
+//                             parse_command(fds[i].fd, command); 
+//                         }
+// 						sendWelcomeMsg(fds[i].fd);
+// 					}
+// 				}
+// 			}
+// 		}
+// 	}
+// }

@@ -180,8 +180,11 @@ int Serv::cmdPART(int fd, std::vector<std::string> line)
 {
 	if (line.empty())
 	{
-		std::cout<<"Not enough parameters for PART command"<< std::endl; // ERR_NEEDMOREARAMS(461)
+		std::cerr << "Need more params" << std::endl;
+		sendError(fd, "ERR_NEEDMOREARAMS: Need more params",  461);
 		return 1;
+		// std::cout<<"Not enough parameters for PART command"<< std::endl; // ERR_NEEDMOREARAMS(461)
+		// return 1;
 	}
 	std::string chanCheck = line[0];
 	std::vector<std::string> channels;
@@ -204,7 +207,8 @@ int Serv::cmdPART(int fd, std::vector<std::string> line)
 	}
 	else
 	{
-		std::cout<< "No channels found: incorrect input for PART."<< std::endl;
+		std::cerr << "No such channel" << std::endl;
+		sendError(fd, "ERR_NOSUCHCHANNEL  : No such channel",  403);
 		return 1;
 	}
 	std::string reason;
@@ -223,9 +227,12 @@ int Serv::cmdPART(int fd, std::vector<std::string> line)
 		auto it = _channels.find(channelName);
 		if (it == _channels.end())
 		{
-			std::cout<< "Channel "<< channelName<< " doesn't exist."<< std::endl;//ERR_NOSUCHCHANNEL(403)
-			//return 1;
-			continue ;
+			// std::cout<< "Channel "<< channelName<< " doesn't exist."<< std::endl;//ERR_NOSUCHCHANNEL(403)
+			// //return 1;
+			// continue ;
+			std::cerr << "No such channel" << std::endl;
+			sendError(fd, "ERR_NOSUCHCHANNEL  : No such channel",  403);
+			continue;
 		}
 		std::shared_ptr<Channel> channel = it->second;
 
@@ -258,8 +265,16 @@ int Serv::cmdPART(int fd, std::vector<std::string> line)
 		}
 		else
 		{
-			std::cout<< "User "<< client->getNickname() <<" is not in channel "<< channelName<< std::endl;//ERR_NOTONCHANNEL(442)
-			continue ;
+// <<<<<<< channel
+// 			std::cout<< "User "<< client->getNickname() <<" is not in channel "<< channelName<< std::endl;//ERR_NOTONCHANNEL(442)
+// 			continue ;
+// =======
+			// std::cout<< "User "<< client->getNickname() <<" is not in channel "<< channelName<< std::endl;//ERR_NOTONCHANNEL(442)
+			// //return 1;
+			// continue ;
+			std::cerr << "No channel" << std::endl;
+			sendError(fd, "ERR_NOTONCHANNEL: No channel",  442);
+        	continue;
 		}
 		std::string message = channelName;
 		if (!reason.empty()) {
@@ -277,7 +292,8 @@ int Serv::cmdINVITE(int fd, std::vector<std::string> line)
 {
 	if (line.empty())
 	{
-		std::cout<<"Not enough parameters for INVITE command"<< std::endl; // ERR_NEEDMOREARAMS(461)
+		std::cerr << "Need more params" << std::endl;
+		sendError(fd, "ERR_NEEDMOREPARAMS : need more params",  461);
 		return 1;
 	}
 	if (line.size() != 2)
@@ -300,19 +316,28 @@ int Serv::cmdINVITE(int fd, std::vector<std::string> line)
 	auto chanToFind = _channels.find(chanToAdd);
 	if (chanToFind == _channels.end())
 	{
-		std::cout<< "Channel "<< chanToAdd<< " doesn't exist."<< std::endl;//ERR_NOSUCHCHANNEL(403)
-		return 1;	
+		std::cerr << "Nno suuch channel" << std::endl;
+		sendError(fd, "ERR_NOSUCHCHANNEL : No such  channel",  403);
+		return 1;
+		// std::cout<< "Channel "<< chanToAdd<< " doesn't exist."<< std::endl;//ERR_NOSUCHCHANNEL(403)
+		// return 1;	
 	}
 	std::shared_ptr<Channel> channel = chanToFind->second;
 	if (!channel->isUserInChannel(client))
 	{
-		std::cout<< "Client "<< client->getNickname()<< " not on channel."<<std::endl;// ERR_NOTONCHANNEL(403)
+		std::cerr << "Nno suuch channel" << std::endl;
+		sendError(fd, "ERR_NOSUCHCHANNEL : No such  channel",  403);
 		return 1;
+		// std::cout<< "Client "<< client->getNickname()<< " not on channel."<<std::endl;// ERR_NOTONCHANNEL(403)
+		// return 1;
 	}
 	if (!channel->isOperator(client))
 	{
-		std::cout<<"Client is not an operator."<<std::endl;// ERR_CHANOPRIVSNEEDED(482)
+		std::cerr << "Client is not an operator." << std::endl;
+		sendError(fd, "ERR_CHANOPRIVSNEEDED : Client is not an operator.",  482);
 		return 1;
+		// std::cout<<"Client is not an operator."<<std::endl;// ERR_CHANOPRIVSNEEDED(482)
+		// return 1;
 	}
 	Client* invitee = getClientByNickname(newUser);
 	if (!invitee)
@@ -321,8 +346,11 @@ int Serv::cmdINVITE(int fd, std::vector<std::string> line)
 		return 1;
 	}
 	if (channel->isUserInChannel(invitee)) {
-        std::cout << "User " << newUser << " is already in channel " << chanToAdd << "." << std::endl;//ERR_USERONCHANNEL(443)
-        return 1;
+		std::cerr << "channel already in use." << std::endl;
+		sendError(fd, "ERR_USERONCHANNEL : channel already in use",  443);
+		return 1;
+        // std::cout << "User " << newUser << " is already in channel " << chanToAdd << "." << std::endl;//ERR_USERONCHANNEL(443)
+        // return 1;
     }
 	channel->addUser(invitee);
 	invitee->joinChannel(channel);
@@ -387,8 +415,11 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 	auto findChan = _channels.find(chan);
 	if (findChan == _channels.end())
 	{
-		std::cout<< "Channel "<< chan<< " doesn't exist."<< std::endl;//ERR_NOSUCHCHANNEL(403)
-		return 1;	
+		std::cerr << "Nno suuch channel" << std::endl;
+		sendError(fd, "ERR_NOSUCHCHANNEL : No such  channel",  403);
+		return 1;
+		// std::cout<< "Channel "<< chan<< " doesn't exist."<< std::endl;//ERR_NOSUCHCHANNEL(403)
+		// return 1;	
 	}
 	std::shared_ptr<Channel> channel = findChan->second;
 	Client* client = getClientByFd(fd);
@@ -467,8 +498,11 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
 	auto findChan = _channels.find(checkChan);
 	if (findChan == _channels.end())
 	{
-		std::cout<< "Channel "<< checkChan<< " doesn't exist."<< std::endl;//ERR_NOSUCHCHANNEL(403)
-		return 1;	
+		std::cerr << "Nno suuch channel" << std::endl;
+		sendError(fd, "ERR_NOSUCHCHANNEL : No such  channel",  403);
+		return 1;
+		// std::cout<< "Channel "<< checkChan<< " doesn't exist."<< std::endl;//ERR_NOSUCHCHANNEL(403)
+		// return 1;	
 	}
 	std::shared_ptr<Channel> channel = findChan->second;
 	Client* client = getClientByFd(fd);
@@ -609,22 +643,31 @@ int Serv::cmdTOPIC(int fd, std::vector<std::string> line)
 	auto findChan = _channels.find(checkChan);
 	if (findChan == _channels.end())
 	{
-		std::cerr<< "Channel "<< checkChan<< " doesn't exist."<< std::endl;
-		sendError(fd, "Channel " + checkChan + " doesn't exist.", 403);//ERR_NOSUCHCHANNEL(403)
-		return 1;	
+		// std::cerr<< "Channel "<< checkChan<< " doesn't exist."<< std::endl;
+		// sendError(fd, "Channel " + checkChan + " doesn't exist.", 403);//ERR_NOSUCHCHANNEL(403)
+		// return 1;	
+		std::cerr << "Nno suuch channel" << std::endl;
+		sendError(fd, "ERR_NOSUCHCHANNEL : No such  channel",  403);
+		return 1;
 	}
 	std::shared_ptr<Channel> channel = findChan->second;
 	Client* client = getClientByFd(fd);
 	std::vector<std::string> reason;
 	if (!client) {
-        std::cerr << "Client not found for fd: " << fd << std::endl; // ERR_NOTONCHANNEL (442)
-		sendError(fd, "Client not found.", 442);
-        return 1;
+		std::cerr << "Client not found." << std::endl;
+		sendError(fd, "ERR_NOTONCHANNEL : Client not found.",  442);
+		return 1;
+        // std::cerr << "Client not found for fd: " << fd << std::endl; // ERR_NOTONCHANNEL (442)
+		// sendError(fd, "Client not found.", 442);
+        // return 1;
     }
 	if (!channel->isUserInChannel(client)) {
-        std::cerr << "User is not in channel " << channel->getName() << std::endl;
-		sendError(fd, "User is not in channel " + channel->getName(), 442); // ERR_NOTONCHANNEL (442)
-        return 1;
+        // std::cerr << "User is not in channel " << channel->getName() << std::endl;
+		// sendError(fd, "User is not in channel " + channel->getName(), 442); // ERR_NOTONCHANNEL (442)
+        // return 1;
+		std::cerr << "Client not found." << std::endl;
+		sendError(fd, "ERR_NOTONCHANNEL : Client not found.",  442);
+		return 1;
     }
 	if (line.size() > 1) {
         std::string topic = "";

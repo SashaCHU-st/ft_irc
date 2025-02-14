@@ -154,7 +154,8 @@ void Channel::setMode(char mode, bool enable, const std::string& param, Client* 
 			_topicRestricted = enable;
 			break;
 		case 'k':
-			if(enable == true)
+
+			if(enable ==  true)
 				_password = param;
 			else
 				_password = "";
