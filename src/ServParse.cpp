@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/02/13 11:11:39 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/14 13:43:17 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ int Serv::parse_command(int fd, const std::string& line) {
     	}
 		else if (addNickname(fd, tokens[0]) == true)
 		{
-			// std::cout << "nick added" << std::endl;
 			return 0;
 		}
 		else
@@ -84,8 +83,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 	{
 		if (addUser(fd, tokens) == true)
 		{
-			std::string user = "Username " + tokens[0] + " added \r\n";
-			send(fd, user.c_str(), user.size(), 0);
+			return 0;
 		}
 		else
 		{
