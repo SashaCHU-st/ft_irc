@@ -208,10 +208,6 @@ void Serv::launch()
                     {
 
                         buffer[bytes_read] = '\0';
-// <<<<<<< parseClientInput
-// =======
-//                         // std::cout<<"recv: "<< buffer <<std::endl;
-// >>>>>>> merge
                         std::cout << "\033[36mReceived from FD " << fds[i].fd << ": " << buffer << "\033[0m" << std::endl;
 						
 						std::string client_input(buffer);

@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:16:25 by alli              #+#    #+#             */
-/*   Updated: 2025/01/14 14:53:06 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/14 14:51:22 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,18 +24,18 @@ void Serv::sendWelcomeMsg(int fd)
 	if (!clients[fd].getUsername().empty() && !clients[fd].getNickname().empty())
 	{
 		
-		
-		if(clients[fd].welcomeSent == false  )
+		if(clients[fd].welcomeSent == false)
 		{
-			std::cout << "8888" << std::endl;
-			std::string nick = ":ircserver 001 " + clients[fd].getNickname() + " :Welcome to network, " + clients[fd].getNickname() + "@localhost" + "\r\n";
+
+			std::string nick = ":ircserver 001 " + clients[fd].getNickname() + " :Welcome to network, " + clients[fd].getNickname() + "@localhost\r\n";
 			send(fd, nick.c_str(), nick.size(), 0);
 			std::string nick1 = ":ircserver 002 " + clients[fd].getNickname() + " :Your host is localhost, running version 1.0\r\n ";
 			send(fd, nick1.c_str(), nick1.size(), 0);
-			std::string nick2 = ":ircserver 003 " + clients[fd].getNickname() + " :This server was created today\r\n ";
+			std::string nick2 =  clients[fd].getNickname() + " This server was created today\r\n "; //":ircserver 003 " +
 			send(fd, nick2.c_str(), nick2.size(), 0);
-			std::string nick3 = ":ircserver 004 " + clients[fd].getNickname() + " localhost 1.0 iow\r\n " + clients[fd].getNickname() + "@localhost" + "\r\n";
+			std::string nick3 =  clients[fd].getNickname() + " localhost 1.0 iow " + clients[fd].getNickname() + "@localhost" + "\r\n"; //":ircserver 004 " +
 			send(fd, nick3.c_str(), nick3.size(), 0);
+			
 				
 			//welcome message
 			clients[fd].welcomeSent = true;
