@@ -125,10 +125,21 @@ void Channel::broadcastMessage(const std::string& sender, const std::string& com
 	for (size_t i = 0; i < _users.size(); ++i) {
         // Get the file descriptor of the user
         int user_fd = _users[i]->getFd();
+		
 		std::cout<<"Print out user_fd "<< user_fd<< std::endl;
         // Format the message for the user
         //std::string formattedMessage = "[" + sender + "] " + message + "\r\n";
-		std::string formattedMessage = ":" + sender + " " + command + " " + _name + " :" + message + "\r\n";
+		std::string formattedMessage;
+		if (isOperator(_users[i]))
+		{
+			
+			formattedMessage = ":@" + sender + " " + command + " " + _name + " :" + message + "\r\n";
+		}
+			
+		else{
+			std::cout<< "Not operator"<< std::endl;
+			formattedMessage = ":" + sender + " " + command + " " + _name + " :" + message + "\r\n";
+		}
 		std::cout << "Sending message to fd " << user_fd << ": " << formattedMessage;
         // Send the message to the user's file descriptor
         if (send(user_fd, formattedMessage.c_str(), formattedMessage.size(), 0) == -1) {
@@ -154,19 +165,20 @@ void Channel::setMode(char mode, bool enable, const std::string& param, Client* 
 			_topicRestricted = enable;
 			break;
 		case 'k':
-			if(enable)
+
+			if(enable ==  true)
 				_password = param;
 			else
 				_password = "";
 			break;
 		case 'l':
-			if (enable)
+			if (enable == true)
 				_userLimit = std::stoi(param);
 			else
 				_userLimit = 0;
 			break;
 		case 'o':
-            if (enable) {
+            if (enable == true) {
                 if (!isOperator(client))
 				{
                 	addOperator(client);
