@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: epolkhov <epolkhov@student.42.fr>          #+#  +:+       +#+        */
+/*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025-01-08 16:13:44 by epolkhov          #+#    #+#             */
-/*   Updated: 2025-01-08 16:13:44 by epolkhov         ###   ########.fr       */
+/*   Created: 2025/01/08 16:13:44 by epolkhov          #+#    #+#             */
+/*   Updated: 2025/02/14 17:05:51 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ void Channel::broadcastMessage(const std::string& sender, const std::string& com
         // Format the message for the user
         //std::string formattedMessage = "[" + sender + "] " + message + "\r\n";
 		std::string formattedMessage = ":" + sender + " " + command + " " + _name + " :" + message + "\r\n";
-		std::cout << "Sending message to fd " << user_fd << ": " << formattedMessage;
+		// std::cout << "Sending message to fd " << user_fd << ": " << formattedMessage;
         // Send the message to the user's file descriptor
         if (send(user_fd, formattedMessage.c_str(), formattedMessage.size(), 0) == -1) {
             std::cerr << "Failed to send message to user: " << _users[i]->getNickname() << std::endl;
