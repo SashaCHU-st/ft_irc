@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ChannelCMDs.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: epolkhov <epolkhov@student.42.fr>          #+#  +:+       +#+        */
+/*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025-01-10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025-01-10 12:59:50 by epolkhov         ###   ########.fr       */
+/*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
+/*   Updated: 2025/02/17 15:07:04 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,36 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 			newChannel->setTopic(defaultTopic, nullptr);
 			newChannel->addUser(client);
 			client->joinChannel(newChannel);
-			newChannel->broadcastMessage(client->getNickname(), "JOIN", " has joined the channel " + newChannel->getName());
+			// newChannel->broadcastMessage(client, "JOIN", " has joined the channel ", *newChannel);
+			if (newChannel->isOperator(client) == false)
+			{
+				std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname() 
+				+ " = " + newChannel->getName() + " :"
+				+ newChannel->getUsersNick() + "\r\n";
+				newChannel->broadcastMessage(client->getNickname(), "JOIN", " has joined the channel ");
+				std::string msgJoin = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
+					+ client->getServerName()
+					+ " JOIN " + newChannel->getName() + "\r\n"; 
+				newChannel->sendToAll(msgJoin);
+				newChannel->sendToAll(msg353);
+				std::cout << "msg 353"  << msg353 << std::endl;
+			}
+			else if (newChannel->isOperator(client) == true)
+			{
+				std::string msgJoin = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
+					+ client->getServerName()
+					+ " JOIN " + newChannel->getName() + "\r\n"; 
+				std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname()
+				+ " = " + newChannel->getName() + " @" + newChannel->getOperator(client)->getNickname()
+				+ newChannel->getUsersNick() + "\r\n";
+				std::cout << "msgJoin1: " << msgJoin << std::endl;
+				newChannel->sendToAll(msgJoin);
+				newChannel->sendToAll(msg353);
+			}
+			std::string msg366 = ":" + client->getServerName() + " 366 " + client->getNickname() 
+				+ newChannel->getName() + " :End of /NAMES list.\r\n";
+			// std::cout << "msg 366"  << msg366 << std::endl;
+				newChannel->sendToAll(msg366);
 			count_joined++;
 		}
 		else
@@ -151,13 +180,45 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 			}		
 			newChannel->addUser(client);
 			client->joinChannel(newChannel);
-			newChannel->broadcastMessage(client->getNickname(), "JOIN", " has joined the channel " + newChannel->getName());
+			if (newChannel->isOperator(client) == false)
+			{
+				std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname() 
+				+ newChannel->getName() + " :"
+				+ newChannel->getUsersNick() + "\r\n";
+				// newChannel->broadcastMessage(client->getNickname(), "JOIN", msg353);
+				std::string msgJoin = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
+					+ client->getServerName()
+					+ " JOIN " + newChannel->getName() + "\r\n"; 
+				std::cout << "msgJoin2: " << msgJoin << std::endl;
+				newChannel->sendToAll(msgJoin);
+				newChannel->sendToAll(msg353);
+			}
+			else if (newChannel->isOperator(client) == true)
+			{
+				std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname()
+				+ newChannel->getName() + " @" + newChannel->getOperator(client)->getNickname()
+				+ newChannel->getUsersNick() + "\r\n";
+				// newChannel->broadcastMessage(client->getNickname(), "JOIN", " has joined the channel ");
+				std::string msgJoin = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
+					+ client->getServerName() + " JOIN " + newChannel->getName() + "\r\n"; 
+				std::cout << "msgJoin3: " << msgJoin << std::endl;
+				newChannel->sendToAll(msgJoin);
+				newChannel->sendToAll(msg353);
+			}
+			std::string msg366 = ":" + client->getServerName() + " 366 " + client->getNickname() 
+				+ newChannel->getName() + " :End of /NAMES list.\r\n";
+			newChannel->sendToAll(msg366);
+			std::cout << "msg 366"  << msg366 << std::endl;
+			newChannel->sendToAll(msg366);
+				// newChannel->broadcastMessage(client->getNickname(), "JOIN", " has joined the channel ");
 			std::string topic = newChannel->getTopic();
 			if (!topic.empty())
 			{
-				std::string topicMessage = "TOPIC " + newChannel->getName() + " :" + topic + "\r\n";
-				newChannel->broadcastMessage(client->getNickname(), "TOPIC", topicMessage);
-
+				// std::string topicMessage = "TOPIC " + newChannel->getName() + " :" + topic + "\r\n";
+				// newChannel->broadcastMessage(client->getNickname(), "TOPIC", topicMessage);
+				std::string topicMessage = ":ircserver 332 " + client->getNickname() + " " + newChannel->getName() + " :Welcome to " + topic + "\r\n";
+                std::cout << topicMessage << std::endl;
+				send(fd, topicMessage.c_str(), topicMessage.size(), 0);
 			}
 			count_joined++;
 			

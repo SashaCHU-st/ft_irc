@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 11:09:24 by alli              #+#    #+#             */
-/*   Updated: 2025/01/14 11:08:21 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/14 13:35:22 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,9 @@ bool Serv::addUser(int client_fd, std::vector<std::string> tokens)
 			clients[client_fd].setUsername(newUser);
 		}
 		else
+		{
 			clients[client_fd].setUsername(tokens[0]);
+		}
 		clients[client_fd].setHostName(tokens[1]);
 		clients[client_fd].setServername(tokens[2]);
 		if(tokens[3].find_first_of(":") == 0) //check ":" then rest of the name
