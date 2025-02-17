@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 16:13:44 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/14 16:55:33 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/17 15:06:28 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,32 @@ bool Channel::isOperator(Client* client) const {
 	return std::find(_operators.begin(), _operators.end(), client) != _operators.end();
 }
 
+Client*	Channel::getOperator(Client* client) const {
+	std::cout << client->getNickname() << std::endl;
+	if (!client)
+		return nullptr;
+	if (isOperator(client) == true){
+		return client;
+	}
+	else 
+		return nullptr;
+}
+
+std::string Channel::getUsersNick() const {
+	std::string names;
+	std::vector<Client*> users = getUsers();
+	for(size_t i = 0; i < getUsers().size(); i++)
+	{
+		if (i == getUsers().size() - 1)
+		{
+			names += users[i]->getNickname();
+			return names;
+		}
+		names += users[i]->getNickname() + " ";
+	}
+	return names;
+}
+
 // Broadcast Messages
 // void Channel::broadcastMessage(const std::string& sender, const std::string& message) {
 // 	// for (size_t i = 0; i < _users.size(); ++i) {
@@ -114,14 +140,23 @@ bool Channel::isOperator(Client* client) const {
 //     }
 // }
 
+void Channel::sendToAll(const std::string& message)
+{
+	for (size_t i = 0; i < _users.size(); i++)
+	{
+		int tmpFd = _users[i]->getFd();
+		send(tmpFd, message.c_str(), message.size(), 0);
+	}
+}
+
 void Channel::broadcastMessage(const std::string& sender, const std::string& command, const std::string& message) {
 	// for (size_t i = 0; i < _users.size(); ++i) {
 	// 	std::cout << "Message to " << _users[i]->getNickname() << ": [" << sender << "] " << message << std::endl;
 	// }
-	std::cout << "Broadcasting message to " << _users.size() << " users." << std::endl;
-	for (size_t i = 0; i < _users.size(); ++i) {
-    	std::cout << "User: " << _users[i]->getNickname() << " fd: " << _users[i]->getFd()<< std::endl;
-	}
+	// std::cout << "Broadcasting message to " << _users.size() << " users." << std::endl;
+	// for (size_t i = 0; i < _users.size(); ++i) {
+    // 	std::cout << "User: " << _users[i]->getNickname() << " fd: " << _users[i]->getFd()<< std::endl;
+	// }
 	for (size_t i = 0; i < _users.size(); ++i) {
         // Get the file descriptor of the user
         int user_fd = _users[i]->getFd();
