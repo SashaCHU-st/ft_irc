@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/18 12:43:10 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/18 13:02:30 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -732,17 +732,17 @@ int Serv::cmdTOPIC(int fd, std::vector<std::string> line)
 		return 1;
     }
 	if (line.size() > 1) {
-        std::string topic = "";
-        for (size_t i = 1; i < line.size(); ++i) {
-            topic += line[i];
-            if (i < line.size() - 1) {
-                topic += " ";
-            }
-        }
-        if (topic[0] == ':') {
-            topic = topic.substr(1);
-        }
-        channel->setTopic(topic, client);
+		std::string topic = "";
+		for (size_t i = 1; i < line.size(); ++i) {
+			topic += line[i];
+			if (i < line.size() - 1) {
+				topic += " ";
+			}
+		}
+		if (topic[0] == ':') {
+			topic = topic.substr(1);
+		}
+		channel->setTopic(topic, client);
 		// for (size_t i = 0; i < channel->getUsers().size(); ++i){
 		// 	std::string topicMessage = ":" + client->getNickname() + " TOPIC " + channel->getName() + " :" + topic + "\r\n";
 		// 	ssize_t bytesSent = send(fd, topicMessage.c_str(), topicMessage.size(), 0);
