@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/02/14 15:17:54 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/18 16:03:25 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,8 +83,6 @@ int Serv::parse_command(int fd, const std::string& line) {
 	{
 		if (addUser(fd, tokens) == true)
 		{
-			// std::string user = "Username " + tokens[0] + " added \r\n";
-			// send(fd, user.c_str(), user.size(), 0);
 			return 0;
 		}
 		else
@@ -100,9 +98,15 @@ int Serv::parse_command(int fd, const std::string& line) {
 		send(fd, pong.c_str(), pong.size(), 0);
 	}
 
+
+	// if (cmd == "JOIN")
+	if (cmd == "JOIN")
+	{
+		if (cmdJOIN(fd, tokens) == 1)
+			return 1;
+	}
 	if (cmd == "PRIVMSG")
 	{
-		std::cout << "entered privmsg" << std::endl;
 		if (tokens.size() < 2)
 		{
 			std::string notEnoughParams = "Not enough parameters: <user> <msg> \r\n";
@@ -112,12 +116,6 @@ int Serv::parse_command(int fd, const std::string& line) {
 		{
 			return 0;
 		}
-	}
-	// if (cmd == "JOIN")
-	if (cmd == "JOIN")
-	{
-		if (cmdJOIN(fd, tokens) == 1)
-			return 1;
 	}
 	if (cmd == "TOPIC")
 	{

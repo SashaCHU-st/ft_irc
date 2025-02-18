@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 13:05:45 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/01/14 15:04:54 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/17 13:34:11 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ class Channel
 		std::string getPassword() const;
 		std::vector<Client*> getUsers() const;
 		int getUserLimit() const;
+		Client* getOperator(Client* client) const;
+		std::string getUsersNick() const;
 
 		bool doesExist() const;
 		bool isInviteOnly() const;
@@ -66,5 +68,6 @@ class Channel
 		void setPassword(const std::string& password);
 		bool checkPassword(const std::string& password) const;
 		void broadcastMessage(const std::string& sender, const std::string& command, const std::string& message);
+		void sendToAll(const std::string& message);
 		//void broadcastMessage(const std::string& sender, const std::string& message);
 };

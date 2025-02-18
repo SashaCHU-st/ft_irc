@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ChannelCMDs.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: epolkhov <epolkhov@student.42.fr>          #+#  +:+       +#+        */
+/*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025-01-10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025-01-10 12:59:50 by epolkhov         ###   ########.fr       */
+/*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
+/*   Updated: 2025/02/18 13:51:07 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,39 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 			newChannel->setTopic(defaultTopic, nullptr);
 			newChannel->addUser(client);
 			client->joinChannel(newChannel);
-			newChannel->broadcastMessage(client->getNickname(), "JOIN", " has joined the channel ");
+			if (newChannel->isOperator(client) == false)
+			{
+				std::string msgJoin = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
+					+ client->getServerName()
+					+ " JOIN " + newChannel->getName() + "\r\n"; 
+				std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname() 
+					+ " = " + newChannel->getName() + " :"
+					+ newChannel->getUsersNick() + "\r\n";
+				std::cout << "msg353 1:" << msg353 << std::endl;
+				newChannel->sendToAll(msgJoin);
+				newChannel->sendToAll(msg353);
+			}
+			else if (newChannel->isOperator(client) == true)
+			{
+				std::string modeMessage = ":" + client->getServerName() +
+				" MODE " + newChannel->getName() +
+				" +o " + client->getNickname() + "\r\n";
+				std::string userList = "@" + newChannel->getOperator(client)->getNickname() + ""
+					+ " " + newChannel->getUsersNick();
+				std::string msgJoin = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
+					+ client->getServerName()
+					+ " JOIN " + newChannel->getName() + "\r\n"; 
+				std::string msg353 =  ":" + client->getServerName() + " 353 " + client->getNickname()
+					+ " = " + newChannel->getName() + " :" + userList + "\r\n";
+				std::cout << "msg353 2 " << msg353 << std::endl;
+				std::cout << userList << std::endl;
+				newChannel->sendToAll(modeMessage);
+				newChannel->sendToAll(msgJoin);
+				newChannel->sendToAll(msg353);
+			}
+			std::string msg366 = ":" + client->getServerName() + " 366 " + client->getNickname() 
+				+ " " + newChannel->getName() + "\r\n";
+			newChannel->sendToAll(msg366);
 			count_joined++;
 		}
 		else
@@ -150,16 +182,43 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 				continue ;
 			}		
 			newChannel->addUser(client);
-			std::cout << "User nickname "<< client->getNickname();
 			client->joinChannel(newChannel);
-			newChannel->broadcastMessage(client->getNickname(), "JOIN", " has joined the channel ");
+			if (newChannel->isOperator(client) == false)
+			{
+				std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname() 
+				+ " = " + newChannel->getName() + " :"
+				+ newChannel->getUsersNick() + "\r\n";
+				std::cout << "msg353 3:" << msg353 << std::endl;
+				std::string msgJoin = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
+					+ client->getServerName()
+					+ " JOIN " + newChannel->getName() + "\r\n"; 
+				std::cout << "msgJoin2: " << msgJoin << std::endl;
+				newChannel->sendToAll(msgJoin);
+				newChannel->sendToAll(msg353);
+			}
+			else if (newChannel->isOperator(client) == true)
+			{
+				std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname()
+					+ newChannel->getName() + " @" + newChannel->getOperator(client)->getNickname()
+					+ newChannel->getUsersNick() + "\r\n";
+				std::cout << "msg353 4:" << msg353 << std::endl;
+				std::string msgJoin = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
+					+ client->getServerName() + " JOIN " + newChannel->getName() + "\r\n"; 
+				std::cout << "msgJoin3: " << msgJoin << std::endl;
+				newChannel->sendToAll(msgJoin);
+				newChannel->sendToAll(msg353);
+			}
+			std::string msg366 = ":" + client->getServerName() + " 366 " + client->getNickname() 
+				+ " " + newChannel->getName() + "\r\n";
+			newChannel->sendToAll(msg366);
 			std::string topic = newChannel->getTopic();
 			if (!topic.empty())
 			{
 				// std::string topicMessage = "TOPIC " + newChannel->getName() + " :" + topic + "\r\n";
 				// newChannel->broadcastMessage(client->getNickname(), "TOPIC", topicMessage);
-				std::string topicMessage = ": 332 " + client->getNickname() + " " + newChannel->getName() + " :" + topic + "\r\n";
-                send(fd, topicMessage.c_str(), topicMessage.size(), 0);
+				std::string topicMessage = ":ircserver 332 " + client->getNickname() + " " + newChannel->getName() + " :Welcome to " + topic + "\r\n";
+                std::cout << topicMessage << std::endl;
+				send(fd, topicMessage.c_str(), topicMessage.size(), 0);
 			}
 			count_joined++;
 			
@@ -672,17 +731,17 @@ int Serv::cmdTOPIC(int fd, std::vector<std::string> line)
 		return 1;
     }
 	if (line.size() > 1) {
-        std::string topic = "";
-        for (size_t i = 1; i < line.size(); ++i) {
-            topic += line[i];
-            if (i < line.size() - 1) {
-                topic += " ";
-            }
-        }
-        if (topic[0] == ':') {
-            topic = topic.substr(1);
-        }
-        channel->setTopic(topic, client);
+		std::string topic = "";
+		for (size_t i = 1; i < line.size(); ++i) {
+			topic += line[i];
+			if (i < line.size() - 1) {
+				topic += " ";
+			}
+		}
+		if (topic[0] == ':') {
+			topic = topic.substr(1);
+		}
+		channel->setTopic(topic, client);
 		// for (size_t i = 0; i < channel->getUsers().size(); ++i){
 		// 	std::string topicMessage = ":" + client->getNickname() + " TOPIC " + channel->getName() + " :" + topic + "\r\n";
 		// 	ssize_t bytesSent = send(fd, topicMessage.c_str(), topicMessage.size(), 0);

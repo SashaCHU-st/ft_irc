@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: epolkhov <epolkhov@student.42.fr>          #+#  +:+       +#+        */
+/*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025-01-08 16:13:44 by epolkhov          #+#    #+#             */
-/*   Updated: 2025-01-08 16:13:44 by epolkhov         ###   ########.fr       */
+/*   Created: 2025/01/08 16:13:44 by epolkhov          #+#    #+#             */
+/*   Updated: 2025/02/18 15:40:21 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,9 @@ void Channel::addUser(Client* client) {
 		if (_users.size() == 1) {
 			addOperator(client);
 		}
-		std::cout << "Added user " << client->getNickname() << " to channel " << _name << "." << std::endl;
+		// std::cout << "Added user " << client->getNickname() << " to channel " << _name << "." << std::endl;
     } else {
-		 std::cout << "User " << client->getNickname() << " is already in channel " << _name << "." << std::endl;
+		//  std::cout << "User " << client->getNickname() << " is already in channel " << _name << "." << std::endl;
 	}
 }
 
@@ -86,6 +86,32 @@ void Channel::removeOperator(Client* client) {
 
 bool Channel::isOperator(Client* client) const {
 	return std::find(_operators.begin(), _operators.end(), client) != _operators.end();
+}
+
+Client*	Channel::getOperator(Client* client) const {
+	// std::cout << client->getNickname() << std::endl;
+	if (!client)
+		return nullptr;
+	if (isOperator(client) == true){
+		return client;
+	}
+	else 
+		return nullptr;
+}
+
+std::string Channel::getUsersNick() const {
+	std::string names;
+	std::vector<Client*> users = getUsers();
+	for(size_t i = 0; i < getUsers().size(); i++)
+	{
+		if (i == getUsers().size() - 1)
+		{
+			names += users[i]->getNickname() + " ";
+			return names;
+		}
+		names += users[i]->getNickname() + " ";
+	}
+	return names;
 }
 
 // Broadcast Messages
@@ -114,38 +140,39 @@ bool Channel::isOperator(Client* client) const {
 //     }
 // }
 
-void Channel::broadcastMessage(const std::string& sender, const std::string& command, const std::string& message) {
-	// for (size_t i = 0; i < _users.size(); ++i) {
-	// 	std::cout << "Message to " << _users[i]->getNickname() << ": [" << sender << "] " << message << std::endl;
-	// }
-	std::cout << "Broadcasting message to " << _users.size() << " users." << std::endl;
-	for (size_t i = 0; i < _users.size(); ++i) {
-    	std::cout << "User: " << _users[i]->getNickname() << " fd: " << _users[i]->getFd()<< std::endl;
+void Channel::sendToAll(const std::string& message)
+{
+	for (size_t i = 0; i < _users.size(); i++)
+	{
+		int tmpFd = _users[i]->getFd();
+		std::cout << message << std::endl;
+		send(tmpFd, message.c_str(), message.size(), 0);
 	}
+}
+
+void Channel::broadcastMessage(const std::string& sender, const std::string& command, const std::string& message) {
 	for (size_t i = 0; i < _users.size(); ++i) {
         // Get the file descriptor of the user
         int user_fd = _users[i]->getFd();
 		
-		std::cout<<"Print out user_fd "<< user_fd<< std::endl;
+		// std::cout<<"Print out user_fd "<< user_fd<< std::endl;
         // Format the message for the user
         //std::string formattedMessage = "[" + sender + "] " + message + "\r\n";
 		std::string formattedMessage;
 		if (isOperator(_users[i]))
 		{
-			
 			formattedMessage = ":@" + sender + " " + command + " " + _name + " :" + message + "\r\n";
 		}
-			
 		else{
-			std::cout<< "Not operator"<< std::endl;
+			// std::cout<< "Not operator"<< std::endl;
 			formattedMessage = ":" + sender + " " + command + " " + _name + " :" + message + "\r\n";
 		}
-		std::cout << "Sending message to fd " << user_fd << ": " << formattedMessage;
+		// std::cout << "Sending message to fd " << user_fd << ": " << formattedMessage;
         // Send the message to the user's file descriptor
         if (send(user_fd, formattedMessage.c_str(), formattedMessage.size(), 0) == -1) {
             std::cerr << "Failed to send message to user: " << _users[i]->getNickname() << std::endl;
         } else {
-            std::cout << "Message sent to " << _users[i]->getNickname() << ": [" << sender << "] " << message << std::endl;
+            // std::cout << "Message sent to " << _users[i]->getNickname() << ": [" << sender << "] " << message << std::endl;
         }
     }
 }
@@ -184,7 +211,7 @@ void Channel::setMode(char mode, bool enable, const std::string& param, Client* 
                 	addOperator(client);
 				}
 				else{
-					std::cout<< "Client "<< client->getNickname()<< "is alredy operator."<< std::endl;
+					// std::cout<< "Client "<< client->getNickname()<< "is alredy operator."<< std::endl;
 				}
             } else {
                 if (isOperator(client))
@@ -192,7 +219,7 @@ void Channel::setMode(char mode, bool enable, const std::string& param, Client* 
                 	removeOperator(client);
 				}
 				else{
-					std::cout << "Client "<< client->getNickname()<< " is not an operator"<< std::endl;
+					// std::cout << "Client "<< client->getNickname()<< " is not an operator"<< std::endl;
 				}
             }
             break;
