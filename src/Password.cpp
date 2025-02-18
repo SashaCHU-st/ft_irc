@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:54:52 by alli              #+#    #+#             */
-/*   Updated: 2025/01/13 10:47:08 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/18 09:14:21 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,12 @@ bool Serv::authenticate_password(int fd, std::vector<std::string> tokens)
 		std::string pass = get_pass();
 		if (pass == token)
 		{
-			std::cout << "client size: " << clients.size() << std::endl;
 			clients[fd].passwordCheck = true;
 			return true;
 		}
 		else
 		{
 			std::string error_pass = "Wrong password, please restart\n";
-			//send(client_fd, error_pass.c_str(), error_msg.size(), 0);
 			return false;
 		}
 	}
