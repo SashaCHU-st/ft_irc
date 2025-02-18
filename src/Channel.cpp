@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 16:13:44 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/18 12:39:30 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/18 13:45:37 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,10 +106,10 @@ std::string Channel::getUsersNick() const {
 	{
 		if (i == getUsers().size() - 1)
 		{
-			names += users[i]->getNickname();
+			names += users[i]->getNickname() + " ";
 			return names;
 		}
-		names += users[i]->getNickname();
+		names += users[i]->getNickname() + " ";
 	}
 	return names;
 }

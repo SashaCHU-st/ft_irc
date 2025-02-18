@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/18 12:43:10 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/18 13:48:59 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,12 +122,11 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 				" +o " + client->getNickname() + "\r\n";
 				std::string userList = "@" + newChannel->getOperator(client)->getNickname() + ""
 					+ " " + newChannel->getUsersNick();
-				// std::cout << "operator" << newChannel->getOperator(client)->getNickname() << std::endl;
 				std::string msgJoin = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
 					+ client->getServerName()
 					+ " JOIN " + newChannel->getName() + "\r\n"; 
 				std::string msg353 =  ":" + client->getServerName() + " 353 " + client->getNickname()
-					+ " " + newChannel->getName() + " :" + userList + "\r\n";
+					+ " = " + newChannel->getName() + " :" + userList + "\r\n";
 				std::cout << "msg353 2 " << msg353 << std::endl;
 				std::cout << userList << std::endl;
 				newChannel->sendToAll(modeMessage);
@@ -187,8 +186,8 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 			if (newChannel->isOperator(client) == false)
 			{
 				std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname() 
-				+ newChannel->getName() + " :"
-				+ " " + newChannel->getUsersNick() + "\r\n";
+				+ " = " + newChannel->getName() + " :"
+				+ newChannel->getUsersNick() + "\r\n";
 				std::cout << "msg353 3:" << msg353 << std::endl;
 				std::string msgJoin = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
 					+ client->getServerName()
