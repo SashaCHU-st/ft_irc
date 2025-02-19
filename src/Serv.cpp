@@ -227,10 +227,12 @@ void Serv::launch()
                             {
                                 if (line.empty())
                                     continue;
-                                parse_command(fds[i].fd, line);
+                                if (parse_command(fds[i].fd, line) == 1)
+									break;
                             }
                         }
-                        sendWelcomeMsg(fds[i].fd);
+                        if (sendWelcomeMsg(fds[i].fd) == 1)
+							break;
                     }
                 }
             }

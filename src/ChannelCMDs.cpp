@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/19 09:45:18 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/19 13:20:40 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 		std::cout << "Keys array: "<< keys[i]<< std::endl;
 	}
 	Client* client = getClientByFd(fd);
-	if (!client) {
+	if (!client || client->allSet == false) {
         std::cerr << "Client not found for fd: " << fd << std::endl;
 		sendError(fd, "ERR_NOSUCHCLIENT", 4);
         return 1;
