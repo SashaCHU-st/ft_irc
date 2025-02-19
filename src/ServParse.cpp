@@ -6,14 +6,13 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/02/19 12:38:26 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/19 12:40:39 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Serv.hpp"
 
 int Serv::parse_command(int fd, const std::string& line) {
-	// std::cout << line << std::endl;
 	std::istringstream lss(line);
 	std::vector<std::string> tokens;
 	
