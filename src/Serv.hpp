@@ -1,7 +1,6 @@
 
 #pragma once
 #include "Socket.hpp"
-#include "Signal.hpp"
 #include "Client.hpp"
 #include <vector>
 #include <poll.h>
