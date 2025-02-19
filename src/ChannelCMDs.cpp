@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/18 13:51:07 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/19 09:45:18 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,6 +198,9 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 			}
 			else if (newChannel->isOperator(client) == true)
 			{
+				std::string modeMessage = ":" + client->getServerName() +
+					" MODE " + newChannel->getName() +
+					" +o " + client->getNickname() + "\r\n";
 				std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname()
 					+ newChannel->getName() + " @" + newChannel->getOperator(client)->getNickname()
 					+ newChannel->getUsersNick() + "\r\n";
