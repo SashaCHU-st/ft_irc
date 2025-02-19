@@ -261,6 +261,7 @@ int Serv::cmdPART(int fd, std::vector<std::string> line)
 			if (channel.empty() || channel[0] != '#' || checkChanName(channel) == 1)
         	{
             std::cout << "Invalid channel name: " << channel << std::endl;
+			sendError(fd, "ERR_NOSUCHCHANNEL  : No such channel",  403);
             return 1;
         	}
 		}
@@ -370,6 +371,7 @@ int Serv::cmdINVITE(int fd, std::vector<std::string> line)
 	if (chanToAdd[0] != '#' || chanToAdd.empty() || checkChanName(chanToAdd) == 1)
 	{
 		std::cout<< "Invalid channel name."<<std::endl;
+		sendError(fd, "ERR_NOSUCHCHANNEL : No such  channel",  403);
 		return 1;
 	}
 	Client* client = getClientByFd(fd);
@@ -418,8 +420,14 @@ int Serv::cmdINVITE(int fd, std::vector<std::string> line)
     }
 	channel->addUser(invitee);
 	invitee->joinChannel(channel);
-	std::string message = client->getServerName() + "INVITE " + invitee->getNickname() + channel->getName() + " :" + invitee->getNickname();
-	send_message(invitee->getFd(), message);
+	// std::string message = client->getServerName() + "INVITE " + invitee->getNickname() + channel->getName() + " :" + invitee->getNickname();
+	// send_message(invitee->getFd(), message);
+	std::string rplInvitingMessage = ":" + client->getServerName() + " 341 " +
+                                      client->getNickname() + " " +
+                                      invitee->getNickname() + " " +
+                                      channel->getName() + "\r\n";
+
+    send_message(fd, rplInvitingMessage); 
 	std::cout << "User " << newUser << " successfully invited to channel " << chanToAdd << "." << std::endl;
 	return 0;
 }
@@ -455,6 +463,7 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 	if (line.empty() || line.size() < 2 || line.size() > 3)
 	{
 		std::cout << "Invalid number of parameters for MODE command."<< std::endl;
+		sendError(fd, "ERR_NEEDMOREPARAMS : need more params",  461);
 		return 1;
 	}
 	std::string chan = line[0];
@@ -474,6 +483,7 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 	if (chan[0] != '#' || checkChanName(chan) == 1)
 	{
 		std::cout<<"Invalid channel name."<< std::endl;
+		sendError(fd, "ERR_NOSUCHCHANNEL : No such  channel",  403);
 		return 1;
 	}
 	auto findChan = _channels.find(chan);
@@ -489,6 +499,7 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 	Client* client = getClientByFd(fd);
 	if (!client) {
         std::cout << "Client not found for fd: " << fd << std::endl;
+		sendError(fd, "ERR_NOSUCHCLIENT", 4);
         return 1;
     }
 	Client* clientToAdd = getClientByNickname(param);
@@ -502,20 +513,24 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 			std::cout << "entered mode function" << std::endl;
 			if (checkValidMode(mode[i]) == 0) {
             	std::cerr << "Invalid mode character." << std::endl;
+				sendError(fd, "ERR_UNKNOWNMODE : Invalid mode", 472);
             	return 1;
         	}
 			if (mode[i] == 'l' && (param.empty() || checkDigit(param) == 1))
 			{
 				std::cout <<"Mode set 'l' should contain only digits as a parameter and always require parameter."<< std::endl;
+				sendError(fd, "ERR_LIMITEEXCEEDED : Mode 'l' requires a numeric parameter.", 472);
 			}
 			if (mode[i] == 'k' && param.empty())
 			{
 				std::cout<< "Parameter cannot be empty for the mode set 'k'"<<std::endl;
+				sendError(fd, "ERR_KEYMISSING : Mode 'k' requires a parameter.", 472);
 				return 1;
 			}
 			if (mode[i] == 'o' && (param.empty() || !channel->isUserInChannel(clientToAdd)))
 			{
 				std::cout<< "Parameter cannot be empty for the mode set 'o' or user is not in channel."<<std::endl;
+				sendError(fd, "ERR_USERNOTINCHANNEL : Mode 'o' requires a valid user in the channel.", 472);
 				return 1;
 			}
 			if (channel->isOperator(client))
@@ -525,20 +540,29 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 					//std::cout<< "Mode + before "<< channel->isInviteOnly() <<std::endl;
 					channel->setMode(mode[i], true, param, clientToAdd);
 					//std::cout<< "Mode + After"<< channel->isInviteOnly() <<std::endl;
-					std::string message = "MODE " + channel->getName() + " " + mode[i];
-					channel->broadcastMessage(client->getNickname(), "MODE", message);
+					//std::string message = "MODE " + channel->getName() + " " + mode[i];
+					//channel->broadcastMessage(client->getNickname(), "MODE", message);
+					 std::string modeMessage = ":" + client->getServerName() +
+                                          " MODE " + channel->getName() +
+                                          " " + mode[i] +"\r\n";
+                	channel->sendToAll(modeMessage);
 				}
 				else if (mode[0] == '-')
 				{
 					//std::cout<< "Mode + before "<< channel->isInviteOnly() <<std::endl;
 					channel->setMode(mode[i], false, param, clientToAdd);
-					std::string message = "MODE " + channel->getName() + " " + mode[i];
-					channel->broadcastMessage(client->getNickname(), "MODE", message);
+					// std::string message = "MODE " + channel->getName() + " " + mode[i];
+					// channel->broadcastMessage(client->getNickname(), "MODE", message);
 					//std::cout<< "Mode + before "<< channel->isInviteOnly() <<std::endl;
+					std::string modeMessage = ":" + client->getServerName() +
+                                          " MODE " + channel->getName() +
+                                          " " + mode[i]  + "\r\n";
+                	channel->sendToAll(modeMessage);
 				}
 			}
 			else{
 				std::cerr << "Client is not an operator." << std::endl;
+				sendError(fd, "ERR_NOPRIVILEGES : You do not have permission to change the mode.", 481);
     			return 1;
 			}	
 		}
@@ -629,67 +653,6 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
 	return 0;
 }
 
-// int Serv::cmdTOPIC(int fd, std::vector<std::string> line)
-// {
-// 	if (line.empty())
-// 	{
-// 		std::cout << "Invalid number of parameters for TOPIC command."<< std::endl;
-// 		return 1;
-// 	}
-// 	std::string checkChan = line[0];
-// 	if (checkChan[0] != '#' || checkChanName(checkChan) == 1)
-// 	{
-// 		std::cout<< "Invalid channel name."<<std::endl;
-// 		return 1;
-// 	}
-// 	auto findChan = _channels.find(checkChan);
-// 	if (findChan == _channels.end())
-// 	{
-// 		std::cout<< "Channel "<< checkChan<< " doesn't exist."<< std::endl;//ERR_NOSUCHCHANNEL(403)
-// 		return 1;	
-// 	}
-// 	std::shared_ptr<Channel> channel = findChan->second;
-// 	Client* client = getClientByFd(fd);
-// 	std::vector<std::string> reason;
-// 	if (!client) {
-//         std::cout << "Client not found for fd: " << fd << std::endl; // ERR_NOTONCHANNEL (442)
-//         return 1;
-//     }
-// 	std::vector<std::string> topicArr;
-// 	if (line.size() > 1)
-// 	{
-// 		for (size_t i = 1; i < line.size(); ++i)
-// 		{
-// 			topicArr.push_back(line[i]);
-// 		}
-// 	}else
-// 	{
-// 		std::cout<< "No topic is set for channel: "<< channel->getName()<< std::endl;
-// 		return 0;
-// 	}
-// 	std::string topic;
-// 	if (!topicArr.empty())
-// 	{
-// 		if (topicArr.size() == 1 && topicArr[0] == ":")
-// 		{
-// 			topic = "";
-// 		}
-// 		for (size_t i = 0; i < topicArr.size(); ++i)
-// 		{
-// 			topic += topicArr[i];
-//             if (i < topicArr.size() - 1) // Add space between words if it's not the last one
-//             {
-//                 topic += " ";
-//             }
-// 		}
-// 		channel->setTopic(topic, client);
-// 	}
-// 	else{
-// 		std::cout << "Current topic for channel " << channel->getName() << ": " << channel->getTopic() << std::endl;
-// 		channel->broadcastMessage(client->getNickname(), " topic of a chennel " + channel->getName() + channel->getTopic());
-// 	}
-// 	return 0;
-// }
 
 int Serv::cmdTOPIC(int fd, std::vector<std::string> line)
 {
