@@ -1,5 +1,7 @@
 #include "Serv.hpp"
+#include <csignal>
 
+static Serv* kuku = NULL;
 int check_port(int port)
 {
     if(port < 1024 || port > 9999)///???
@@ -7,10 +9,30 @@ int check_port(int port)
     return(0);
 }
 
+static void cleanEverything()
+{
+    if (kuku) {
+        delete kuku;
+        kuku = NULL;
+    }
+}
+
+void signalHandler(int signal) {
+    std::cerr << "signal: " << signal << std::endl;
+    cleanEverything();
+    exit(signal);
+}
+
+void signals()
+{
+    signal(SIGSEGV, signalHandler); // Seg  == 11
+    signal(SIGINT, signalHandler); // Ctrl+C == 2
+    signal(SIGTERM, signalHandler); // Termin ==15
+} 
+
 int main(int argc, char **argv)
 {
-    // (void)argc;
-    Signal sig;
+    std::signal(SIGINT, signalHandler);
     try
     {
         if(argc !=3)
@@ -24,8 +46,9 @@ int main(int argc, char **argv)
             std::cout << "Error! Port must be from !!!!!! to !!!!!!"<<std::endl;
             return(1);
         }
-        Serv serv(port, argv[2]);
-        serv.launch();
+          kuku = new Serv(port, argv[2]);
+        kuku->launch();
+        cleanEverything();
 
     }
     catch(const std::exception& e)
