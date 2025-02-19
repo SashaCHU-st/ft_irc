@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/19 16:08:19 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/19 16:19:21 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -698,10 +698,7 @@ int Serv::cmdTOPIC(int fd, std::vector<std::string> line)
 	}
 	auto findChan = _channels.find(checkChan);
 	if (findChan == _channels.end())
-	{
-		// std::cerr<< "Channel "<< checkChan<< " doesn't exist."<< std::endl;
-		// sendError(fd, "Channel " + checkChan + " doesn't exist.", 403);//ERR_NOSUCHCHANNEL(403)
-		// return 1;	
+	{	
 		std::cerr << "Nno suuch channel" << std::endl;
 		sendError(fd, "ERR_NOSUCHCHANNEL : No such  channel",  403);
 		return 1;
@@ -718,9 +715,6 @@ int Serv::cmdTOPIC(int fd, std::vector<std::string> line)
         // return 1;
     }
 	if (!channel->isUserInChannel(client)) {
-        // std::cerr << "User is not in channel " << channel->getName() << std::endl;
-		// sendError(fd, "User is not in channel " + channel->getName(), 442); // ERR_NOTONCHANNEL (442)
-        // return 1;
 		std::cerr << "Client not found." << std::endl;
 		sendError(fd, "ERR_NOTONCHANNEL : Client not found.",  442);
 		return 1;
@@ -737,26 +731,25 @@ int Serv::cmdTOPIC(int fd, std::vector<std::string> line)
 			topic = topic.substr(1);
 		}
 		channel->setTopic(topic, client);
-		// for (size_t i = 0; i < channel->getUsers().size(); ++i){
-		// 	std::string topicMessage = ":" + client->getNickname() + " TOPIC " + channel->getName() + " :" + topic + "\r\n";
-		// 	ssize_t bytesSent = send(fd, topicMessage.c_str(), topicMessage.size(), 0);
-		// 	if (bytesSent == -1) {
-		// 		std::cerr << "Error sending TOPIC response to client " << fd << std::endl;
-		// 	}
-
-		// }
-		std::string broadcastMessage = ":" + client->getNickname() + " TOPIC " + channel->getName() + " :" + topic + "\r\n";
-        channel->broadcastMessage(client->getNickname(), "TOPIC", broadcastMessage);
+		std::string broadcastMessage = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
+			+ client->getServerName() + " TOPIC " + channel->getName() + " :" + topic + "\r\n";
+		channel->sendToAll(broadcastMessage);
+        // channel->broadcastMessage(client->getNickname(), "TOPIC", broadcastMessage);
+		
 	}
 	else{
 		std::string currentTopic = channel->getTopic();
         std::string topicResponse;
 
         if (currentTopic.empty()) {
-            topicResponse = ":" " 331 " + client->getNickname() + " " + channel->getName() + " :No topic is set\r\n";
+            topicResponse = ":" + client->getServerName() + " 331 " + client->getNickname() 
+			+ " " + channel->getName() + " :No topic is set\r\n";
         }
         else {
-            topicResponse = ":" " 332 " + client->getNickname() + " " + channel->getName() + " :" + currentTopic + "\r\n";
+            topicResponse = ":" + client->getServerName() + " 332 " + client->getNickname() 
+				+ " " + channel->getName() + " :" + "Welcome to our chat!" + "\r\n"
+				+ ":" + client->getServerName() + " 333 " + client->getNickname() 
+				+ " " + channel->getName() + " :" + currentTopic + "\r\n";
         }
 
         ssize_t bytesSent = send(fd, topicResponse.c_str(), topicResponse.size(), 0);
