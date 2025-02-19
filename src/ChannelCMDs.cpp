@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/19 15:03:09 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/19 16:08:19 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -329,23 +329,17 @@ int Serv::cmdPART(int fd, std::vector<std::string> line)
 		}
 		else
 		{
-// <<<<<<< channel
-// 			std::cout<< "User "<< client->getNickname() <<" is not in channel "<< channelName<< std::endl;//ERR_NOTONCHANNEL(442)
-// 			continue ;
-// =======
-			// std::cout<< "User "<< client->getNickname() <<" is not in channel "<< channelName<< std::endl;//ERR_NOTONCHANNEL(442)
-			// //return 1;
-			// continue ;
 			std::cerr << "No channel" << std::endl;
 			sendError(fd, "ERR_NOTONCHANNEL: No channel",  442);
         	continue;
 		}
-		std::string message = channelName;
 		if (!reason.empty()) {
-    		message = ":" + client->getNickname() + " PART " + channelName + " :" + reason;
+			std::string message = ":" + client->getNickname() + "!" + client->getUsername() + "@"
+				+ client->getServerName() + " PART " + channelName + " :" + reason + "\r\n";
 			send_message(client->getFd(), message);
 		} else {
-    		message = ":" + client->getNickname() + " PART " + channelName;
+			std::string message = ":" + client->getNickname() + "!" + client->getUsername() + "@"
+				+ client->getServerName() + " PART " + channelName + "\r\n";
 			send_message(client->getFd(), message);
 		}
 	}
