@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/02/18 16:03:25 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/19 12:38:26 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,6 @@ int Serv::parse_command(int fd, const std::string& line) {
 		close (fd);
 		//exit(0); //close fds and exit function
 	}
-	// if (tokens.empty())
-	// {
-	// 	std::cerr << "Please add another parameter" << std::endl;
-	// 	return 1;
-	// }
 	if (cmd == "CAP")
 	{
 		std::string cap = tokens[0] + "\r\n";
@@ -74,9 +69,9 @@ int Serv::parse_command(int fd, const std::string& line) {
 		}
 		else
 		{
-        std::cerr << "Nick in use" << std::endl;
-		sendError(fd, "ERR_NICKNAMEINUSE : Nick name in use",  433);
-        	return 1;
+			std::cerr << "Nick in use" << std::endl;
+			sendError(fd, "ERR_NICKNAMEINUSE :" + tokens[0],  433);
+				return 1;
 		}
 	}
 	else if (cmd == "USER")

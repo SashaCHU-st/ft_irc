@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 13:17:19 by alli              #+#    #+#             */
-/*   Updated: 2025/02/18 16:03:12 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/19 12:32:33 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,11 @@ bool Serv::addNickname(int fd, std::string name)
 						clients[fd].setNickname(latest + "_");
 						if (findLatestMatch(fd, clients[fd].getNickname()) > 0)
 						{
-							// std::cout << "entered addNickname again" << clients[fd].getNickname() << std::endl;
 							addNickname(fd, clients[fd].getNickname());
-							
 						}
 						return true;
 					}
+					std::cout << "not a unique nickname" << std::endl;
 					return false;
 				}
 				else
@@ -76,7 +75,6 @@ bool Serv::addNickname(int fd, std::string name)
 					clients[fd].setNickname(latest + "_");
 					if (findLatestMatch(fd, clients[fd].getNickname()) > 0)
 					{
-						// std::cout << "2 entered addNickname again" << clients[fd].getNickname() << std::endl;
 						addNickname(fd, clients[fd].getNickname());
 					}
 					return true;
