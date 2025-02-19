@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/19 13:20:40 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/19 15:03:09 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -550,42 +550,36 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
 	std::cout << "Line size: "<< line.size()<< std::endl;
 	if (line.empty() || line.size() < 3)
 	{
-		std::cout << "Invalid number of parameters for KICK command."<< std::endl;
+		sendError(fd, "ERR_NEEDMOREPARAMS", 461);
 		return 1;
 	}
 	std::string checkChan = line[0];
 	if (checkChan[0] != '#' || checkChanName(checkChan) == 1)
 	{
-		std::cout<< "Invalid channel name."<<std::endl;
+		sendError(fd, "ERR_NOSUCHCHANNEL", 403);
 		return 1;
 	}
 	auto findChan = _channels.find(checkChan);
 	if (findChan == _channels.end())
 	{
-		std::cerr << "Nno suuch channel" << std::endl;
 		sendError(fd, "ERR_NOSUCHCHANNEL : No such  channel",  403);
 		return 1;
-		// std::cout<< "Channel "<< checkChan<< " doesn't exist."<< std::endl;//ERR_NOSUCHCHANNEL(403)
-		// return 1;	
 	}
 	std::shared_ptr<Channel> channel = findChan->second;
 	Client* client = getClientByFd(fd);
 	std::vector<std::string> reason;
 	if (!client) {
-        std::cout << "Client not found for fd: " << fd << std::endl;
+		sendError(fd, "ERR_NOTONCHANNEL", 442);
         return 1;
     }
 	std::vector<std::string> usersToKick;
 	std::string message;
-	std::cout << "Line size: "<< line.size()<< std::endl;
 	for (size_t i = 1; i < line.size(); ++i)
 	{
-		std::cout << "Print i: "<< i<< std::endl;
 		Client* userKick = getClientByNickname(line[i]);
-		std::cout << "Print usetToKick: "<< userKick<< std::endl;
 		if (!userKick || !channel->isUserInChannel(userKick))
 		{
-			std::cout<< "User "<< line[i]<< " not found."<< std::endl;
+			sendError(fd, "ERR_USERNOTINCHANNEL", 441);
 			reason.push_back(line[i]);
 			continue ;
 		}	
@@ -596,8 +590,9 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
 			usersToKick.push_back(userKick->getNickname());
 			std::cout<< "The user "<< userKick->getNickname() << " is kicked out from the channel "<< channel->getName()<< std::endl;
 		}
-		else{
-			std::cout << "You do not have permission to kick users from this channel." << std::endl;
+		else {
+			std::cout << "not chan operator" << std::endl;
+			sendError(fd, "ERR_CHANOPRIVSNEEDED", 482);
             return 1;
 		}	
 	}
@@ -605,7 +600,6 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
 	std::string fullReason;
     if (!reason.empty())
     {
-        std::cout << "I am here in reason" << std::endl;
 		for (size_t i = 0; i < reason.size(); ++i)
         {
             fullReason += reason[i];
@@ -619,7 +613,11 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
 	for (size_t i = 0; i < usersToKick.size(); i++)
 	{
 		std::cout << "Check to broadcast" << std::endl;
-		message = "User " + usersToKick[i] + " is kicked out of the channel: " + channel->getName();
+
+		//KICK #channel target_nick :reason
+		message = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
+			+ client->getServerName() + " KICK " + channel->getName() + " " + usersToKick[i];
+		// message = "User " + usersToKick[i] + " is kicked out of the channel: " + channel->getName();
 		if (!fullReason.empty())
 		{
 			message += " (" + fullReason + ")";
