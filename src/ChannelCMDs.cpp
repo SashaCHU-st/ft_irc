@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/19 16:19:21 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/20 09:45:57 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -630,17 +630,17 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
 	std::cout << "Print full reason: "<< fullReason<<  std::endl;
 	for (size_t i = 0; i < usersToKick.size(); i++)
 	{
-		std::cout << "Check to broadcast" << std::endl;
-
-		//KICK #channel target_nick :reason
 		message = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
 			+ client->getServerName() + " KICK " + channel->getName() + " " + usersToKick[i];
-		// message = "User " + usersToKick[i] + " is kicked out of the channel: " + channel->getName();
 		if (!fullReason.empty())
 		{
 			message += " (" + fullReason + ")";
 		}
-		channel->broadcastMessage(client->getNickname(), "KICK", message);
+		ssize_t bytesSent = send(fd, message.c_str(), message.size(), 0);
+		if (bytesSent == -1) {
+			std::cerr << "Error sending TOPIC response to client " << fd << std::endl;
+		}
+		// channel->broadcastMessage(client->getNickname(), "KICK", message);
 	}
 	return 0;
 }
