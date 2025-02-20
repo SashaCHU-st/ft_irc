@@ -64,7 +64,7 @@ class Channel
 
 		
 		void setMode(char mode, bool enable, const std::string& param = "", Client* client = nullptr);
-		void setTopic(const std::string& topic, Client* client);
+		bool setTopic(const std::string& topic, Client* client);
 		void setPassword(const std::string& password);
 		bool checkPassword(const std::string& password) const;
 		void broadcastMessage(const std::string& sender, const std::string& command, const std::string& message);

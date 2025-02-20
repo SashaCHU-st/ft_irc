@@ -705,7 +705,8 @@ int Serv::cmdTOPIC(int fd, std::vector<std::string> line)
 		if (topic[0] == ':') {
 			topic = topic.substr(1);
 		}
-		channel->setTopic(topic, client);
+		if (channel->setTopic(topic, client) == false)
+			return 1;
 		// for (size_t i = 0; i < channel->getUsers().size(); ++i){
 		// 	std::string topicMessage = ":" + client->getNickname() + " TOPIC " + channel->getName() + " :" + topic + "\r\n";
 		// 	ssize_t bytesSent = send(fd, topicMessage.c_str(), topicMessage.size(), 0);

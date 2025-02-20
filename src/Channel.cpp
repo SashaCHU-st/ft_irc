@@ -223,23 +223,28 @@ void Channel::setMode(char mode, bool enable, const std::string& param, Client* 
 }
 
 // Set Channel Topic
-void Channel::setTopic(const std::string& topic, Client* client) {
+bool Channel::setTopic(const std::string& topic, Client* client) {
 	if (client == nullptr)
 	{
 		_topic = topic;
+		return true;
 	}
 	else if (!_topicRestricted)  // If the topic is not restricted, allow any user to set the topic
     {
         _topic = topic;
+		return true;
 		//std::cout<< "Topic changed to "<< _topic<< std::endl;
         //broadcastMessage(client->getNickname(), "Topic changed to: " + topic);
     }
 	else if (isOperator(client)) {
 		_topic = topic;
+		return true;
 		//broadcastMessage(client->getNickname(), "Topic changed to: " + topic);
 	} else {
 		std::cout << "You do not have permission to change the topic.\n";
+		return false;
 	}
+	return true;
 }
 
 // Check Channel Password
