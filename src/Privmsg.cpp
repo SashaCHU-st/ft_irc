@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 14:10:11 by alli              #+#    #+#             */
-/*   Updated: 2025/02/14 10:41:52 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/18 16:01:14 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,17 +53,32 @@ bool Serv::message(int client_fd, std::vector<std::string> tokens)
 			std::cout << "No users in group" << std::endl;
 			return false;
 		}
+		//check if they are part of the group
+		for (size_t i = 0; i < userList.size(); i++)
+		{
+			Client* user = userList[i];
+			if (user->getFd() == client_fd)
+				break;
+			else if (user->getFd() != client_fd)
+			{
+				if (i == userList.size() - 1)
+					return false;
+				continue;
+			}
+			else
+				return false;
+		}
+		std::cout << "left user list loop" << std::endl;
 		for(unsigned long i = 1; i < tokens.size(); i++)
 		{
 			message += tokens[i] + " "; 
 		}
 		for (size_t i = 0; i < userList.size(); i++)
 		{
-			std::cout << "User list number " << i << std::endl;
 			int tmpFd = userList[i]->getFd();
 			if (client_fd == tmpFd)
 				continue;
-			std::cout << clients[tmpFd].getNickname() << std::endl;
+			// std::cout << clients[tmpFd].getNickname() << std::endl;
 			if (clients[client_fd].getUsername().empty() || clients[client_fd].getServerName().empty() || clients[client_fd].getNickname().empty())
 			{
 				std::cout << "entered empty user name or empty server name" << std::endl;
