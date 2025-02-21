@@ -52,7 +52,7 @@ bool Channel::isInviteOnly() const {
 	return _inviteOnly;
 }
 
-// User Management
+
 void Channel::addUser(Client* client) {
 	if (std::find(_users.begin(), _users.end(), client) == _users.end()) {
 		_users.push_back(client);
@@ -61,9 +61,28 @@ void Channel::addUser(Client* client) {
 		}
 		// std::cout << "Added user " << client->getNickname() << " to channel " << _name << "." << std::endl;
     } else {
-		//  std::cout << "User " << client->getNickname() << " is already in channel " << _name << "." << std::endl;
+		  std::cout << "User " << client->getNickname() << " is already in channel " << _name << "." << std::endl;
 	}
 }
+
+// void Channel::addUser(Client* client) {
+//     // Find the client based on their unique attribute (e.g., nickname)
+//     auto it = std::find_if(_users.begin(), _users.end(), 
+//                            [&client](Client* existingClient) { return existingClient->getNickname() == client->getNickname(); });
+
+//     // If the client is not already in the channel, add them
+//     if (it == _users.end()) {
+//         _users.push_back(client);  // Store the pointer to the original client object
+
+//         if (_users.size() == 1) {
+//             addOperator(client);  // Assign operator if this is the first user
+//         }
+//     }
+//     else {
+//         std::cout << "User " << client->getNickname() << " is already in channel " << _name << "." << std::endl;
+//     }
+// }
+
 
 void Channel::removeUser(Client* client) {
 	_users.erase(std::remove(_users.begin(), _users.end(), client), _users.end());
