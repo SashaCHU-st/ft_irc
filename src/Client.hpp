@@ -28,6 +28,7 @@ class Client {
 		std::string _hostname;
 		std::string _servername;
 		std::vector<std::string> _realname;
+		bool invited_to_channel = false;
 		
 		int _fd = 0;
 
@@ -44,6 +45,8 @@ class Client {
 		int 		getFd () const;
 		std::string getHostName();
 		std::string getServerName();
+		bool isInvitedToChan()const;
+		void setInvitedToChannel(bool status);
 		std::vector<std::shared_ptr<Channel>> getChannels();
 		// int 		getFd();
 		bool allSet = false;

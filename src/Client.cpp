@@ -40,6 +40,15 @@ std::string Client::getServerName()
 	return _servername;
 }
 
+bool Client::isInvitedToChan()const{
+    return invited_to_channel;
+}
+
+void Client::setInvitedToChannel(bool status) {
+    invited_to_channel = status;
+
+}
+
 std::vector<std::shared_ptr<Channel>> Client::getChannels() {
     return _joinedChannels;
 }

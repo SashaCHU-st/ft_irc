@@ -103,20 +103,20 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 			newChannel->setTopic(defaultTopic, nullptr);
 			newChannel->addUser(client);
 			client->joinChannel(newChannel);
-			if (newChannel->isOperator(client) == false)
-			{
-				std::string msgJoin = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
-					+ client->getServerName()
-					+ " JOIN " + newChannel->getName() + "\r\n"; 
-				std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname() 
-					+ " = " + newChannel->getName() + " :"
-					+ newChannel->getUsersNick() + "\r\n";
-				std::cout << "msg353 1:" << msg353 << std::endl;
-				newChannel->sendToAll(msgJoin);
-				newChannel->sendToAll(msg353);
-			}
-			else if (newChannel->isOperator(client) == true)
-			{
+			// if (newChannel->isOperator(client) == false)
+			// {
+			// 	std::string msgJoin = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
+			// 		+ client->getServerName()
+			// 		+ " JOIN " + newChannel->getName() + "\r\n"; 
+			// 	std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname() 
+			// 		+ " = " + newChannel->getName() + " :"
+			// 		+ newChannel->getUsersNick() + "\r\n";
+			// 	std::cout << "msg353 1:" << msg353 << std::endl;
+			// 	newChannel->sendToAll(msgJoin);
+			// 	newChannel->sendToAll(msg353);
+			// }
+			// else if (newChannel->isOperator(client) == true)
+			// {
 				std::string modeMessage = ":" + client->getServerName() +
 				" MODE " + newChannel->getName() +
 				" +o " + client->getNickname() + "\r\n";
@@ -132,7 +132,7 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 				newChannel->sendToAll(modeMessage);
 				newChannel->sendToAll(msgJoin);
 				newChannel->sendToAll(msg353);
-			}
+			//}
 			std::string msg366 = ":" + client->getServerName() + " 366 " + client->getNickname() 
 				+ " " + newChannel->getName() + "\r\n";
 			newChannel->sendToAll(msg366);
@@ -177,10 +177,17 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 			}
 			if (newChannel->isInviteOnly())
 			{
-				std::cout<< "User "<< client->getNickname()<< " tries to join the channel and wait for INVITE." << std::endl;
-				sendError(fd, "ERR_INVITEONLYCHAN" + client->getNickname() + " " + newChannel->getName() + " :Cannot join channel (+i)", 473);
-				continue ;
-			}		
+				if (client->isInvitedToChan() == false)
+				{
+					std::cout<< "Invite only IN" << std::endl;
+					std::cout<< "User "<< client->getNickname()<< " tries to join the channel and wait for INVITE." << std::endl;
+					// sendError(fd, "ERR_INVITEONLYCHAN: Cannot join channel (+i)", 473);
+					sendError(fd, "ERR_INVITEONLYCHAN" + client->getNickname() + " " + newChannel->getName() + " :Cannot join channel (+i)", 473);
+					continue ;
+
+				}
+			}
+			std::cout << "I am about to add user"<< std::endl;
 			newChannel->addUser(client);
 			client->joinChannel(newChannel);
 			if (newChannel->isOperator(client) == false)
@@ -208,6 +215,7 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 				std::string msgJoin = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
 					+ client->getServerName() + " JOIN " + newChannel->getName() + "\r\n"; 
 				std::cout << "msgJoin3: " << msgJoin << std::endl;
+				newChannel->sendToAll(modeMessage);
 				newChannel->sendToAll(msgJoin);
 				newChannel->sendToAll(msg353);
 			}
@@ -412,8 +420,8 @@ int Serv::cmdINVITE(int fd, std::vector<std::string> line)
         // std::cout << "User " << newUser << " is already in channel " << chanToAdd << "." << std::endl;//ERR_USERONCHANNEL(443)
         // return 1;
     }
-	channel->addUser(invitee);
-	invitee->joinChannel(channel);
+	//channel->addUser(invitee);
+	//invitee->joinChannel(channel);
 	// std::string message = client->getServerName() + "INVITE " + invitee->getNickname() + channel->getName() + " :" + invitee->getNickname();
 	// send_message(invitee->getFd(), message);
 	std::string rplInvitingMessage = ":" + client->getServerName() + " 341 " +
@@ -421,7 +429,12 @@ int Serv::cmdINVITE(int fd, std::vector<std::string> line)
                                       invitee->getNickname() + " " +
                                       channel->getName() + "\r\n";
 
-    send_message(fd, rplInvitingMessage); 
+    send_message(fd, rplInvitingMessage);
+	std::string inviteeMessage = ":" + client->getServerName() + " INVITE " +
+                                 invitee->getNickname() + " " + channel->getName() + "\r\n";
+
+    send_message(invitee->getFd(), inviteeMessage);
+	invitee->setInvitedToChannel(true);
 	std::cout << "User " << newUser << " successfully invited to channel " << chanToAdd << "." << std::endl;
 	return 0;
 }
@@ -442,6 +455,8 @@ int checkValidMode(char mode)
 
 int checkDigit(std::string& str)
 {
+	if (str.empty())
+		return 1;
 	for (size_t i = 0; i < str.size(); i++)
 	{
 		if (!std::isdigit(str[i]))
@@ -510,10 +525,15 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 				sendError(fd, "ERR_UNKNOWNMODE : Invalid mode", 472);
             	return 1;
         	}
-			if (mode[i] == 'l' && (param.empty() || checkDigit(param) == 1))
+			if (mode[i] == 'l')
 			{
-				std::cout <<"Mode set 'l' should contain only digits as a parameter and always require parameter."<< std::endl;
-				sendError(fd, "ERR_LIMITEEXCEEDED : Mode 'l' requires a numeric parameter.", 472);
+			 	if (param.empty() || checkDigit(param) == 1)
+				{
+
+					std::cout <<"Mode set 'l' should contaiways require parametn only digits as a parameter and aler."<< std::endl;
+					sendError(fd, "ERR_LIMITEEXCEEDED : Mode 'l' requires a numeric parameter.", 472);
+					return 1;
+				}
 			}
 			if (mode[i] == 'k' && param.empty())
 			{
