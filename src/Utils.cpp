@@ -78,6 +78,27 @@ std::shared_ptr<Channel> Serv::createChannel(const std::string& name)
     return newChannel;
 }
 
+// void Serv::sendError(int fd, const std::string& message, int errorCode) {
+// 	 Client* client = getClientByFd(fd);
+//     if (!client) {
+//         std::cerr << "Client not found for fd: " << fd << std::endl;
+//         return;
+//     }
+
+//     std::string errorResponse = ":" + client->getServerName() + " " + std::to_string(errorCode) + " " + client->getNickname() + " " + message + "\r\n";
+    
+//     // Debug output
+//     std::cout << "Sending error to client " << fd << ": " << errorResponse;
+
+//     ssize_t bytesSent = send(fd, errorResponse.c_str(), errorResponse.size(), 0);
+//     if (bytesSent == -1) {
+//         std::cerr << "Error sending error response to client " << fd << std::endl;
+//     }
+// 	else {
+//         std::cout << "Successfully sent " << bytesSent << " bytes to client " << fd << std::endl;
+//     }
+// }
+
 void Serv::sendError(int fd, const std::string& message, int errorCode) {
     std::string errorResponse = ":" + clients[fd].getServerName() + " " 
 				+ std::to_string(errorCode) + " " + clients[fd].getNickname() 
