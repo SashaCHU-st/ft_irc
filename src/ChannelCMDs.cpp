@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/20 09:45:57 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/21 08:33:32 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 {
 	if (line.empty())
 	{
-		std::cout<<"No parameter after JOIN"<< std::endl;
 		sendError(fd, "ERR_NEEDMOREPARAMS" , 461);
 		return 1;
 	}
@@ -90,7 +89,7 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 		const std::string& chan = channels[i];
 		if (chan.empty() || chan[0] != '#' || checkChanName(chan) == 1)
 		{
-			std::cout<< "Invalid channel name: "<< chan<< ": it should start with #"<<std::endl;
+			std::cout<< "Invalid channel name: "<< chan << ": it should start with #"<<std::endl;
 			sendError(fd, "ERR_NOSUCHCHANNEL", 403);
 			continue ;
 		}
@@ -111,7 +110,6 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 				std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname() 
 					+ " = " + newChannel->getName() + " :"
 					+ newChannel->getUsersNick() + "\r\n";
-				std::cout << "msg353 1:" << msg353 << std::endl;
 				newChannel->sendToAll(msgJoin);
 				newChannel->sendToAll(msg353);
 			}
@@ -127,8 +125,6 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 					+ " JOIN " + newChannel->getName() + "\r\n"; 
 				std::string msg353 =  ":" + client->getServerName() + " 353 " + client->getNickname()
 					+ " = " + newChannel->getName() + " :" + userList + "\r\n";
-				std::cout << "msg353 2 " << msg353 << std::endl;
-				std::cout << userList << std::endl;
 				newChannel->sendToAll(modeMessage);
 				newChannel->sendToAll(msgJoin);
 				newChannel->sendToAll(msg353);
@@ -188,11 +184,9 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 				std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname() 
 				+ " = " + newChannel->getName() + " :"
 				+ newChannel->getUsersNick() + "\r\n";
-				std::cout << "msg353 3:" << msg353 << std::endl;
 				std::string msgJoin = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
 					+ client->getServerName()
-					+ " JOIN " + newChannel->getName() + "\r\n"; 
-				std::cout << "msgJoin2: " << msgJoin << std::endl;
+					+ " JOIN " + newChannel->getName() + "\r\n";
 				newChannel->sendToAll(msgJoin);
 				newChannel->sendToAll(msg353);
 			}
@@ -204,10 +198,8 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 				std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname()
 					+ newChannel->getName() + " @" + newChannel->getOperator(client)->getNickname()
 					+ newChannel->getUsersNick() + "\r\n";
-				std::cout << "msg353 4:" << msg353 << std::endl;
 				std::string msgJoin = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
 					+ client->getServerName() + " JOIN " + newChannel->getName() + "\r\n"; 
-				std::cout << "msgJoin3: " << msgJoin << std::endl;
 				newChannel->sendToAll(msgJoin);
 				newChannel->sendToAll(msg353);
 			}
@@ -217,25 +209,15 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 			std::string topic = newChannel->getTopic();
 			if (!topic.empty())
 			{
-				// std::string topicMessage = "TOPIC " + newChannel->getName() + " :" + topic + "\r\n";
-				// newChannel->broadcastMessage(client->getNickname(), "TOPIC", topicMessage);
-				std::string topicMessage = ":ircserver 332 " + client->getNickname() + " " + newChannel->getName() + " :Welcome to " + topic + "\r\n";
-                std::cout << topicMessage << std::endl;
+				std::string topicMessage = ":" + client->getServerName() + " 332 " + client->getNickname() 
+					+ " " + newChannel->getName() + " :" + "Welcome to our chat!" + "\r\n"
+					+ ":" + client->getServerName() + " 333 " + client->getNickname() 
+					+ " " + newChannel->getName() + " :" + topic + "\r\n";
 				send(fd, topicMessage.c_str(), topicMessage.size(), 0);
 			}
 			count_joined++;
 			
 		}
-        // Send the topic to the client
-        // ssize_t bytesSent = send(fd, topicMessage.c_str(), topicMessage.size(), 0);
-        // if (bytesSent == -1)
-        // {
-        //     std::cerr << "Error sending topic message to client " << fd << std::endl;
-        // }
-        // else
-        // {
-        //     std::cout << "Sent topic message to client " << fd << ": " << topic << std::endl;
-        // }
 	}
 	return  0;
 }
@@ -379,8 +361,6 @@ int Serv::cmdINVITE(int fd, std::vector<std::string> line)
 		std::cerr << "Nno suuch channel" << std::endl;
 		sendError(fd, "ERR_NOSUCHCHANNEL : No such  channel",  403);
 		return 1;
-		// std::cout<< "Channel "<< chanToAdd<< " doesn't exist."<< std::endl;//ERR_NOSUCHCHANNEL(403)
-		// return 1;	
 	}
 	std::shared_ptr<Channel> channel = chanToFind->second;
 	if (!channel->isUserInChannel(client))
@@ -388,16 +368,12 @@ int Serv::cmdINVITE(int fd, std::vector<std::string> line)
 		std::cerr << "Nno suuch channel" << std::endl;
 		sendError(fd, "ERR_NOSUCHCHANNEL : No such  channel",  403);
 		return 1;
-		// std::cout<< "Client "<< client->getNickname()<< " not on channel."<<std::endl;// ERR_NOTONCHANNEL(403)
-		// return 1;
 	}
 	if (!channel->isOperator(client))
 	{
 		std::cerr << "Client is not an operator." << std::endl;
 		sendError(fd, "ERR_CHANOPRIVSNEEDED : Client is not an operator.",  482);
 		return 1;
-		// std::cout<<"Client is not an operator."<<std::endl;// ERR_CHANOPRIVSNEEDED(482)
-		// return 1;
 	}
 	Client* invitee = getClientByNickname(newUser);
 	if (!invitee)
@@ -409,13 +385,9 @@ int Serv::cmdINVITE(int fd, std::vector<std::string> line)
 		std::cerr << "channel already in use." << std::endl;
 		sendError(fd, "ERR_USERONCHANNEL : channel already in use",  443);
 		return 1;
-        // std::cout << "User " << newUser << " is already in channel " << chanToAdd << "." << std::endl;//ERR_USERONCHANNEL(443)
-        // return 1;
     }
 	channel->addUser(invitee);
 	invitee->joinChannel(channel);
-	// std::string message = client->getServerName() + "INVITE " + invitee->getNickname() + channel->getName() + " :" + invitee->getNickname();
-	// send_message(invitee->getFd(), message);
 	std::string rplInvitingMessage = ":" + client->getServerName() + " 341 " +
                                       client->getNickname() + " " +
                                       invitee->getNickname() + " " +
@@ -486,8 +458,6 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 		std::cerr << "Nno suuch channel" << std::endl;
 		sendError(fd, "ERR_NOSUCHCHANNEL : No such  channel",  403);
 		return 1;
-		// std::cout<< "Channel "<< chan<< " doesn't exist."<< std::endl;//ERR_NOSUCHCHANNEL(403)
-		// return 1;	
 	}
 	std::shared_ptr<Channel> channel = findChan->second;
 	Client* client = getClientByFd(fd);
@@ -614,7 +584,6 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
             return 1;
 		}	
 	}
-
 	std::string fullReason;
     if (!reason.empty())
     {
@@ -627,7 +596,6 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
             }
         }
     }
-	std::cout << "Print full reason: "<< fullReason<<  std::endl;
 	for (size_t i = 0; i < usersToKick.size(); i++)
 	{
 		message = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
@@ -640,7 +608,6 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
 		if (bytesSent == -1) {
 			std::cerr << "Error sending TOPIC response to client " << fd << std::endl;
 		}
-		// channel->broadcastMessage(client->getNickname(), "KICK", message);
 	}
 	return 0;
 }
@@ -673,9 +640,6 @@ int Serv::cmdTOPIC(int fd, std::vector<std::string> line)
 		std::cerr << "Client not found." << std::endl;
 		sendError(fd, "ERR_NOTONCHANNEL : Client not found.",  442);
 		return 1;
-        // std::cerr << "Client not found for fd: " << fd << std::endl; // ERR_NOTONCHANNEL (442)
-		// sendError(fd, "Client not found.", 442);
-        // return 1;
     }
 	if (!channel->isUserInChannel(client)) {
 		std::cerr << "Client not found." << std::endl;
@@ -693,18 +657,8 @@ int Serv::cmdTOPIC(int fd, std::vector<std::string> line)
 		if (topic[0] == ':') {
 			topic = topic.substr(1);
 		}
-
-		
-        // channel->broadcastMessage(client->getNickname(), "TOPIC", broadcastMessage);
-		
 		if (channel->setTopic(topic, client) == false)
 			return 1;
-		// for (size_t i = 0; i < channel->getUsers().size(); ++i){
-		// 	std::string topicMessage = ":" + client->getNickname() + " TOPIC " + channel->getName() + " :" + topic + "\r\n";
-		// 	
-		// 	}
-
-		// }
 		std::string broadcastMessage = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
 			+ client->getServerName() + " TOPIC " + channel->getName() + " :" + topic + "\r\n";
 		ssize_t bytesSent = send(fd, broadcastMessage.c_str(), broadcastMessage.size(), 0);
@@ -712,9 +666,6 @@ int Serv::cmdTOPIC(int fd, std::vector<std::string> line)
 				std::cerr << "Error sending TOPIC response to client " << fd << std::endl;
 			}
 	}
-		// channel->sendToAll(broadcastMessage);
-        // channel->broadcastMessage(client->getNickname(), "TOPIC", broadcastMessage);
-	
 	else{
 		std::string currentTopic = channel->getTopic();
         std::string topicResponse;
@@ -734,7 +685,6 @@ int Serv::cmdTOPIC(int fd, std::vector<std::string> line)
         if (bytesSent == -1) {
             std::cerr << "Error sending TOPIC response to client " << fd << std::endl;
         }
-		//channel->broadcastMessage(client->getNickname(), "TOPIC", " topic of a chennel " + channel->getName() + channel->getTopic());
 	}
 	return 0;
 }

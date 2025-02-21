@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 16:13:44 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/19 14:22:33 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/21 08:24:30 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,6 @@ void Channel::sendToAll(const std::string& message)
 	for (size_t i = 0; i < _users.size(); i++)
 	{
 		int tmpFd = _users[i]->getFd();
-		std::cout << message << std::endl;
 		send(tmpFd, message.c_str(), message.size(), 0);
 	}
 }
