@@ -6,7 +6,6 @@ CFLAGS = -Wall -Wextra -Werror -std=c++17
 SRCS = src/main.cpp \
 		src/Serv.cpp \
 		src/Socket.cpp \
-		src/Signal.cpp \
 		src/Client.cpp \
 		src/Nick.cpp \
 		src/Password.cpp \

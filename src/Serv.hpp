@@ -1,7 +1,6 @@
 
 #pragma once
 #include "Socket.hpp"
-#include "Signal.hpp"
 #include "Client.hpp"
 #include <vector>
 #include <poll.h>
@@ -52,7 +51,7 @@ class Serv
         void send_message(int client_fd, const std::string& message);
 		int findClient(int client_fd);
 		int findLatestMatch(int client_fd, std::string nickname);
-		void sendWelcomeMsg(int client_fd);
+		int sendWelcomeMsg(int client_fd);
 		bool message(int client_fd, std::vector<std::string> tokens);
 
         static std::vector<std::string> splitStr (const std::string& str, std::string delim);

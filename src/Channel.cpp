@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 16:13:44 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/18 15:40:21 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/19 14:22:33 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,12 +152,8 @@ void Channel::sendToAll(const std::string& message)
 
 void Channel::broadcastMessage(const std::string& sender, const std::string& command, const std::string& message) {
 	for (size_t i = 0; i < _users.size(); ++i) {
-        // Get the file descriptor of the user
         int user_fd = _users[i]->getFd();
 		
-		// std::cout<<"Print out user_fd "<< user_fd<< std::endl;
-        // Format the message for the user
-        //std::string formattedMessage = "[" + sender + "] " + message + "\r\n";
 		std::string formattedMessage;
 		if (isOperator(_users[i]))
 		{
@@ -227,23 +223,28 @@ void Channel::setMode(char mode, bool enable, const std::string& param, Client* 
 }
 
 // Set Channel Topic
-void Channel::setTopic(const std::string& topic, Client* client) {
+bool Channel::setTopic(const std::string& topic, Client* client) {
 	if (client == nullptr)
 	{
 		_topic = topic;
+		return true;
 	}
 	else if (!_topicRestricted)  // If the topic is not restricted, allow any user to set the topic
     {
         _topic = topic;
+		return true;
 		//std::cout<< "Topic changed to "<< _topic<< std::endl;
         //broadcastMessage(client->getNickname(), "Topic changed to: " + topic);
     }
 	else if (isOperator(client)) {
 		_topic = topic;
+		return true;
 		//broadcastMessage(client->getNickname(), "Topic changed to: " + topic);
 	} else {
 		std::cout << "You do not have permission to change the topic.\n";
+		return false;
 	}
+	return true;
 }
 
 // Check Channel Password

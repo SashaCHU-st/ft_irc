@@ -29,7 +29,7 @@ class Client {
 		std::string _servername;
 		std::vector<std::string> _realname;
 		
-		int _fd;
+		int _fd = 0;
 
 		std::vector<std::shared_ptr<Channel>> _joinedChannels;
 		

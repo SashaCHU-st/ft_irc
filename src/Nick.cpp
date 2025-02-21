@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 13:17:19 by alli              #+#    #+#             */
-/*   Updated: 2025/02/14 13:35:59 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/21 08:22:03 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,12 @@
 
 bool Serv::addNickname(int fd, std::string name)
 {
-	// if(name.size() == 0)
-	// {
-    //     std::cerr << "NO NICK!!!" << std::endl;
-	// 	sendError(fd, "ERR_NONICKNAMEGIVEN: No nick name given",  431);
-    //     return false;
-	// }
-
 	if (clients[fd].getFd() == fd)
 	{
-		// std::string nickname = tokens[0];
-		if (clients[fd].getNickname().empty()) // new nickname if there's no nickname
+		if (clients[fd].getNickname().empty())
 		{
-			// std::cout << "entered empty nickname" << std::endl;
 			if (uniqueNickname(name) == true)
 			{
-				// std::cout << "true" << std::endl;
 				clients[fd].setNickname(name);
 				return true;
 			}
@@ -43,12 +33,11 @@ bool Serv::addNickname(int fd, std::string name)
 						clients[fd].setNickname(latest + "_");
 						if (findLatestMatch(fd, clients[fd].getNickname()) > 0)
 						{
-							// std::cout << "entered addNickname again" << clients[fd].getNickname() << std::endl;
 							addNickname(fd, clients[fd].getNickname());
-							
 						}
 						return true;
 					}
+					std::cout << "not a unique nickname" << std::endl;
 					return false;
 				}
 				else
@@ -76,7 +65,6 @@ bool Serv::addNickname(int fd, std::string name)
 					clients[fd].setNickname(latest + "_");
 					if (findLatestMatch(fd, clients[fd].getNickname()) > 0)
 					{
-						// std::cout << "2 entered addNickname again" << clients[fd].getNickname() << std::endl;
 						addNickname(fd, clients[fd].getNickname());
 					}
 					return true;
@@ -94,10 +82,8 @@ bool Serv::addNickname(int fd, std::string name)
 
 bool Serv::uniqueNickname(std::string nickname)
 {
-    // std::cout << "client size in unique nickname" << clients.size() << std::endl;
     for(auto& [fd, client] : clients)
     {
-		// std::cout << "unique client.getnickname: " << client.getNickname() << std::endl;
         if (client.getNickname() == nickname)
         {
 		   return false;
