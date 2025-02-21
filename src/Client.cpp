@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:17:16 by alli              #+#    #+#             */
-/*   Updated: 2025/01/14 15:02:55 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/21 08:58:53 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,6 @@ void Client::setServername(std::string servername) {
 	_servername = servername;
 }
 void Client::setUsername(std::string username) {
-	// if (username.empty())
-	// {
-	// 	std::cerr << "Please input a username" << std::endl;
-	// 	return;
-	// }
 	_username = username;
 }
 void Client::setRealname(std::string names)
@@ -77,14 +72,6 @@ void Client::setRealname(std::string names)
 void Client::setFd(int fd) {
 	_fd = fd;
 }
-// int Client::get_fd() const 
-// { 
-// 	return _fd;
-// }
-// std::vector<std::string> Client::getServerInfo() {
-	
-// }
-
 
 // Channel Part
 
@@ -96,16 +83,6 @@ void Client::joinChannel(std::shared_ptr<Channel> channel) {
         std::cout << "User is already in the channel: " << channel->getName() << std::endl;
     }
 }
-
-// void Client::leaveChannel(std::shared_ptr<Channel> channel) {
-//     auto it = std::find(_joinedChannels.begin(), _joinedChannels.end(), channel);
-//     if (it != _joinedChannels.end()) {
-//         _joinedChannels.erase(it);
-//         std::cout << "You leaved the channel: " << channel->getName() << std::endl;
-//     } else {
-//         std::cout << "Channel not found in client's joined channels.\n";
-//     }
-// }
 
 void Client::leaveChannel(const std::string& channelName) {
     auto it = std::find_if(_joinedChannels.begin(), _joinedChannels.end(),
