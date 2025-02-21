@@ -551,11 +551,29 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 			{
 				if (mode[0] == '+' )
 				{
+					if (mode[i] == 'o')
+					{
+						{
+							channel->setMode(mode[i], true, param, clientToAdd);
+							// std::string modeMessage = ":" + client->getServerName() +
+							// 	" MODE " + channel->getName() +
+							// 	" +o " + client->getNickname() + "\r\n";
+							std::string modeMessage = ":" + client->getServerName() +
+                                              " MODE " + channel->getName() +
+                                              " +o " + clientToAdd->getNickname() + "\r\n";
+							std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname()
+								+ channel->getName() + " @" + channel->getOperator(client)->getNickname()
+								+ channel->getUsersNick() + "\r\n";
+							std::cout << "msg353 4:" << msg353 << std::endl;
+							channel->sendToAll(modeMessage);
+							channel->sendToAll(msg353);
+						}
+					}
 					//std::cout<< "Mode + before "<< channel->isInviteOnly() <<std::endl;
-					channel->setMode(mode[i], true, param, clientToAdd);
 					//std::cout<< "Mode + After"<< channel->isInviteOnly() <<std::endl;
 					//std::string message = "MODE " + channel->getName() + " " + mode[i];
 					//channel->broadcastMessage(client->getNickname(), "MODE", message);
+					channel->setMode(mode[i], true, param, clientToAdd);
 					 std::string modeMessage = ":" + client->getServerName() +
                                           " MODE " + channel->getName() +
                                           " " + mode[i] +"\r\n";
@@ -564,6 +582,24 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 				else if (mode[0] == '-')
 				{
 					//std::cout<< "Mode + before "<< channel->isInviteOnly() <<std::endl;
+					if (mode[i] == 'o')
+					{
+						{
+							channel->setMode(mode[i], true, param, clientToAdd);
+							// std::string modeMessage = ":" + client->getServerName() +
+							// 	" MODE " + channel->getName() +
+							// 	" +o " + client->getNickname() + "\r\n";
+							std::string modeMessage = ":" + client->getServerName() +
+                                              " MODE " + channel->getName() +
+                                              " -o " + clientToAdd->getNickname() + "\r\n";
+							std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname()
+								+ channel->getName() + " " + channel->getOperator(client)->getNickname()
+								+ channel->getUsersNick() + "\r\n";
+							std::cout << "msg353 4:" << msg353 << std::endl;
+							channel->sendToAll(modeMessage);
+							channel->sendToAll(msg353);
+						}
+					}
 					channel->setMode(mode[i], false, param, clientToAdd);
 					// std::string message = "MODE " + channel->getName() + " " + mode[i];
 					// channel->broadcastMessage(client->getNickname(), "MODE", message);
