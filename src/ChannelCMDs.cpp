@@ -633,7 +633,7 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
 		for (size_t i = 0; i < reason.size(); ++i)
         {
             fullReason += reason[i];
-            if (i < reason.size() - 1) // Add space between words if it's not the last one
+            if (i < reason.size() - 1)
             {
                 fullReason += " ";
             }
