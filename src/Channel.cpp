@@ -145,7 +145,7 @@ void Channel::sendToAll(const std::string& message)
 	for (size_t i = 0; i < _users.size(); i++)
 	{
 		int tmpFd = _users[i]->getFd();
-		std::cout << message << std::endl;
+		std::cout << "!!!"<< message << std::endl;
 		send(tmpFd, message.c_str(), message.size(), 0);
 	}
 }
@@ -167,7 +167,8 @@ void Channel::broadcastMessage(const std::string& sender, const std::string& com
         // Send the message to the user's file descriptor
         if (send(user_fd, formattedMessage.c_str(), formattedMessage.size(), 0) == -1) {
             std::cerr << "Failed to send message to user: " << _users[i]->getNickname() << std::endl;
-        } else {
+        } 
+		else {
             // std::cout << "Message sent to " << _users[i]->getNickname() << ": [" << sender << "] " << message << std::endl;
         }
     }
