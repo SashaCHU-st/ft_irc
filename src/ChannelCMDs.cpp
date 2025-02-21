@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/21 14:49:28 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/21 15:07:01 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -520,6 +520,28 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 			{
 				if (mode[0] == '+' )
 				{
+					if (mode[i] == 'o')
+					{
+						{
+							channel->setMode(mode[i], true, param, clientToAdd);
+							// std::string modeMessage = ":" + client->getServerName() +
+							// 	" MODE " + channel->getName() +
+							// 	" +o " + client->getNickname() + "\r\n";
+							std::string modeMessage = ":" + client->getServerName() +
+                                              " MODE " + channel->getName() +
+                                              " +o " + clientToAdd->getNickname() + "\r\n";
+							std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname()
+								+ channel->getName() + " @" + channel->getOperator(client)->getNickname()
+								+ channel->getUsersNick() + "\r\n";
+							std::cout << "msg353 4:" << msg353 << std::endl;
+							channel->sendToAll(modeMessage);
+							channel->sendToAll(msg353);
+						}
+					}
+					//std::cout<< "Mode + before "<< channel->isInviteOnly() <<std::endl;
+					//std::cout<< "Mode + After"<< channel->isInviteOnly() <<std::endl;
+					//std::string message = "MODE " + channel->getName() + " " + mode[i];
+					//channel->broadcastMessage(client->getNickname(), "MODE", message);
 					channel->setMode(mode[i], true, param, clientToAdd);
 					 std::string modeMessage = ":" + client->getServerName() +
                                           " MODE " + channel->getName() +
@@ -533,6 +555,25 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 				}
 				else if (mode[0] == '-')
 				{
+					//std::cout<< "Mode + before "<< channel->isInviteOnly() <<std::endl;
+					if (mode[i] == 'o')
+					{
+						{
+							channel->setMode(mode[i], true, param, clientToAdd);
+							// std::string modeMessage = ":" + client->getServerName() +
+							// 	" MODE " + channel->getName() +
+							// 	" +o " + client->getNickname() + "\r\n";
+							std::string modeMessage = ":" + client->getServerName() +
+                                              " MODE " + channel->getName() +
+                                              " -o " + clientToAdd->getNickname() + "\r\n";
+							std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname()
+								+ channel->getName() + " " + channel->getOperator(client)->getNickname()
+								+ channel->getUsersNick() + "\r\n";
+							std::cout << "msg353 4:" << msg353 << std::endl;
+							channel->sendToAll(modeMessage);
+							channel->sendToAll(msg353);
+						}
+					}
 					channel->setMode(mode[i], false, param, clientToAdd);
 					std::string modeMessage = ":" + client->getServerName() +
                                           " MODE " + channel->getName() +
