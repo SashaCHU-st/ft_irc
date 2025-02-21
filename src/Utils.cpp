@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 12:36:38 by alli              #+#    #+#             */
-/*   Updated: 2025/01/09 13:32:54 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/21 08:51:15 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,9 @@ std::shared_ptr<Channel> Serv::createChannel(const std::string& name)
 }
 
 void Serv::sendError(int fd, const std::string& message, int errorCode) {
-    std::string errorResponse = ":" " " + std::to_string(errorCode) + " " + message + "\r\n";
+    std::string errorResponse = ":" + clients[fd].getServerName() + " " 
+				+ std::to_string(errorCode) + " " + clients[fd].getNickname() 
+				+ " " + message + "\r\n";
     ssize_t bytesSent = send(fd, errorResponse.c_str(), errorResponse.size(), 0);
     if (bytesSent == -1) {
         std::cerr << "Error sending error response to client " << fd << std::endl;

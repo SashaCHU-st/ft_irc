@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 13:17:19 by alli              #+#    #+#             */
-/*   Updated: 2025/02/21 08:22:03 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/21 08:38:06 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,17 @@ bool Serv::addNickname(int fd, std::string name)
 						}
 						return true;
 					}
-					std::cout << "not a unique nickname" << std::endl;
+					sendError(fd, "ERR_NICKNAMEINUSE", 433);
 					return false;
 				}
 				else
 					return false;
 			}
 			else
+			{
+				sendError(fd, "ERR_NICKNAMEINUSE", 433);
 				return false;
+			}
 		}
 		else if (uniqueNickname(name))
 		{
@@ -69,6 +72,7 @@ bool Serv::addNickname(int fd, std::string name)
 					}
 					return true;
 				}
+				sendError(fd, "ERR_NICKNAMEINUSE", 433);
 				return false;
 			}
 			else
