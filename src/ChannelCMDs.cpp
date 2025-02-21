@@ -638,11 +638,11 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
 		}
 		std::cout << message << std::endl;
 		channel->sendToAll(message);
-		ssize_t bytesSent = send(fd, message.c_str(), message.size(), 0);
-		if (bytesSent == -1) {
-			std::cerr << "Error sending TOPIC response to client " << fd << std::endl;
-		}
-		// channel->broadcastMessage(client->getNickname(), "KICK", message);
+		// ssize_t bytesSent = send(fd, message.c_str(), message.size(), 0);
+		// if (bytesSent == -1) {
+		// 	std::cerr << "Error sending TOPIC response to client " << fd << std::endl;
+		// }
+		channel->broadcastMessage(client->getNickname(), "KICK", message);
 	}
 	return 0;
 }
