@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/02/21 08:58:23 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/21 10:40:41 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,11 @@ int Serv::parse_command(int fd, const std::string& line) {
 			return 0;
 		else
 			return 1;
+	}
+	if (cmd == "PING")
+	{
+		std::string pong = std::string("PONG") + "\r\n";
+		send(fd, pong.c_str(), pong.size(), 0);
 	}
 	else if (cmd == "NICK")
 	{
@@ -73,11 +78,6 @@ int Serv::parse_command(int fd, const std::string& line) {
 			send(fd, error_username.c_str(), error_username.size(), 0);
 			return 1;
 		}
-	}
-	if (cmd == "PING")
-	{
-		std::string pong = std::string("PONG") + "\r\n";
-		send(fd, pong.c_str(), pong.size(), 0);
 	}
 	if (cmd == "JOIN")
 	{

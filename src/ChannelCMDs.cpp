@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/21 09:03:29 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/21 12:05:55 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -675,7 +675,6 @@ int Serv::cmdTOPIC(int fd, std::vector<std::string> line)
 				+ ":" + client->getServerName() + " 333 " + client->getNickname() 
 				+ " " + channel->getName() + " :" + currentTopic + "\r\n";
         }
-
         ssize_t bytesSent = send(fd, topicResponse.c_str(), topicResponse.size(), 0);
         if (bytesSent == -1) {
             std::cerr << "Error sending TOPIC response to client " << fd << std::endl;
