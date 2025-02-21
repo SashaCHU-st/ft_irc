@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/21 12:05:55 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/21 13:08:56 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -496,11 +496,7 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 			{
 				if (mode[0] == '+' )
 				{
-					//std::cout<< "Mode + before "<< channel->isInviteOnly() <<std::endl;
 					channel->setMode(mode[i], true, param, clientToAdd);
-					//std::cout<< "Mode + After"<< channel->isInviteOnly() <<std::endl;
-					//std::string message = "MODE " + channel->getName() + " " + mode[i];
-					//channel->broadcastMessage(client->getNickname(), "MODE", message);
 					 std::string modeMessage = ":" + client->getServerName() +
                                           " MODE " + channel->getName() +
                                           " " + mode[i] +"\r\n";
@@ -508,11 +504,7 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 				}
 				else if (mode[0] == '-')
 				{
-					//std::cout<< "Mode + before "<< channel->isInviteOnly() <<std::endl;
 					channel->setMode(mode[i], false, param, clientToAdd);
-					// std::string message = "MODE " + channel->getName() + " " + mode[i];
-					// channel->broadcastMessage(client->getNickname(), "MODE", message);
-					//std::cout<< "Mode + before "<< channel->isInviteOnly() <<std::endl;
 					std::string modeMessage = ":" + client->getServerName() +
                                           " MODE " + channel->getName() +
                                           " " + mode[i]  + "\r\n";
@@ -568,6 +560,7 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
 		}	
 		if (channel->isOperator(client))
 		{
+			channel->sendToAll(message);
 			channel->removeUser(userKick);
 			userKick->leaveChannel(channel->getName());
 			usersToKick.push_back(userKick->getNickname());
@@ -597,12 +590,10 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
 			+ client->getServerName() + " KICK " + channel->getName() + " " + usersToKick[i];
 		if (!fullReason.empty())
 		{
-			message += " (" + fullReason + ")";
+			message += fullReason;
 		}
-		ssize_t bytesSent = send(fd, message.c_str(), message.size(), 0);
-		if (bytesSent == -1) {
-			std::cerr << "Error sending TOPIC response to client " << fd << std::endl;
-		}
+		std::cout << "kick message: "<< message << std::endl;
+		channel->sendToAll(message);
 	}
 	return 0;
 }
@@ -656,10 +647,11 @@ int Serv::cmdTOPIC(int fd, std::vector<std::string> line)
 			return 1;
 		std::string broadcastMessage = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
 			+ client->getServerName() + " TOPIC " + channel->getName() + " :" + topic + "\r\n";
-		ssize_t bytesSent = send(fd, broadcastMessage.c_str(), broadcastMessage.size(), 0);
-			if (bytesSent == -1) {
-				std::cerr << "Error sending TOPIC response to client " << fd << std::endl;
-			}
+		channel->sendToAll(broadcastMessage);
+		// ssize_t bytesSent = send(fd, broadcastMessage.c_str(), broadcastMessage.size(), 0);
+		// 	if (bytesSent == -1) {
+		// 		std::cerr << "Error sending TOPIC response to client " << fd << std::endl;
+		// 	}
 	}
 	else{
 		std::string currentTopic = channel->getTopic();
@@ -675,10 +667,12 @@ int Serv::cmdTOPIC(int fd, std::vector<std::string> line)
 				+ ":" + client->getServerName() + " 333 " + client->getNickname() 
 				+ " " + channel->getName() + " :" + currentTopic + "\r\n";
         }
-        ssize_t bytesSent = send(fd, topicResponse.c_str(), topicResponse.size(), 0);
-        if (bytesSent == -1) {
-            std::cerr << "Error sending TOPIC response to client " << fd << std::endl;
-        }
+        // ssize_t bytesSent = send(fd, topicResponse.c_str(), topicResponse.size(), 0);
+		channel->sendToAll(topicResponse);
+        // if (bytesSent == -1) {
+        //     std::cerr << "Error sending TOPIC response to client " << fd << std::endl;
+        // }
+		//channel->broadcastMessage(client->getNickname(), "TOPIC", " topic of a chennel " + channel->getName() + channel->getTopic());
 	}
 	return 0;
 }

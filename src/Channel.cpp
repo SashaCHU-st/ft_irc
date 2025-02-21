@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 16:13:44 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/21 08:24:30 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/21 12:57:21 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,10 +142,14 @@ std::string Channel::getUsersNick() const {
 
 void Channel::sendToAll(const std::string& message)
 {
-	for (size_t i = 0; i < _users.size(); i++)
+	for (size_t i = 0; i < _users.size(); ++i)
 	{
 		int tmpFd = _users[i]->getFd();
-		send(tmpFd, message.c_str(), message.size(), 0);
+		if (send(tmpFd, message.c_str(), message.size(), 0) == -1)
+		{
+			std::cerr << "Failed to send message to user" << std::endl;
+		}
+		std::cout << "sent to everyone" << std::endl;
 	}
 }
 
@@ -162,8 +166,6 @@ void Channel::broadcastMessage(const std::string& sender, const std::string& com
 			// std::cout<< "Not operator"<< std::endl;
 			formattedMessage = ":" + sender + " " + command + " " + _name + " :" + message + "\r\n";
 		}
-		// std::cout << "Sending message to fd " << user_fd << ": " << formattedMessage;
-        // Send the message to the user's file descriptor
         if (send(user_fd, formattedMessage.c_str(), formattedMessage.size(), 0) == -1) {
             std::cerr << "Failed to send message to user: " << _users[i]->getNickname() << std::endl;
         } else {
