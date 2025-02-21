@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 16:13:44 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/21 12:57:21 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/21 14:26:53 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,11 +145,8 @@ void Channel::sendToAll(const std::string& message)
 	for (size_t i = 0; i < _users.size(); ++i)
 	{
 		int tmpFd = _users[i]->getFd();
-		if (send(tmpFd, message.c_str(), message.size(), 0) == -1)
-		{
-			std::cerr << "Failed to send message to user" << std::endl;
-		}
-		std::cout << "sent to everyone" << std::endl;
+		std::cout << "!!!"<< message << std::endl;
+		send(tmpFd, message.c_str(), message.size(), 0);
 	}
 }
 
@@ -168,7 +165,8 @@ void Channel::broadcastMessage(const std::string& sender, const std::string& com
 		}
         if (send(user_fd, formattedMessage.c_str(), formattedMessage.size(), 0) == -1) {
             std::cerr << "Failed to send message to user: " << _users[i]->getNickname() << std::endl;
-        } else {
+        } 
+		else {
             // std::cout << "Message sent to " << _users[i]->getNickname() << ": [" << sender << "] " << message << std::endl;
         }
     }

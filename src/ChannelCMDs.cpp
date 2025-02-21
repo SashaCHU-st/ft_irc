@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/21 13:08:56 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/21 14:27:34 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -594,6 +594,11 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
 		}
 		std::cout << "kick message: "<< message << std::endl;
 		channel->sendToAll(message);
+		// ssize_t bytesSent = send(fd, message.c_str(), message.size(), 0);
+		// if (bytesSent == -1) {
+		// 	std::cerr << "Error sending TOPIC response to client " << fd << std::endl;
+		// }
+		channel->broadcastMessage(client->getNickname(), "KICK", message);
 	}
 	return 0;
 }
@@ -648,10 +653,6 @@ int Serv::cmdTOPIC(int fd, std::vector<std::string> line)
 		std::string broadcastMessage = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
 			+ client->getServerName() + " TOPIC " + channel->getName() + " :" + topic + "\r\n";
 		channel->sendToAll(broadcastMessage);
-		// ssize_t bytesSent = send(fd, broadcastMessage.c_str(), broadcastMessage.size(), 0);
-		// 	if (bytesSent == -1) {
-		// 		std::cerr << "Error sending TOPIC response to client " << fd << std::endl;
-		// 	}
 	}
 	else{
 		std::string currentTopic = channel->getTopic();
