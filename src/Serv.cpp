@@ -95,14 +95,7 @@ void Serv::accepter() {
         set_non_blocking(_new_socket); // new sockecke to non blocking
 
         Client new_cl(_new_socket);
-// std::cout << "Sending welcome message to: " << nick << std::endl;
-
-     //   new_cl.setNickname("wwww");
-
-        ///////SASHA's NEW
-        // Create a new Client object and add it to the clients list
-        // clients.push_back(Client(_new_socket));
-         clients[_new_socket] = new_cl;
+        clients[_new_socket] = new_cl;
 
         // Add the new socket to the poll list
         pollfd client_poll;
@@ -115,28 +108,14 @@ void Serv::accepter() {
         std::string nick = "Guest";  // Default fallback nickname
 		if (clients.find(_new_socket) != clients.end()) {
 			Client& client = clients[_new_socket];
-        // for (const Client& client : clients) {
-        //     if (client.getFd() == _new_socket) {
-                nick = client.getNickname(); 
-				} // Retrieve client nickname
-            // std::cout << "Sending welcome message to: " << nick << std::endl;
-
-    //             break;
-			// std::string message = " :ircserver 001 " + clients[sock_fd].getNickname() + " :Welcome to the IRC Network, " + nick + "!";
-        	// send_message(_new_socket, message);  // Send the message
-            }
-
-        }
-
-        // welcome message
-
-    // }
-
-
+            nick = client.getNickname(); 
+			} // Retrieve client nickname
+    }
+}
 
 void Serv::launch()
 {
-    //     // main server socket ... added to the iist of monitored fd
+    // main server socket ... added to the iist of monitored fd
     pollfd server_poll;
     server_poll.fd = sock->get_sock(); 
     server_poll.events = POLLIN;  /// monitore for incoom data
@@ -151,7 +130,6 @@ void Serv::launch()
             perror("Poll failed");
             break;///if error exit the loop
         }
-
         for (size_t i = 0; i < fds.size(); ++i)
         {
             if (fds[i].revents & POLLIN)  // If there is data to read in curr fd
@@ -164,7 +142,7 @@ void Serv::launch()
                     if (_new_socket >= 0)
                     {
                          //add new client socket to the poll list
-                         pollfd client_poll;
+                        pollfd client_poll;
                         client_poll.fd = _new_socket;
                         client_poll.events = POLLIN;
                         fds.push_back(client_poll);
@@ -181,7 +159,6 @@ void Serv::launch()
                         if (errno == EAGAIN || errno == EWOULDBLOCK) {
                             continue;  // No data yet, try again later
                         } else {
-                            // perror("Recv failed");
                               close(fds[i].fd);
                             fds.erase(fds.begin() + i);
                             --i; // Adjust index
@@ -200,8 +177,8 @@ void Serv::launch()
                             {
                                 clients.erase(fds[i].fd);
                                 break;
+                            }
                         }
-                    }
                         --i;
                         continue;
                     }
