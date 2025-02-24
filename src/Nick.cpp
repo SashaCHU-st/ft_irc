@@ -37,7 +37,7 @@ bool Serv::addNickname(int fd, std::string name)
 						}
 						return true;
 					}
-					sendError(fd, "ERR_NICKNAMEINUSE", 433);
+					//sendError(fd, "ERR_NICKNAMEINUSE", 433);
 					return false;
 				}
 				else
@@ -45,7 +45,7 @@ bool Serv::addNickname(int fd, std::string name)
 			}
 			else
 			{
-				sendError(fd, "ERR_NICKNAMEINUSE", 433);
+				//sendError(fd, "ERR_NICKNAMEINUSE", 433);
 				return false;
 			}
 		}
@@ -72,7 +72,7 @@ bool Serv::addNickname(int fd, std::string name)
 					}
 					return true;
 				}
-				sendError(fd, "ERR_NICKNAMEINUSE", 433);
+				//sendError(fd, "ERR_NICKNAMEINUSE", 433);
 				return false;
 			}
 			else

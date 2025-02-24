@@ -69,5 +69,4 @@ class Channel
 		bool checkPassword(const std::string& password) const;
 		void broadcastMessage(const std::string& sender, const std::string& command, const std::string& message);
 		void sendToAll(const std::string& message);
-		//void broadcastMessage(const std::string& sender, const std::string& message);
 };
