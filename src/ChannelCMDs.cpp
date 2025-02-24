@@ -510,10 +510,16 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 				sendError(fd, "ERR_UNKNOWNMODE : Invalid mode", 472);
             	return 1;
         	}
-			if (mode[i] == 'l' && (param.empty() || checkDigit(param) == 1))
+			if (mode[i] == 'l')
 			{
-				std::cout <<"Mode set 'l' should contain only digits as a parameter and always require parameter."<< std::endl;
-				sendError(fd, "ERR_LIMITEEXCEEDED : Mode 'l' requires a numeric parameter.", 472);
+			 	if (mode[i] == '-' && param.empty())
+					std::cout<< "User limit unset"<< std::endl;
+				if (mode[0] == '+' && (param.empty() || checkDigit(param) == 1))
+				{
+					std::cout <<"Mode set 'l' should contain only digits as a parameter and always require parameter."<< std::endl;
+					sendError(fd, "ERR_LIMITEEXCEEDED : Mode 'l' requires a numeric parameter.", 472);
+
+				}
 			}
 			if (mode[i] == 'k' && param.empty())
 			{
@@ -531,6 +537,24 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 			{
 				if (mode[0] == '+' )
 				{
+					if (mode[i] == 'o')
+					{
+						{
+							channel->setMode(mode[i], true, param, clientToAdd);
+							// std::string modeMessage = ":" + client->getServerName() +
+							// 	" MODE " + channel->getName() +
+							// 	" +o " + client->getNickname() + "\r\n";
+							std::string modeMessage = ":" + client->getServerName() +
+                                              " MODE " + channel->getName() +
+                                              " +o " + clientToAdd->getNickname() + "\r\n";
+							std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname()
+								+ channel->getName() + " @" + channel->getOperator(client)->getNickname()
+								+ channel->getUsersNick() + "\r\n";
+							std::cout << "msg353 4:" << msg353 << std::endl;
+							channel->sendToAll(modeMessage);
+							channel->sendToAll(msg353);
+						}
+					}
 					//std::cout<< "Mode + before "<< channel->isInviteOnly() <<std::endl;
 					channel->setMode(mode[i], true, param, clientToAdd);
 					//std::cout<< "Mode + After"<< channel->isInviteOnly() <<std::endl;
@@ -543,6 +567,25 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 				}
 				else if (mode[0] == '-')
 				{
+					if (mode[i] == 'o')
+					{
+						{
+							channel->setMode(mode[i], false, param, clientToAdd);
+							// std::string modeMessage = ":" + client->getServerName() +
+							// 	" MODE " + channel->getName() +
+							// 	" +o " + client->getNickname() + "\r\n";
+							std::string modeMessage = ":" + client->getServerName() +
+                                              " MODE " + channel->getName() +
+                                              " -o " + clientToAdd->getNickname() + "\r\n";
+							std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname()
+								+ channel->getName() + " " + channel->getOperator(client)->getNickname()
+								+ channel->getUsersNick() + "\r\n";
+							std::cout << "msg353 4:" << msg353 << std::endl;
+							channel->sendToAll(modeMessage);
+							channel->sendToAll(msg353);
+						}
+					}
+					
 					//std::cout<< "Mode + before "<< channel->isInviteOnly() <<std::endl;
 					channel->setMode(mode[i], false, param, clientToAdd);
 					// std::string message = "MODE " + channel->getName() + " " + mode[i];
