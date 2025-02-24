@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/02/21 10:40:41 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/24 10:30:53 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 	{
 		if (cmdKICK(fd, tokens) == 1)
 			return 1;
+		std::cout << "kick finished" << std::endl;
 	}
 	if (cmd == "INVITE")
 	{

@@ -225,6 +225,7 @@ void Serv::launch()
                             std::string line;
                             while (getline(ss, line)) 
                             {
+								std::cout << "next loop" << std::endl;
                                 if (line.empty())
                                     continue;
                                 if (parse_command(fds[i].fd, line) == 1)
