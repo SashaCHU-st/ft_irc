@@ -109,3 +109,16 @@ void Serv::sendError(int fd, const std::string& message, int errorCode) {
         std::cerr << "Error sending error response to client " << fd << std::endl;
     }
 }
+
+int Serv::checkChanName(std::string name)
+{
+	std::vector<char> chars = {'!', '@', '$', '%', ' '};
+	for (char c : name)
+	{
+		if (std::find(chars.begin(), chars.end(), c) != chars.end() || \
+				std::iscntrl(static_cast<unsigned char>(c))) {
+            return 1;  // Invalid: contains forbidden character or control character
+        }
+	}
+	return 0;
+}
