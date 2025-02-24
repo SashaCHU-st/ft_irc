@@ -390,10 +390,13 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 			}
 			if (newChannel->isInviteOnly())
 			{
-				std::cout<< "User "<< client->getNickname()<< " tries to join the channel and wait for INVITE." << std::endl;
-				//sendError(fd, "ERR_INVITEONLYCHAN " + newChannel->getName() + " :Cannot join channel (+i)", 473);
-				sendError(fd, newChannel->getName() + " :Cannot join channel (+i)", 473);
-				continue ;
+				if (client->isInvitedToChan() == false)
+				{
+					std::cout<< "User "<< client->getNickname()<< " tries to join the channel and wait for INVITE." << std::endl;
+					//sendError(fd, "ERR_INVITEONLYCHAN " + newChannel->getName() + " :Cannot join channel (+i)", 473);
+					sendError(fd, newChannel->getName() + " :Cannot join channel (+i)", 473);
+					continue ;
+				}
 			}
 			std::cout << "After continue in JOIN"<< std::endl;		
 			newChannel->addUser(client);
@@ -939,14 +942,16 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
     std::cout << "Line size: " << line.size() << std::endl;
     if (line.empty() || line.size() < 3)
     {
-        sendError(fd, "ERR_NEEDMOREPARAMS", 461);
+        //sendError(fd, "ERR_NEEDMOREPARAMS", 461);
+		sendError(fd, "KICK :Not enough parameters", 461);
         return 1;
     }
 
     std::string checkChan = line[0];
     if (checkChan[0] != '#' || checkChanName(checkChan) == 1)
     {
-        sendError(fd, "ERR_NOSUCHCHANNEL", 403);
+        //sendError(fd, "ERR_NOSUCHCHANNEL", 403);
+		sendError(fd, checkChan + " :No such channel", 403);
         return 1;
     }
 
@@ -960,7 +965,8 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
     std::shared_ptr<Channel> channel = findChan->second;
     Client* client = getClientByFd(fd);
     if (!client) {
-        sendError(fd, "ERR_NOTONCHANNEL", 442);
+        //sendError(fd, "ERR_NOTONCHANNEL", 442);
+		sendError(fd, checkChan + " :You're not on that channel", 442);
         return 1;
     }
 
@@ -974,7 +980,8 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
         Client* userKick = getClientByNickname(line[i]);
         if (!userKick || !channel->isUserInChannel(userKick))
         {
-            sendError(fd, "ERR_USERNOTINCHANNEL", 441);
+            //sendError(fd, "ERR_USERNOTINCHANNEL", 441);
+			sendError(fd, line[i] + " " + checkChan + " :They aren't on that channel", 441);
             reason.push_back(line[i]);
             continue;
         }
@@ -1004,7 +1011,8 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
         }
         else {
             std::cout << "Not a channel operator" << std::endl;
-            sendError(fd, "ERR_CHANOPRIVSNEEDED", 482);
+            //sendError(fd, "ERR_CHANOPRIVSNEEDED", 482);
+			sendError(fd, checkChan + " :You're not a channel operator", 482);
             return 1;
         }
     }
