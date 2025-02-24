@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 14:10:11 by alli              #+#    #+#             */
-/*   Updated: 2025/02/21 15:25:29 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/21 18:51:21 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,8 @@ bool Serv::message(int client_fd, std::vector<std::string> tokens)
 				break;
 			else if (user->getFd() != client_fd)
 			{
-				std::cout << "user nick in prvmsg1 : " << user->getNickname() << std::endl;
 				if (i == userList.size() - 1)
 				{
-					std::cout << "user nick in prvmsg2: " << user->getNickname() << std::endl;
 					return false;
 				}
 				continue;
@@ -71,7 +69,6 @@ bool Serv::message(int client_fd, std::vector<std::string> tokens)
 			else
 				return false;
 		}
-		std::cout << "left user list loop" << std::endl;
 		for(unsigned long i = 1; i < tokens.size(); i++)
 		{
 			message += tokens[i] + " "; 
@@ -81,7 +78,6 @@ bool Serv::message(int client_fd, std::vector<std::string> tokens)
 			int tmpFd = userList[i]->getFd();
 			if (client_fd == tmpFd)
 				continue;
-			// std::cout << clients[tmpFd].getNickname() << std::endl;
 			if (clients[client_fd].getUsername().empty() || clients[client_fd].getServerName().empty() || clients[client_fd].getNickname().empty())
 			{
 				std::cout << "entered empty user name or empty server name" << std::endl;

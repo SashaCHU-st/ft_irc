@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/21 15:07:01 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/24 08:56:49 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,20 +102,20 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 			newChannel->setTopic(defaultTopic, nullptr);
 			newChannel->addUser(client);
 			client->joinChannel(newChannel);
-			// if (newChannel->isOperator(client) == false)
-			// {
-			// 	std::string msgJoin = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
-			// 		+ client->getServerName()
-			// 		+ " JOIN " + newChannel->getName() + "\r\n"; 
-			// 	std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname() 
-			// 		+ " = " + newChannel->getName() + " :"
-			// 		+ newChannel->getUsersNick() + "\r\n";
-			// 	std::cout << "msg353 1:" << msg353 << std::endl;
-			// 	newChannel->sendToAll(msgJoin);
-			// 	newChannel->sendToAll(msg353);
-			// }
-			// else if (newChannel->isOperator(client) == true)
-			// {
+			if (newChannel->isOperator(client) == false)
+			{
+				std::string msgJoin = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
+					+ client->getServerName()
+					+ " JOIN " + newChannel->getName() + "\r\n"; 
+				std::string msg353 = ":" + client->getServerName() + " 353 " + client->getNickname() 
+					+ " = " + newChannel->getName() + " :"
+					+ newChannel->getUsersNick() + "\r\n";
+				std::cout << "msg353 1:" << msg353 << std::endl;
+				newChannel->sendToAll(msgJoin);
+				newChannel->sendToAll(msg353);
+			}
+			else if (newChannel->isOperator(client) == true)
+			{
 				std::string modeMessage = ":" + client->getServerName() +
 				" MODE " + newChannel->getName() +
 				" +o " + client->getNickname() + "\r\n";
@@ -129,7 +129,7 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 				newChannel->sendToAll(modeMessage);
 				newChannel->sendToAll(msgJoin);
 				newChannel->sendToAll(msg353);
-			//}
+			}
 			std::string msg366 = ":" + client->getServerName() + " 366 " + client->getNickname() 
 				+ " " + newChannel->getName() + "\r\n";
 			newChannel->sendToAll(msg366);
@@ -197,6 +197,7 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 					+ " JOIN " + newChannel->getName() + "\r\n";
 				newChannel->sendToAll(msgJoin);
 				newChannel->sendToAll(msg353);
+				// newChannel->broadcastMessage(client->getNickname(), "JOIN", msgJoin);
 			}
 			else if (newChannel->isOperator(client) == true)
 			{
@@ -212,6 +213,8 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 				newChannel->sendToAll(modeMessage);
 				newChannel->sendToAll(msgJoin);
 				newChannel->sendToAll(msg353);
+				// newChannel->broadcastMessage(client->getNickname(), "JOIN", msgJoin);
+
 			}
 			std::string msg366 = ":" + client->getServerName() + " 366 " + client->getNickname() 
 				+ " " + newChannel->getName() + "\r\n";
@@ -490,6 +493,7 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 			}
 			std::cout << "entered mode function" << std::endl;
 			if (checkValidMode(mode[i]) == 0) {
+
             	std::cerr << "Invalid mode character." << std::endl;
 				sendError(fd, "ERR_UNKNOWNMODE :Invalid mode", 472);
             	return 1;
@@ -538,20 +542,19 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 							channel->sendToAll(msg353);
 						}
 					}
-					//std::cout<< "Mode + before "<< channel->isInviteOnly() <<std::endl;
-					//std::cout<< "Mode + After"<< channel->isInviteOnly() <<std::endl;
-					//std::string message = "MODE " + channel->getName() + " " + mode[i];
-					//channel->broadcastMessage(client->getNickname(), "MODE", message);
-					channel->setMode(mode[i], true, param, clientToAdd);
-					 std::string modeMessage = ":" + client->getServerName() +
-                                          " MODE " + channel->getName() +
-                                          " +" + mode[i] + " " + client->getNickname() + "\r\n";
-					std::string userList = "@" + channel->getOperator(client)->getNickname() + ""
-						+ " " + channel->getUsersNick();
-					std::string msg353 =  ":" + client->getServerName() + " 353 " + client->getNickname()
-						+ " = " + channel->getName() + " :" + userList + "\r\n";
-					channel->sendToAll(modeMessage);
-					channel->sendToAll(msg353);
+					else{
+						channel->setMode(mode[i], true, param, clientToAdd);
+						std::string modeMessage = ":" + client->getServerName() +
+											" MODE " + channel->getName() +
+											" +" + mode[i] + " " + client->getNickname() + "\r\n";
+						std::string userList = "@" + channel->getOperator(client)->getNickname() + ""
+							+ " " + channel->getUsersNick();
+						std::string msg353 =  ":" + client->getServerName() + " 353 " + client->getNickname()
+							+ " = " + channel->getName() + " :" + userList + "\r\n";
+						channel->sendToAll(modeMessage);
+						channel->sendToAll(msg353);
+
+					}
 				}
 				else if (mode[0] == '-')
 				{
@@ -574,11 +577,14 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 							channel->sendToAll(msg353);
 						}
 					}
-					channel->setMode(mode[i], false, param, clientToAdd);
-					std::string modeMessage = ":" + client->getServerName() +
-                                          " MODE " + channel->getName() +
-                                          " " + mode[i]  + "\r\n";
-                	channel->sendToAll(modeMessage);
+					else{
+						channel->setMode(mode[i], false, param, clientToAdd);
+						std::string modeMessage = ":" + client->getServerName() +
+											" MODE " + channel->getName() +
+											" " + mode[i]  + "\r\n";
+						channel->sendToAll(modeMessage);
+
+					}
 				}
 			}
 			else{
@@ -621,25 +627,33 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
 	std::string message;
 	for (size_t i = 1; i < line.size(); ++i)
 	{
+		std::cout << "line " << i << line[i] << std::endl;
 		Client* userKick = getClientByNickname(line[i]);
+		std::cout << userKick->getNickname() << std::endl;
 		if (!userKick || !channel->isUserInChannel(userKick))
 		{
 			sendError(fd, "ERR_USERNOTINCHANNEL", 441);
 			reason.push_back(line[i]);
 			continue ;
-		}	
+		}
 		if (channel->isOperator(client))
 		{
-			channel->sendToAll(message);
-			channel->removeUser(userKick);
-			userKick->leaveChannel(channel->getName());
-			usersToKick.push_back(userKick->getNickname());
-			std::cout<< "The user "<< userKick->getNickname() << " is kicked out from the channel "<< channel->getName()<< std::endl;
+			std::cout << "entered is operator" << std::endl;
+			for (size_t i = 0; i < usersToKick.size(); i++)
+			{
+				// std::cout << " users to kick size" << usersToKick.size() << std::endl;
+				channel->removeUser(userKick);
+				userKick->leaveChannel(channel->getName());
+				usersToKick.push_back(userKick->getNickname());
+				std::cout<< "The user "<< userKick->getNickname() << " is kicked out from the channel "<< channel->getName()<< std::endl;
+				return 0;
+			}
 		}
 		else {
 			std::cout << "not chan operator" << std::endl;
 			sendError(fd, "ERR_CHANOPRIVSNEEDED", 482);
             return 1;
+		std::cout << "moving onto next loop" << std::endl;
 		}	
 	}
 	std::string fullReason;
@@ -664,11 +678,7 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
 		}
 		std::cout << "kick message: "<< message << std::endl;
 		channel->sendToAll(message);
-		// ssize_t bytesSent = send(fd, message.c_str(), message.size(), 0);
-		// if (bytesSent == -1) {
-		// 	std::cerr << "Error sending TOPIC response to client " << fd << std::endl;
-		// }
-		channel->broadcastMessage(client->getNickname(), "KICK", message);
+		
 	}
 	return 0;
 }
