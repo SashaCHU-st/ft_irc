@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/21 14:49:28 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/21 15:07:01 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -557,19 +557,20 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 							channel->sendToAll(msg353);
 						}
 					}
-					else{
-						channel->setMode(mode[i], true, param, clientToAdd);
-						std::string modeMessage = ":" + client->getServerName() +
-											" MODE " + channel->getName() +
-											" +" + mode[i] + " " + client->getNickname() + "\r\n";
-						std::string userList = "@" + channel->getOperator(client)->getNickname() + ""
-							+ " " + channel->getUsersNick();
-						std::string msg353 =  ":" + client->getServerName() + " 353 " + client->getNickname()
-							+ " = " + channel->getName() + " :" + userList + "\r\n";
-						channel->sendToAll(modeMessage);
-						channel->sendToAll(msg353);
-
-					}
+					//std::cout<< "Mode + before "<< channel->isInviteOnly() <<std::endl;
+					//std::cout<< "Mode + After"<< channel->isInviteOnly() <<std::endl;
+					//std::string message = "MODE " + channel->getName() + " " + mode[i];
+					//channel->broadcastMessage(client->getNickname(), "MODE", message);
+					channel->setMode(mode[i], true, param, clientToAdd);
+					 std::string modeMessage = ":" + client->getServerName() +
+                                          " MODE " + channel->getName() +
+                                          " +" + mode[i] + " " + client->getNickname() + "\r\n";
+					std::string userList = "@" + channel->getOperator(client)->getNickname() + ""
+						+ " " + channel->getUsersNick();
+					std::string msg353 =  ":" + client->getServerName() + " 353 " + client->getNickname()
+						+ " = " + channel->getName() + " :" + userList + "\r\n";
+					channel->sendToAll(modeMessage);
+					channel->sendToAll(msg353);
 				}
 				else if (mode[0] == '-')
 				{
@@ -592,14 +593,11 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 							channel->sendToAll(msg353);
 						}
 					}
-					else{
-						channel->setMode(mode[i], false, param, clientToAdd);
-						std::string modeMessage = ":" + client->getServerName() +
-											" MODE " + channel->getName() +
-											" " + mode[i]  + "\r\n";
-						channel->sendToAll(modeMessage);
-
-					}
+					channel->setMode(mode[i], false, param, clientToAdd);
+					std::string modeMessage = ":" + client->getServerName() +
+                                          " MODE " + channel->getName() +
+                                          " " + mode[i]  + "\r\n";
+                	channel->sendToAll(modeMessage);
 				}
 			}
 			else{

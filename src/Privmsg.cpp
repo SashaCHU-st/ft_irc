@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 14:10:11 by alli              #+#    #+#             */
-/*   Updated: 2025/02/18 16:01:14 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/21 15:25:29 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,16 +53,19 @@ bool Serv::message(int client_fd, std::vector<std::string> tokens)
 			std::cout << "No users in group" << std::endl;
 			return false;
 		}
-		//check if they are part of the group
 		for (size_t i = 0; i < userList.size(); i++)
 		{
 			Client* user = userList[i];
-			if (user->getFd() == client_fd)
+			if (user->getFd() == client_fd) //sender
 				break;
 			else if (user->getFd() != client_fd)
 			{
+				std::cout << "user nick in prvmsg1 : " << user->getNickname() << std::endl;
 				if (i == userList.size() - 1)
+				{
+					std::cout << "user nick in prvmsg2: " << user->getNickname() << std::endl;
 					return false;
+				}
 				continue;
 			}
 			else
