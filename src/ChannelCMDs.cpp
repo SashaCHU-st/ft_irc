@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/24 10:30:04 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/24 12:54:15 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -759,22 +759,15 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
 
         if (channel->isOperator(client))
         {
-            std::cout << "Before kicking user, channel size: " << channel->getUserCount() << std::endl;
+           std::cout << "channel is operator" << std::endl;
             channel->removeUser(userKick);
             userKick->leaveChannel(channel->getName());
             usersToKick.push_back(userKick->getNickname());
 			std::string kickMessage = ":" + client->getServerName() + " KICK " 
-                          + channel->getName() + " " + userKick->getNickname();
+                          + channel->getName() + " " + userKick->getNickname() + "\r\n";
 
 			// Send the KICK message to the client who was kicked
 			send(userKick->getFd(), kickMessage.c_str(), kickMessage.size(), 0);
-
-			// Optional: Log the kick message for debugging purposes
-			std::cout << "KICK message sent to client " << userKick->getNickname() << ": " << kickMessage << std::endl;
-
-
-            std::cout << "The user " << userKick->getNickname() << " is kicked out from the channel " << channel->getName() << std::endl;
-            std::cout << "After kicking user, channel size: " << channel->getUserCount() << std::endl;
         }
         else {
             std::cout << "Not a channel operator" << std::endl;
@@ -795,7 +788,6 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
             }
         }
     }
-
     // Construct a combined message for the channel about all users to be kicked
     std::string combinedKickedUsers;
     for (size_t i = 0; i < usersToKick.size(); ++i)
@@ -806,28 +798,14 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
     }
 
     message = ":" + client->getNickname() + "!" + client->getUsername() + "@" 
-        + client->getServerName() + " KICK " + channel->getName() + " " + combinedKickedUsers;
+        + client->getServerName() + " KICK " + channel->getName() + " " + combinedKickedUsers + "\r\n";
 
     if (!fullReason.empty())
     {
-        message += " :" + fullReason;  // Add colon before reason
+        message += fullReason;  // Add colon before reason
     }
 
-    std::cout << "Kick message to channel: " << message << std::endl;
     channel->sendToAll(message);  // Send to all users in the channel
-
-    //Send individual KICK responses to the kicked users
-    // for (size_t i = 0; i < usersToKick.size(); ++i)
-    // {
-    //     Client* kickedClient = getClientByNickname(usersToKick[i]);
-    //     if (kickedClient) {
-    //         std::string kickResponse = "KICK " + channel->getName() + " " + client->getNickname() + " :" + fullReason;
-    //         send(kickedClient->getFd(), kickResponse.c_str(), kickResponse.size(), 0);
-    //     }
-    // }
-	channel->broadcastMessage(client->getNickname(), "KICK", message);
-	std::cout << "returned" << std::endl;
-
     return 0;
 }
 

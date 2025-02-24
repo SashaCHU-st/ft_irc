@@ -178,6 +178,7 @@ void Serv::launch()
                     if (bytes_read < 0)
                     {
                         // Check for EAGAIN or EWOULDBLOCK
+						std::cout << "bytes < 0" << std::endl;
                         if (errno == EAGAIN || errno == EWOULDBLOCK) {
                             continue;  // No data yet, try again later
                         } else {
@@ -207,6 +208,7 @@ void Serv::launch()
                     }
                     else
                     {
+						std::cout << "before receiving data" << std::endl;
                         buffer[bytes_read] = '\0';
                         std::cout << "Received data from FD " << fds[i].fd << ": " << buffer << std::endl;
                         _clientBuffers[fds[i].fd] += buffer;
@@ -214,6 +216,7 @@ void Serv::launch()
                         size_t pos;
                         while ((pos = _clientBuffers[fds[i].fd].find("\n")) != std::string::npos) 
                         {
+							std::cout << "outer message" << std::endl;
                             std::string command = _clientBuffers[fds[i].fd].substr(0, pos);
                             _clientBuffers[fds[i].fd].erase(0, pos + 1);
 
@@ -225,16 +228,18 @@ void Serv::launch()
                             std::string line;
                             while (getline(ss, line)) 
                             {
-								std::cout << "next loop" << std::endl;
+								std::cout << "start loop" << std::endl;
                                 if (line.empty())
                                     continue;
                                 if (parse_command(fds[i].fd, line) == 1)
 									break;
+								std::cout << "finished loop" << std::endl;
                             }
                         }
                         if (sendWelcomeMsg(fds[i].fd) == 1)
 							break;
                     }
+					std::cout << "waiting for next command" << std::endl;
                 }
             }
         }
