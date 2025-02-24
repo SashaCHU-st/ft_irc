@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/02/24 13:25:33 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/24 16:05:07 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,18 +75,18 @@ int Serv::parse_command(int fd, const std::string& line) {
 			return 1;
 		}
 	}
-	if (cmd == "PING")
+	else if (cmd == "PING")
 	{
-		std::string pong = std::string("PONG") + clients[fd].getServerName() + "\r\n";
+		std::string pong = "PONG " + clients[fd].getServerName() + "\r\n";
 		send(fd, pong.c_str(), pong.size(), 0);
 	}
-	if (cmd == "JOIN")
+	else if (cmd == "JOIN")
 	{
 		std::cout << "ENTERED JOIN" << std::endl;
 		if (cmdJOIN(fd, tokens) == 1)
 			return 1;
 	}
-	if (cmd == "PRIVMSG")
+	else if (cmd == "PRIVMSG")
 	{
 		if (tokens.size() < 2)
 		{
@@ -96,28 +96,28 @@ int Serv::parse_command(int fd, const std::string& line) {
 		else if (message(fd, tokens) == true)
 			return 0;
 	}
-	if (cmd == "TOPIC")
+	else if (cmd == "TOPIC")
 	{
 		if (cmdTOPIC(fd, tokens) == 1)
 			return 1;
 	}
-	if (cmd == "MODE")
+	else if (cmd == "MODE")
 	{
 		if (cmdMODE(fd, tokens) == 1)
 			return 1;
 	}
-	if (cmd == "KICK")
+	else if (cmd == "KICK")
 	{
 		if (cmdKICK(fd, tokens) == 1)
 			return 1;
 		std::cout << "kick finished" << std::endl;
 	}
-	if (cmd == "INVITE")
+	else if (cmd == "INVITE")
 	{
 		if (cmdINVITE(fd, tokens) == 1)
 			return 1;
 	}
-	if (cmd == "PART")
+	else if (cmd == "PART")
 	{
 		if (cmdPART(fd, tokens) == 1)
 			return(1);
