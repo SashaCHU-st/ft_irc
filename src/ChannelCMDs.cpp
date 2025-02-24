@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/21 14:49:28 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/24 13:54:50 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -390,10 +390,12 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 			}
 			if (newChannel->isInviteOnly())
 			{
-				std::cout<< "User "<< client->getNickname()<< " tries to join the channel and wait for INVITE." << std::endl;
-				//sendError(fd, "ERR_INVITEONLYCHAN " + newChannel->getName() + " :Cannot join channel (+i)", 473);
-				sendError(fd, newChannel->getName() + " :Cannot join channel (+i)", 473);
-				continue ;
+				if (client->isInvitedToChan() == false){
+					std::cout<< "User "<< client->getNickname()<< " tries to join the channel and wait for INVITE." << std::endl;
+					//sendError(fd, "ERR_INVITEONLYCHAN " + newChannel->getName() + " :Cannot join channel (+i)", 473);
+					sendError(fd, newChannel->getName() + " :Cannot join channel (+i)", 473);
+					continue ;
+				}
 			}
 			std::cout << "After continue in JOIN"<< std::endl;		
 			newChannel->addUser(client);
