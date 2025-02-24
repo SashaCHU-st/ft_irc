@@ -103,6 +103,7 @@ void Serv::sendError(int fd, const std::string& message, int errorCode) {
     std::string errorResponse = ":" + clients[fd].getServerName() + " " 
 				+ std::to_string(errorCode) + " " + clients[fd].getNickname() 
 				+ " " + message + "\r\n";
+	std::cout<< "Error Response: "<< errorResponse<< std::endl;
     ssize_t bytesSent = send(fd, errorResponse.c_str(), errorResponse.size(), 0);
     if (bytesSent == -1) {
         std::cerr << "Error sending error response to client " << fd << std::endl;
