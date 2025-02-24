@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 12:59:50 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/24 13:54:50 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/24 15:21:34 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -977,7 +977,7 @@ int Serv::cmdKICK(int fd, std::vector<std::string> line)
         if (!userKick || !channel->isUserInChannel(userKick))
         {
             sendError(fd, "ERR_USERNOTINCHANNEL", 441);
-            reason.push_back(line[i]);
+           // reason.push_back(line[i]);
             continue;
         }
 		if (line[i][0] == ':')
