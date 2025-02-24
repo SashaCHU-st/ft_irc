@@ -810,7 +810,7 @@ int Serv::cmdMODE(int fd, std::vector<std::string> line)
 					if (mode[i] == 'o')
 					{
 						{
-							channel->setMode(mode[i], true, param, clientToAdd);
+							channel->setMode(mode[i], false, param, clientToAdd);
 							// std::string modeMessage = ":" + client->getServerName() +
 							// 	" MODE " + channel->getName() +
 							// 	" +o " + client->getNickname() + "\r\n";
