@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/02/19 12:40:39 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/21 10:40:41 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,19 +20,11 @@ int Serv::parse_command(int fd, const std::string& line) {
 	std::string cmd;
 	
 	if (lss)
-	{
 		lss >> cmd;
-	}
 	while (lss >> token)
-	{
 		tokens.push_back(token);
-	}
 	if (cmd == "QUIT")
-	{
-		std::cout << "Thank you for using irSEE" << std::endl;
 		close (fd);
-		//exit(0); //close fds and exit function
-	}
 	if (cmd == "CAP")
 	{
 		std::string cap = tokens[0] + "\r\n";
@@ -41,20 +33,21 @@ int Serv::parse_command(int fd, const std::string& line) {
 	else if (cmd == "PASS")
 	{
 		if (authenticate_password(fd, tokens) == true)
-		{
 			return 0;
-		}
 		else
-		{
 			return 1;
-		}
+	}
+	if (cmd == "PING")
+	{
+		std::string pong = std::string("PONG") + "\r\n";
+		send(fd, pong.c_str(), pong.size(), 0);
 	}
 	else if (cmd == "NICK")
 	{
 		if (token.empty())
 		{
  			std::cerr << "No nick given" << std::endl;
-			sendError(fd, "ERR_NONICKNAMEGIVEN : No nick given",  431);
+			sendError(fd, "ERR_NONICKNAMEGIVEN :No nick given",  431);
         	return 1;
 		}
 		if (tokens.size() > 1)
@@ -86,14 +79,6 @@ int Serv::parse_command(int fd, const std::string& line) {
 			return 1;
 		}
 	}
-	if (cmd == "PING")
-	{
-		std::string pong = std::string("PONG") + "\r\n";
-		send(fd, pong.c_str(), pong.size(), 0);
-	}
-
-
-	// if (cmd == "JOIN")
 	if (cmd == "JOIN")
 	{
 		if (cmdJOIN(fd, tokens) == 1)
@@ -107,9 +92,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 			send(fd, notEnoughParams.c_str(), notEnoughParams.size(), 0);
 		}
 		else if (message(fd, tokens) == true)
-		{
 			return 0;
-		}
 	}
 	if (cmd == "TOPIC")
 	{
@@ -118,18 +101,13 @@ int Serv::parse_command(int fd, const std::string& line) {
 	}
 	if (cmd == "MODE")
 	{
-		// std::cout << "entered mode " << std::endl;
 		if (cmdMODE(fd, tokens) == 1)
-		{
 			return 1;
-		}
 	}
 	if (cmd == "KICK")
 	{
 		if (cmdKICK(fd, tokens) == 1)
-		{
 			return 1;
-		}
 	}
 	if (cmd == "INVITE")
 	{

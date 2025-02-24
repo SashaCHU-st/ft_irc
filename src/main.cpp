@@ -37,7 +37,7 @@ int main(int argc, char **argv)
     {
         if(argc !=3)
         {
-            std::cout<<"Error! Usage ./ircserv PORT PASSWORD"<<std::endl;
+            std::cout<< "Error! Usage ./ircserv PORT PASSWORD" <<std::endl;
             return(1);
         }
         int port = std::atoi(argv[1]);

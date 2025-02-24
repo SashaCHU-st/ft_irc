@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 16:13:44 by epolkhov          #+#    #+#             */
-/*   Updated: 2025/02/19 14:22:33 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/21 14:36:25 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ bool Channel::isInviteOnly() const {
 	return _inviteOnly;
 }
 
-// User Management
+
 void Channel::addUser(Client* client) {
 	if (std::find(_users.begin(), _users.end(), client) == _users.end()) {
 		_users.push_back(client);
@@ -61,9 +61,28 @@ void Channel::addUser(Client* client) {
 		}
 		// std::cout << "Added user " << client->getNickname() << " to channel " << _name << "." << std::endl;
     } else {
-		//  std::cout << "User " << client->getNickname() << " is already in channel " << _name << "." << std::endl;
+		  std::cout << "User " << client->getNickname() << " is already in channel " << _name << "." << std::endl;
 	}
 }
+
+// void Channel::addUser(Client* client) {
+//     // Find the client based on their unique attribute (e.g., nickname)
+//     auto it = std::find_if(_users.begin(), _users.end(), 
+//                            [&client](Client* existingClient) { return existingClient->getNickname() == client->getNickname(); });
+
+//     // If the client is not already in the channel, add them
+//     if (it == _users.end()) {
+//         _users.push_back(client);  // Store the pointer to the original client object
+
+//         if (_users.size() == 1) {
+//             addOperator(client);  // Assign operator if this is the first user
+//         }
+//     }
+//     else {
+//         std::cout << "User " << client->getNickname() << " is already in channel " << _name << "." << std::endl;
+//     }
+// }
+
 
 void Channel::removeUser(Client* client) {
 	_users.erase(std::remove(_users.begin(), _users.end(), client), _users.end());
@@ -106,10 +125,17 @@ std::string Channel::getUsersNick() const {
 	{
 		if (i == getUsers().size() - 1)
 		{
+			if (isOperator(users[i]) == true)
+				names += "@" + users[i]->getNickname() + " ";
 			names += users[i]->getNickname() + " ";
 			return names;
 		}
-		names += users[i]->getNickname() + " ";
+		if (isOperator(users[i]) == true)
+		{
+			names += "@" + users[i]->getNickname() + " ";
+		}
+		else
+			names += users[i]->getNickname() + " ";
 	}
 	return names;
 }
@@ -142,7 +168,7 @@ std::string Channel::getUsersNick() const {
 
 void Channel::sendToAll(const std::string& message)
 {
-	for (size_t i = 0; i < _users.size(); i++)
+	for (size_t i = 0; i < _users.size(); ++i)
 	{
 		int tmpFd = _users[i]->getFd();
 		std::cout << "!!!"<< message << std::endl;
@@ -163,8 +189,6 @@ void Channel::broadcastMessage(const std::string& sender, const std::string& com
 			// std::cout<< "Not operator"<< std::endl;
 			formattedMessage = ":" + sender + " " + command + " " + _name + " :" + message + "\r\n";
 		}
-		// std::cout << "Sending message to fd " << user_fd << ": " << formattedMessage;
-        // Send the message to the user's file descriptor
         if (send(user_fd, formattedMessage.c_str(), formattedMessage.size(), 0) == -1) {
             std::cerr << "Failed to send message to user: " << _users[i]->getNickname() << std::endl;
         } 

@@ -38,9 +38,31 @@ class Client {
 		Client(); 
 		Client(int fd);
 		~Client();
+		// Client(Client& other) {
+        //     // Copy basic member variables
+        //     _username = other._username;
+        //     _nickname = other._nickname;
+        //     _password = other._password;
+        //     _hostname = other._hostname;
+        //     _servername = other._servername;
+        //     _realname = other._realname;
+        //     invited_to_channel = other.invited_to_channel;
+        //     _fd = other._fd;
+        //     allSet = other.allSet;
+        //     welcomeSent = other.welcomeSent;
+        //     passwordCheck = other.passwordCheck;
+
+        //     _joinedChannels = other._joinedChannels;
+        // }
+		// bool operator==(Client& other) const{
+       	// 	 return _nickname == other._nickname; // Or any other unique attribute
+    	// }
+		// bool operator==(Client* other) const{
+        // 	return this->_nickname == other->_nickname;  // Or any other unique comparison
+   		// }
 
 		std::string getUsername();
-		std::string getNickname() const;
+		std::string getNickname()const;
 		std::string getPassword();
 		int 		getFd () const;
 		std::string getHostName();
