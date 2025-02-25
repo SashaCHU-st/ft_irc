@@ -67,6 +67,7 @@ class Serv
         Client* getClientByFd(int fd);
         Client* getClientByNickname(const std::string& nickname);
         void sendError(int fd, const std::string& message, int errorCode);
+        int checkChanName(std::string name);
         
 
 };

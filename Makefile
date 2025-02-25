@@ -12,10 +12,15 @@ SRCS = src/main.cpp \
 		src/ServParse.cpp \
 		src/User.cpp \
 		src/Utils.cpp \
-		src/ChannelCMDs.cpp\
 		src/Channel.cpp \
 		src/WelcomeMsg.cpp \
 		src/Privmsg.cpp \
+		src/commands/JOIN.cpp \
+		src/commands/PART.cpp \
+		src/commands/MODE.cpp \
+		src/commands/KICK.cpp \
+		src/commands/INVITE.cpp \
+		src/commands/TOPIC.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 

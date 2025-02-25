@@ -39,8 +39,10 @@ int Serv::parse_command(int fd, const std::string& line) {
 	}
 	if (cmd == "PING")
 	{
-		std::string pong = std::string("PONG") + "\r\n";
-		send(fd, pong.c_str(), pong.size(), 0);
+		// std::string pong = std::string("PONG") + "\r\n";
+		// send(fd, pong.c_str(), pong.size(), 0);
+		std::string pong = "PONG " + clients[fd].getServerName() + "\r\n";
+        send(fd, pong.c_str(), pong.size(), 0);
 	}
 	else if (cmd == "NICK")
 	{
