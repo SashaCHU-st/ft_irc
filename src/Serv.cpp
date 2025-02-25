@@ -38,7 +38,7 @@ std::string Serv::get_pass() {
 ///NON BLOCKING-
 void Serv::set_non_blocking(int sock_fd)
 {
-   // fcntl(int fd, int cmd, and othe diff arguments);
+                                                // fcntl(int fd, int cmd, and othe diff arguments);
     int non_block = fcntl(sock_fd, F_GETFL, 0);// checking the access to socket, 
     if (non_block < 0)
     {
@@ -90,7 +90,7 @@ void Serv::accepter() {
     }
     if(_new_socket >=0)
     {
-        set_non_blocking(_new_socket); // new sockecke to non blocking
+        set_non_blocking(_new_socket); // new socket to non blocking
 
         Client new_cl(_new_socket);
         clients[_new_socket] = new_cl;

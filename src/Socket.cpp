@@ -56,7 +56,7 @@ int Socket::socketing(int port)
     address.sin_family = domain;// AF_INET
     address.sin_port = htons(port);// Port 4051
     address.sin_addr.s_addr = INADDR_ANY; // INADDR_ANY (0.0.0.0)
-    // option that do not need to wait when again run server
+                                            // option that do not need to wait when again run server
     return(0);
 }
 int Socket::binding()
@@ -78,7 +78,7 @@ int Socket::binding()
 int Socket::listening()
 {
     int listening_status = listen(sock, 10); // backlog is the max number of pending connections
-    //listening incoming con  from client
+                                            //listening incoming con  from client
     if (listening_status < 0)
     {
         perror("failed");
