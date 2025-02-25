@@ -4,7 +4,7 @@
 static Serv* kuku = NULL;
 int check_port(int port)
 {
-    if(port < 1024 || port > 9999)///???
+    if(port < 1024 || port > 49151 )
         return(1);
     return(0);
 }
@@ -43,7 +43,7 @@ int main(int argc, char **argv)
         int port = std::atoi(argv[1]);
         if(check_port(port) == 1)
         {
-            std::cout << "Error! Port must be from !!!!!! to !!!!!!"<<std::endl;
+            std::cout << "Error! Port must be from 1024 to 49151"<<std::endl;
             return(1);
         }
           kuku = new Serv(port, argv[2]);

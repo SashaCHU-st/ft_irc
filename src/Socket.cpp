@@ -10,7 +10,7 @@ Socket::Socket(int domain, int type, int protocol, int port)
     }
 }
 
-int Socket::get_conn()///?
+int Socket::get_conn()
 { 
     return conn;
 }
@@ -22,12 +22,12 @@ int Socket::get_sock() const
 }
 
 
-struct sockaddr_in Socket::get_address()///?
+struct sockaddr_in Socket::get_address()
 {
     return address;
 }
 
-void Socket::set_conn(int conn)///?
+void Socket::set_conn(int conn)
 {
     this->conn = conn;
 }
@@ -86,8 +86,6 @@ int Socket::run(int port)
 {
     if(socketing(port) !=0 )
         return(1);
-    // if (sock < 0)
-    //     exit(EXIT_FAILURE);
     if(binding()!= 0)
         return(1);
     if(listening() != 0)
