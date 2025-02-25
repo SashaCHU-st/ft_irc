@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 14:10:11 by alli              #+#    #+#             */
-/*   Updated: 2025/02/25 09:33:33 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/25 09:58:24 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,10 @@ bool Serv::message(int client_fd, std::vector<std::string> tokens)
 	int msg_fd = findLatestMatch(-1, tokens[0]);
 	int receiver_fd = clients[msg_fd].getFd();
 	
-	if (clients.find(msg_fd) == clients.end())
+	if (clients.find(msg_fd) == clients.end()) //checking clients
 	{
 		std::cout << "Client not found" << std::endl;
+		sendError(client_fd, "ERR_NOSUCHNICK", 401);
 		return false;	
 	}
 	if (clients[msg_fd].getNickname() == tokens[0])
@@ -40,9 +41,10 @@ bool Serv::message(int client_fd, std::vector<std::string> tokens)
 		std::cout << "message sent" << std::endl;
 		return true;
 	}
-	auto chanToFind = _channels.find(tokens[0]);
+	auto chanToFind = _channels.find(tokens[0]); //checking channels
 	if (chanToFind == _channels.end())
 	{
+		sendError(client_fd, "ERR_NOSUCHCHANNEL", 403);
 		std::cout << "no channel found" << std::endl;
 	}
 	else
@@ -79,7 +81,7 @@ bool Serv::message(int client_fd, std::vector<std::string> tokens)
 				continue;
 			if (clients[client_fd].getUsername().empty() || clients[client_fd].getServerName().empty() || clients[client_fd].getNickname().empty())
 			{
-				std::cout << "entered empty user name or empty server name" << std::endl;
+				sendError(client_fd, "ERR_NOSUCHCHANNEL", 403);
 				continue;
 			}
  			std::string msg = ":" + clients[client_fd].getNickname() + "!" + clients[client_fd].getUsername() + "@" + clients[client_fd].getServerName()

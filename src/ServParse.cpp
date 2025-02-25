@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/02/25 09:29:31 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/25 09:39:38 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int Serv::parse_command(int fd, const std::string& line) {
 	}
 	if (cmd == "PING")
 	{
-		std::string pong = "PONG " + clients[fd].getServerName() + "\r\n";
+		std::string pong = "PONG :" + clients[fd].getServerName() + "\r\n";
         send(fd, pong.c_str(), pong.size(), 0);
 	}
 	else if (cmd == "NICK")
