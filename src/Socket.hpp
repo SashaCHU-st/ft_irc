@@ -21,15 +21,14 @@ private:
     int type;
     int protocol;
     int port;
-    // std::vector<struct pollfd> *fds;/// for dinamcalyy fds
 	std::vector<Client> _clients;
 
 public:
     // consctructors
     Socket(int domain, int type, int protocol, int port);
 
-    //desctruc
-    //~Socket();
+    ///desctruc
+    ~Socket();
     //getters
     struct sockaddr_in get_address();
     int get_sock() const;

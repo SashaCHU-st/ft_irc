@@ -10,6 +10,11 @@ Socket::Socket(int domain, int type, int protocol, int port)
     }
 }
 
+Socket::~Socket()
+{
+
+};
+
 int Socket::get_conn()
 { 
     return conn;

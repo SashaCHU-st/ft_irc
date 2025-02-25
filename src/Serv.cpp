@@ -40,15 +40,14 @@ void Serv::set_non_blocking(int sock_fd)
 {
    // fcntl(int fd, int cmd, and othe diff arguments);
     int non_block = fcntl(sock_fd, F_GETFL, 0);// checking the access to socket, 
-    // if it is < 0 then fcnl failed
     if (non_block < 0)
     {
         perror("fcntl get failed");
         exit(EXIT_FAILURE);
     }
     if (fcntl(sock_fd, F_SETFL, non_block | O_NONBLOCK) < 0)// makes socket non blocking by
-    // O_NONBLOCK flag
-    // F_SETFL 
+                                                            // O_NONBLOCK flag
+                                                            // F_SETFL 
     {
         perror("fcntl set non-blocking failed");
         exit(EXIT_FAILURE);
@@ -70,7 +69,7 @@ void Serv::accepter() {
     int sock_fd = socket->get_sock();
     if (sock_fd < 0)
         return;
-        //prepare to accept new connection
+    //prepare to accept new connection
     struct sockaddr_in address = socket->get_address();
     socklen_t adrlen = sizeof(address);
 
