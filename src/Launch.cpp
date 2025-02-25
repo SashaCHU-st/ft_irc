@@ -25,7 +25,6 @@ void Serv::launch()
                 if (fds[i].fd == sock->get_sock())  
                 {
                     accepter();
-                    // if all good
                     if (_new_socket >= 0)
                     {
                          //add new client socket to the poll list
@@ -39,7 +38,6 @@ void Serv::launch()
                 {
                     char buffer[1024] = {0};
                     int bytes_read = recv(fds[i].fd, buffer, sizeof(buffer) - 1, 0);//reads data from the client
-
                     if (bytes_read < 0)
                     {
                         // Check for EAGAIN or EWOULDBLOCK
