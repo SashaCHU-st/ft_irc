@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 14:10:11 by alli              #+#    #+#             */
-/*   Updated: 2025/02/18 16:01:14 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/25 09:33:33 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ bool Serv::message(int client_fd, std::vector<std::string> tokens)
 			else
 				return false;
 		}
-		std::cout << "left user list loop" << std::endl;
 		for(unsigned long i = 1; i < tokens.size(); i++)
 		{
 			message += tokens[i] + " "; 
@@ -78,7 +77,6 @@ bool Serv::message(int client_fd, std::vector<std::string> tokens)
 			int tmpFd = userList[i]->getFd();
 			if (client_fd == tmpFd)
 				continue;
-			// std::cout << clients[tmpFd].getNickname() << std::endl;
 			if (clients[client_fd].getUsername().empty() || clients[client_fd].getServerName().empty() || clients[client_fd].getNickname().empty())
 			{
 				std::cout << "entered empty user name or empty server name" << std::endl;
@@ -86,7 +84,6 @@ bool Serv::message(int client_fd, std::vector<std::string> tokens)
 			}
  			std::string msg = ":" + clients[client_fd].getNickname() + "!" + clients[client_fd].getUsername() + "@" + clients[client_fd].getServerName()
 				+ " PRIVMSG " + tokens[0] + " " + message + "\r\n";
-			std::cout << msg << std::endl;
 			if (send(tmpFd, msg.c_str(), msg.size(), 0) == -1)
 			{
 				std::cerr << "message failed to send" << std::endl;

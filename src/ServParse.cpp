@@ -6,7 +6,7 @@
 /*   By: alli <alli@student.hive.fi>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 15:32:10 by alli              #+#    #+#             */
-/*   Updated: 2025/02/24 15:10:13 by alli             ###   ########.fr       */
+/*   Updated: 2025/02/25 09:29:31 by alli             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,6 @@ int Serv::parse_command(int fd, const std::string& line) {
 	}
 	if (cmd == "PING")
 	{
-		// std::string pong = std::string("PONG") + "\r\n";
-		// send(fd, pong.c_str(), pong.size(), 0);
 		std::string pong = "PONG " + clients[fd].getServerName() + "\r\n";
         send(fd, pong.c_str(), pong.size(), 0);
 	}
@@ -63,7 +61,6 @@ int Serv::parse_command(int fd, const std::string& line) {
 		}
 		else
 		{
-			std::cerr << "Nick in use" << std::endl;
 			std::string nickError = ":" + clients[fd].getHostName() + " 433 " + clients[fd].getNickname()
 							+ " " + token + " :Nickname is already in use\r\n";
 			send(fd, nickError.c_str(), nickError.size(), 0);
