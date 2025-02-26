@@ -138,12 +138,15 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 				sendError(fd, newChannel->getName() + " :You are already in the channel", 433);
 				continue ;
 			}
-			if (newChannel->getUserLimit() == newChannel->getUserCount())
+			if (newChannel->getUserLimit() > 0)
 			{
-				//std::cout<< "User "<< client->getNickname() << " cannot join the channel as the ammount of users are limited."<< std::endl;
-				//sendError(fd, "ERR_CHANNELISFULL" + client->getNickname() + " " + newChannel->getName() + " :Cannot join channel (+l)", 471);
-				sendError(fd, newChannel->getName() + " :Cannot join channel (+l)", 471);
-				continue ;
+				if (newChannel->getUserLimit() <= newChannel->getUserCount())
+				{
+					//std::cout<< "User "<< client->getNickname() << " cannot join the channel as the ammount of users are limited."<< std::endl;
+					//sendError(fd, "ERR_CHANNELISFULL" + client->getNickname() + " " + newChannel->getName() + " :Cannot join channel (+l)", 471);
+					sendError(fd, newChannel->getName() + " :Cannot join channel (+l)", 471);
+					continue ;
+				}
 			}
 			if (newChannel->isInviteOnly())
 			{
