@@ -32,12 +32,26 @@ int Serv::parse_command(int fd, const std::string& line) {
 			{
 				auto client = getClientByFd(fd);
 				auto channel = channels[i];
-				channel->removeUser(client);
 				if (channel->isOperator(client) == true)
+				{
+					channel->removeUser(client);
 					channel->removeOperator(client);
-				std::string quitMsg = ":" + client->getNickname() + " QUIT :Lost terminal\r\n";
+					if (!channel->getUsers().empty())
+					{
+						std::vector<Client*> usersInChannel = channel->getUsers();
+						srand(time(0));
+						int randomIndex = rand() % usersInChannel.size();
+						Client* randomUser = usersInChannel[randomIndex];
+						channel->addOperator(randomUser);
+						std::string modeMessage = ":" + client->getServerName() + " MODE " + channel->getName() +
+									" +o " + randomUser->getNickname() + "\r\n";
+						channel->sendToAll(modeMessage);
+					}
+				std::string quitMsg = ":" + client->getNickname() + "!" + client->getUsername()
+                            + "@" + client->getHostName()+ " QUIT :Lost terminal\r\n";
 				channel->sendToAll(quitMsg);
 			}
+		}
 		}
 		if (clients[fd].getFd() == fd)
 			clients.erase(fd);

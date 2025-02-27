@@ -19,11 +19,13 @@ void Serv::launch()
         }
         for (size_t i = 0; i < fds.size(); ++i)
         {
+            
             if (fds[i].revents & POLLIN)  // If there is data to read in curr fd
             {
                 //handle the server socket(new conn request)
                 if (fds[i].fd == sock->get_sock())  
                 {
+                    _new_socket = -1;
                     accepter();
                     if (_new_socket >= 0)
                     {

@@ -59,54 +59,52 @@ void Serv::send_message(int client_fd, const std::string& message)
    std::string messages = message + "\r\n";
     send(client_fd, messages.c_str(), messages.length(), 0);
 }
-
-
-void Serv::accepter() {
-
-    Socket* socket = sock;
-    if (socket == nullptr)
+void Serv::accepter()
+{
+    if (!sock)  
         return;
-    int sock_fd = socket->get_sock();
+
+    int sock_fd = sock->get_sock();
     if (sock_fd < 0)
         return;
-    //prepare to accept new connection
-    struct sockaddr_in address = socket->get_address();
+     //prepare to accept new connection
+    // struct sockaddr_in address = socket->get_address();
+    // socklen_t adrlen = sizeof(address);
+    struct sockaddr_in address;
     socklen_t adrlen = sizeof(address);
 
+    memset(&address, 0, sizeof(address));
     // accept new CLIENT connect
-    _new_socket = accept(sock_fd, (struct sockaddr*)&address, &adrlen);
+    int _new_socket = accept(sock_fd, (struct sockaddr*)&address, &adrlen);
     // listen socket to accept incom conn req from CLIENT
     // creates newsocket and return a fd for new socket
     // the original "big socket" will remain open and contuue listen for new incomes
-
-    if (_new_socket < 0)
+    if (_new_socket < 0) 
     {
         /// No pending connections (expected in non-blocking mode)
         if (errno == EWOULDBLOCK || errno == EAGAIN)
             std::cout << "No pending connections. Non-blocking accept returned." << std::endl;
         else
             perror("Failed to accept connection");
+
+        _new_socket = -1;
         return;
     }
-    if(_new_socket >=0)
-    {
-        set_non_blocking(_new_socket); // new socket to non blocking
 
-        Client new_cl(_new_socket);
-        clients[_new_socket] = new_cl;
+    set_non_blocking(_new_socket); // new socket to non blocking
+    clients[_new_socket] = Client(_new_socket);
+    _clientBuffers[_new_socket] = "";
 
-        // Add the new socket to the poll list
-        pollfd client_poll;
-        client_poll.fd = _new_socket;
-        client_poll.events = POLLIN;
-        fds.push_back(client_poll);
+    // Add the new socket to the poll list
+    pollfd client_poll = {}; 
+    client_poll.fd = _new_socket;
+    client_poll.events = POLLIN;
+    fds.push_back(client_poll);
 
-        std::string server_name = "ircserv";
-       // Retrieve the nickname
-        std::string nick = "Guest";  // Default fallback nickname
-		if (clients.find(_new_socket) != clients.end()) {
-			Client& client = clients[_new_socket];
-            nick = client.getNickname(); 
-			} // Retrieve client nickname
-    }
+    // Retrieve the nickname
+    std::string nick = "Guest";  // Default fallback nickname
+    if (clients.find(_new_socket) != clients.end()) {
+        Client& client = clients[_new_socket];
+        nick = client.getNickname();  
+    }// Retrieve client nickname
 }

@@ -15,6 +15,7 @@
 #include "Channel.hpp"
 #include <memory>  // for shared_ptr
 #include <csignal>
+#include <cstring>  // For memset()
 
 class Serv
 {
