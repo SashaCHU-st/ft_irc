@@ -24,7 +24,27 @@ int Serv::parse_command(int fd, const std::string& line) {
 	while (lss >> token)
 		tokens.push_back(token);
 	if (cmd == "QUIT")
+	{
+		if(clients[fd].getFd() == fd)
+		{
+			auto channels = clients[fd].getJoinedChannels();
+			for (size_t i = 0; i < channels.size(); i++)
+			{
+				auto client = getClientByFd(fd);
+				auto channel = channels[i];
+				channel->removeUser(client);
+				if (channel->isOperator(client) == true)
+					channel->removeOperator(client);
+				std::string quitMsg = ":" + client->getNickname() + " QUIT :Lost terminal\r\n";
+				channel->sendToAll(quitMsg);
+			}
+		}
+		if (clients[fd].getFd() == fd)
+			clients.erase(fd);
+
 		close (fd);
+		return(1);
+	}
 	if (cmd == "CAP")
 	{
 		std::string cap = tokens[0] + "\r\n";

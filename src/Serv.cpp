@@ -39,7 +39,7 @@ std::string Serv::get_pass() {
 void Serv::set_non_blocking(int sock_fd)
 {
                                                 // fcntl(int fd, int cmd, and othe diff arguments);
-    int non_block = fcntl(sock_fd, F_GETFL, 0);// checking the access to socket, 
+    int non_block = fcntl(sock_fd, F_SETFL, 0);// checking the access to socket, 
     if (non_block < 0)
     {
         perror("fcntl get failed");

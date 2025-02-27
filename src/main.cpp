@@ -23,16 +23,13 @@ void signalHandler(int signal) {
     exit(signal);
 }
 
-void signals()
-{
-    signal(SIGSEGV, signalHandler); // Seg  == 11
-    signal(SIGINT, signalHandler); // Ctrl+C == 2
-    signal(SIGTERM, signalHandler); // Termin ==15
-} 
 
 int main(int argc, char **argv)
 {
-    std::signal(SIGINT, signalHandler);
+    std::signal(SIGINT, signalHandler);// Ctrl+C == 2
+    std::signal(SIGQUIT, signalHandler); // quit
+    std::signal(SIGSEGV, signalHandler); // Seg  == 11
+    std::signal(SIGTERM, signalHandler); // Termin ==15
     try
     {
         if(argc !=3)
