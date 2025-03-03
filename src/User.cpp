@@ -34,7 +34,6 @@ bool Serv::addUser(int client_fd, std::vector<std::string> tokens)
 		clients[client_fd].setServername(tokens[2]);
 		if(tokens[3].find_first_of(":") == 0) //check ":" then rest of the name
 		{
-			std::cout << "entered token[3]" << std::endl;
 			for (unsigned long i = 3; i < tokens.size(); i++)
 			{
 				clients[client_fd].setRealname(tokens[i]);

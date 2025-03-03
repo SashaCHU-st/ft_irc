@@ -2,35 +2,38 @@
 
 void Serv::launch()
 {
-    // main server socket ... added to the iist of monitored fd
-    pollfd server_poll;
-    server_poll.fd = sock->get_sock(); 
-    server_poll.events = POLLIN;  /// monitore for income data
-    fds.push_back(server_poll);
+    // main server socket ... 
+    //init pollfd for Server socket
+    pollfd server_poll = {};
+    server_poll.fd = sock->get_sock(); //gets the server's "main socket fd"
+    server_poll.events = POLLIN;  /// monitore for income data (new connectiobs)
+    fds.push_back(server_poll);//added to the iist of monitored fd
 
     while (true)
     {
         // wait for events on the monitored sockets
         int poll_res = poll(fds.data(), fds.size(), -1);// Wait indefinitely for events
+                                                        //pointing for pollfds array
         if (poll_res < 0)
         {
             perror("Poll failed");
             break;
         }
-        for (size_t i = 0; i < fds.size(); ++i)
+        for (size_t i = 0; i < fds.size(); ++i)/// go throuh all fds
         {
             
             if (fds[i].revents & POLLIN)  // If there is data to read in curr fd
+                                            // check if POLLIN is set in revents, means that there is data to read
             {
                 //handle the server socket(new conn request)
                 if (fds[i].fd == sock->get_sock())  
                 {
                     _new_socket = -1;
                     accepter();
-                    if (_new_socket >= 0)
+                    if (_new_socket >= 0)// if new client has connected
                     {
                          //add new client socket to the poll list
-                        pollfd client_poll;
+                        pollfd client_poll = {};
                         client_poll.fd = _new_socket;
                         client_poll.events = POLLIN;
                         fds.push_back(client_poll);
@@ -43,6 +46,7 @@ void Serv::launch()
                     if (bytes_read < 0)
                     {
                         // Check for EAGAIN or EWOULDBLOCK
+                        //EAGAIN or EWOULDBLOCKThe socket is non-blocking, and there’s no data available.
                         if (errno == EAGAIN || errno == EWOULDBLOCK) {
                             continue;  // No data yet, try again later
                         } else {

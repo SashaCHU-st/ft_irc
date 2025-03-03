@@ -122,13 +122,11 @@ bool Serv::checkSigns(std::string nickname)
 		int a = 0;
 		if (i == 0)
 		{
-			std::cout << "nickname[i]: " << nickname[i] << std::endl;
 			while (nickname[i] == '@')
 			{
 				a++;
 				i++;
 			}
-			std::cout <<"a: " << a << std::endl;
 			if (a >= 1)
 				return false;
 		}

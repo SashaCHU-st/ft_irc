@@ -21,7 +21,7 @@ class Serv
 {
     private:
         int port;
-        int _new_socket;
+        int _new_socket = -1;
         std::string pass;
         Socket* sock;
         std::vector<pollfd> fds;

@@ -19,6 +19,8 @@ bool Serv::message(int client_fd, std::vector<std::string> tokens)
 	int msg_fd = findLatestMatch(-1, tokens[0]);
 	int receiver_fd = clients[msg_fd].getFd();
 	
+	if (msg_fd == -1 || receiver_fd == -1)
+		return false;
 	if (clients.find(msg_fd) == clients.end()) //checking clients
 	{
 		std::cout << "Client not found" << std::endl;
