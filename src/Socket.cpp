@@ -37,7 +37,7 @@ void Socket::set_conn(int conn)
     this->conn = conn;
 }
 
-int Socket::socketing(int port)
+int Socket::socketing(int port) //Creates a TCP socket
 {
     sock = socket(domain, type, protocol); // AF_INET, SOCK_STREAM, 0 ( 0 default based on type if SOCK_STREAM => TCP)
                                          //SOK_DGRAM =>UDP
@@ -47,19 +47,20 @@ int Socket::socketing(int port)
         return(1);
     }
     int opt =1;
-    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)// Uses setsockopt() to allow reuse of the address 
+                                                                        //(SO_REUSEADDR prevents "address already in use" errors)
     {
         perror("Set socket options failed");
         close(sock);
         return 1;
     }
     address.sin_family = domain;// AF_INET
-    address.sin_port = htons(port);// Port 4051
+    address.sin_port = htons(port);// Port 6667 // Port (converted to network byte order using htons()
     address.sin_addr.s_addr = INADDR_ANY; // INADDR_ANY (0.0.0.0)
                                             // option that do not need to wait when again run server
     return(0);
 }
-int Socket::binding()
+int Socket::binding()// Binds the socket to =>PORT so it can accept connections
 {
     int binding_from_server = bind(get_sock(), (struct sockaddr *)&address, sizeof(address));
     if(binding_from_server)
@@ -75,7 +76,7 @@ int Socket::binding()
     }
     return(0);
 }
-int Socket::listening()
+int Socket::listening()//mark the socket as a listening socket.
 {
     int listening_status = listen(sock, 10); // backlog is the max number of pending connections
                                             //listening incoming con  from client

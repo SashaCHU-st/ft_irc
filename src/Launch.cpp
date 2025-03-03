@@ -4,9 +4,10 @@ void Serv::launch()
 {
     // main server socket ... 
     //init pollfd for Server socket
-    pollfd server_poll;
+    pollfd server_poll;//creating pollfd stcructure for monitoring the server socket
     server_poll.fd = sock->get_sock(); //gets the server's "main socket fd"
     server_poll.events = POLLIN;  /// monitore for income data (new connectiobs)
+                                    //flag that tell poll to minitor the socket for incoming connect
     fds.push_back(server_poll);//added to the iist of monitored fd
 
     while (true)

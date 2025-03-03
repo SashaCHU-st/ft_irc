@@ -22,7 +22,7 @@ int Serv::get_port() const
 // Creating a socket
 void Serv::creating_socket()
 {
-    sock = new Socket(AF_INET, SOCK_STREAM, 0,port);
+    sock = new Socket(AF_INET, SOCK_STREAM, 0,port);///0 protocol so =>SOCK_STREAM
 
     if (!sock || sock->get_sock() < 0)
     {
@@ -38,20 +38,16 @@ std::string Serv::get_pass() {
 ///NON BLOCKING-
 void Serv::set_non_blocking(int sock_fd)
 {
-                                                // fcntl(int fd, int cmd, and othe diff arguments);
+                                                        // fcntl(int fd, int cmd, and othe diff arguments);
     int non_block = fcntl(sock_fd, F_SETFL, O_NONBLOCK);// checking the access to socket, 
+                                                        // makes socket non blocking by
+                                                        // O_NONBLOCK flag                                               
+                                                        // F_SETFL 
     if (non_block < 0)
     {
         perror("fcntl get failed");
         exit(EXIT_FAILURE);
     }
-    // if (fcntl(sock_fd, F_SETFL, non_block | O_NONBLOCK) < 0)// makes socket non blocking by
-    //                                                         // O_NONBLOCK flag
-    //                                                         // F_SETFL 
-    // {
-    //     perror("fcntl set non-blocking failed");
-    //     exit(EXIT_FAILURE);
-    // }
 }
 
 void Serv::send_message(int client_fd, const std::string& message)
