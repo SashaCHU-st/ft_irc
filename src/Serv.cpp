@@ -55,7 +55,7 @@ void Serv::send_message(int client_fd, const std::string& message)
    std::string messages = message + "\r\n";
     send(client_fd, messages.c_str(), messages.length(), 0);
 }
-void Serv::accepter()
+void Serv::accepter()// accepting new client connection
 {
     if (!sock)  
         return;
@@ -69,7 +69,7 @@ void Serv::accepter()
     struct sockaddr_in address;
     socklen_t adrlen = sizeof(address);
 
-    memset(&address, 0, sizeof(address));
+    memset(&address, 0, sizeof(address));// initializes the structure to zero to avoid garbage values
     // accept new CLIENT connect
     _new_socket = accept(sock_fd, (struct sockaddr*)&address, &adrlen);
     // listen socket to accept incom conn req from CLIENT
