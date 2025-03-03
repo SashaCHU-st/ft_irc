@@ -71,7 +71,7 @@ void Serv::accepter()
 
     memset(&address, 0, sizeof(address));
     // accept new CLIENT connect
-    int _new_socket = accept(sock_fd, (struct sockaddr*)&address, &adrlen);
+    _new_socket = accept(sock_fd, (struct sockaddr*)&address, &adrlen);
     // listen socket to accept incom conn req from CLIENT
     // creates newsocket and return a fd for new socket
     // the original "big socket" will remain open and contuue listen for new incomes

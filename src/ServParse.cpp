@@ -25,39 +25,40 @@ int Serv::parse_command(int fd, const std::string& line) {
 		tokens.push_back(token);
 	if (cmd == "QUIT")
 	{
-		if(clients[fd].getFd() == fd)
-		{
-			auto channels = clients[fd].getJoinedChannels();
-			for (size_t i = 0; i < channels.size(); i++)
-			{
-				auto client = getClientByFd(fd);
-				auto channel = channels[i];
-				if (channel->isOperator(client) == true)
-				{
-					channel->removeUser(client);
-					channel->removeOperator(client);
-					if (!channel->getUsers().empty())
-					{
-						std::vector<Client*> usersInChannel = channel->getUsers();
-						srand(time(0));
-						int randomIndex = rand() % usersInChannel.size();
-						Client* randomUser = usersInChannel[randomIndex];
-						channel->addOperator(randomUser);
-						std::string modeMessage = ":" + client->getServerName() + " MODE " + channel->getName() +
-									" +o " + randomUser->getNickname() + "\r\n";
-						channel->sendToAll(modeMessage);
-					}
-				std::string quitMsg = ":" + client->getNickname() + "!" + client->getUsername()
-                            + "@" + client->getHostName()+ " QUIT :Lost terminal\r\n";
-				channel->sendToAll(quitMsg);
-			}
-		}
-		}
-		if (clients[fd].getFd() == fd)
-			clients.erase(fd);
+		// if(clients[fd].getFd() == fd)
+		// {
+		// 	auto channels = clients[fd].getJoinedChannels();
+		// 	for (size_t i = 0; i < channels.size(); i++)
+		// 	{
+		// 		auto client = getClientByFd(fd);
+		// 		auto channel = channels[i];
+		// 		if (channel->isOperator(client) == true)
+		// 		{
+		// 			channel->removeUser(client);
+		// 			channel->removeOperator(client);
+		// 			if (!channel->getUsers().empty())
+		// 			{
+		// 				std::vector<Client*> usersInChannel = channel->getUsers();
+		// 				srand(time(0));
+		// 				int randomIndex = rand() % usersInChannel.size();
+		// 				Client* randomUser = usersInChannel[randomIndex];
+		// 				channel->addOperator(randomUser);
+		// 				std::string modeMessage = ":" + client->getServerName() + " MODE " + channel->getName() +
+		// 							" +o " + randomUser->getNickname() + "\r\n";
+		// 				channel->sendToAll(modeMessage);
+		// 			}
+		// 		std::string quitMsg = ":" + client->getNickname() + "!" + client->getUsername()
+        //                     + "@" + client->getHostName()+ " QUIT :Lost terminal\r\n";
+		// 		channel->sendToAll(quitMsg);
+		// 	}
+		// }
+		// }
+		// if (clients[fd].getFd() == fd)
+		// 	clients.erase(fd);
 
-		close (fd);
-		return(1);
+		// close (fd);
+		// return(1);
+		quit(fd);
 	}
 	if (cmd == "CAP")
 	{
