@@ -38,25 +38,21 @@ std::string Serv::get_pass() {
 ///NON BLOCKING-
 void Serv::set_non_blocking(int sock_fd)
 {
-                                                // fcntl(int fd, int cmd, and othe diff arguments);
-    int non_block = fcntl(sock_fd, F_SETFL, 0);// checking the access to socket, 
+                                                        // fcntl(int fd, int cmd, and othe diff arguments);
+    int non_block = fcntl(sock_fd, F_SETFL, O_NONBLOCK);// checking the access to socket, 
+                                                        // makes socket non blocking by
+                                                        // O_NONBLOCK flag                                               
+                                                        // F_SETFL 
     if (non_block < 0)
     {
         perror("fcntl get failed");
-        exit(EXIT_FAILURE);
-    }
-    if (fcntl(sock_fd, F_SETFL, non_block | O_NONBLOCK) < 0)// makes socket non blocking by
-                                                            // O_NONBLOCK flag
-                                                            // F_SETFL 
-    {
-        perror("fcntl set non-blocking failed");
         exit(EXIT_FAILURE);
     }
 }
 
 void Serv::send_message(int client_fd, const std::string& message)
 {
-   std::string messages = message + "\r\n";
+    std::string messages = message + "\r\n";
     send(client_fd, messages.c_str(), messages.length(), 0);
 }
 void Serv::accepter()
@@ -67,7 +63,7 @@ void Serv::accepter()
     int sock_fd = sock->get_sock();
     if (sock_fd < 0)
         return;
-     //prepare to accept new connection
+    //prepare to accept new connection
     // struct sockaddr_in address = socket->get_address();
     // socklen_t adrlen = sizeof(address);
     struct sockaddr_in address;
