@@ -39,19 +39,19 @@ std::string Serv::get_pass() {
 void Serv::set_non_blocking(int sock_fd)
 {
                                                 // fcntl(int fd, int cmd, and othe diff arguments);
-    int non_block = fcntl(sock_fd, F_SETFL, 0);// checking the access to socket, 
+    int non_block = fcntl(sock_fd, F_SETFL, O_NONBLOCK);// checking the access to socket, 
     if (non_block < 0)
     {
         perror("fcntl get failed");
         exit(EXIT_FAILURE);
     }
-    if (fcntl(sock_fd, F_SETFL, non_block | O_NONBLOCK) < 0)// makes socket non blocking by
-                                                            // O_NONBLOCK flag
-                                                            // F_SETFL 
-    {
-        perror("fcntl set non-blocking failed");
-        exit(EXIT_FAILURE);
-    }
+    // if (fcntl(sock_fd, F_SETFL, non_block | O_NONBLOCK) < 0)// makes socket non blocking by
+    //                                                         // O_NONBLOCK flag
+    //                                                         // F_SETFL 
+    // {
+    //     perror("fcntl set non-blocking failed");
+    //     exit(EXIT_FAILURE);
+    // }
 }
 
 void Serv::send_message(int client_fd, const std::string& message)
@@ -75,7 +75,7 @@ void Serv::accepter()
 
     memset(&address, 0, sizeof(address));
     // accept new CLIENT connect
-    int _new_socket = accept(sock_fd, (struct sockaddr*)&address, &adrlen);
+    _new_socket = accept(sock_fd, (struct sockaddr*)&address, &adrlen);
     // listen socket to accept incom conn req from CLIENT
     // creates newsocket and return a fd for new socket
     // the original "big socket" will remain open and contuue listen for new incomes

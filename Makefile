@@ -8,6 +8,7 @@ SRCS = src/main.cpp \
 		src/Socket.cpp \
 		src/Client.cpp \
 		src/Nick.cpp \
+		src/Quit.cpp \
 		src/Password.cpp \
 		src/Launch.cpp \
 		src/ServParse.cpp \
