@@ -16,7 +16,7 @@ int Serv::sendWelcomeMsg(int fd)
 {
 	if (!clients[fd].getUsername().empty() && !clients[fd].getNickname().empty())
 	{
-		if(clients[fd].welcomeSent == false && clients[fd].passwordCheck == true)
+		if(clients[fd].welcomeSent == false && clients[fd].passwordCheck == true && clients[fd].allSet == true)
 		{
 			std::string nick = ":" + clients[fd].getServerName() + " 001 " + clients[fd].getNickname() + " :Welcome to the network, " + clients[fd].getNickname() + "!" + clients[fd].getUsername() + "@" + clients[fd].getServerName() + "\r\n";
 			std::cout << nick << std::endl;
@@ -33,7 +33,7 @@ int Serv::sendWelcomeMsg(int fd)
 				
 			//welcome message
 			clients[fd].welcomeSent = true;
-			clients[fd].allSet = true;
+			
 			return 0;
 		}
 		return 1;
