@@ -53,7 +53,6 @@ class Serv
         bool checkSigns(std::string nickname);
         void send_message(int client_fd, const std::string& message);
 		int findClient(int client_fd);
-        int quit(int fd);
 		int findLatestMatch(int client_fd, std::string nickname);
 		int sendWelcomeMsg(int client_fd);
 		bool message(int client_fd, std::vector<std::string> tokens);
