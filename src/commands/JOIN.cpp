@@ -58,7 +58,7 @@ int Serv::cmdJOIN(int fd, std::vector<std::string> line)
 		std::cout << "Keys array: "<< keys[i]<< std::endl;
 	}
 	Client* client = getClientByFd(fd);
-	if (!client || client->allSet == false) {
+	if (!client || client->welcomeSent == false) {
         //std::cerr << "Client not found for fd: " << fd << std::endl;
 		sendError(fd, "ERR_NOSUCHCLIENT", 4);
         return 1;
