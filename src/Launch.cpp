@@ -4,9 +4,10 @@ void Serv::launch()
 {
     // main server socket ... 
     //init pollfd for Server socket
-    pollfd server_poll = {};
+    pollfd server_poll;//creating pollfd stcructure for monitoring the server socket
     server_poll.fd = sock->get_sock(); //gets the server's "main socket fd"
     server_poll.events = POLLIN;  /// monitore for income data (new connectiobs)
+                                    //flag that tell poll to minitor the socket for incoming connect
     fds.push_back(server_poll);//added to the iist of monitored fd
 
     while (true)
@@ -82,11 +83,11 @@ void Serv::launch()
                         size_t pos;
                         while ((pos = _clientBuffers[fds[i].fd].find("\n")) != std::string::npos) 
                         {
-                            std::string command = _clientBuffers[fds[i].fd].substr(0, pos);
+                            std::string command = _clientBuffers[fds[i].fd].substr(0, pos);// excrate first command befire \n
                             _clientBuffers[fds[i].fd].erase(0, pos + 1);
 
                             if (!command.empty() && command.back() == '\r') {
-                                command.pop_back();
+                                command.pop_back();// removes \r, no bneed in \r only need \n
                             }
 
                             std::stringstream ss(command);

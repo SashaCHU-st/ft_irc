@@ -61,13 +61,10 @@ class Client {
 		void setServername(std::string servername);
 		void setRealname(std::string names);
 		
-		// std::vector<std::string> getServerInfo();
 
 		//Channel Handler for Client
 		void joinChannel(std::shared_ptr<Channel> channel);
-		//void leaveChannel(std::shared_ptr<Channel> channel);
 		void leaveChannel(const std::string& channelName);
-		//bool isInChannel(Channel *channel)const;
 		const std::vector<std::shared_ptr<Channel>>& getJoinedChannels()const;
 };
 

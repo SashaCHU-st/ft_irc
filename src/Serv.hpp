@@ -43,6 +43,7 @@ class Serv
         void set_non_blocking(int sock_fd);
         void accepter();
         void launch();
+        int quit(int fd);
 
 		int parse_command(int client_fd, const std::string& line);
 		bool authenticate_password(int client_fd, std::vector<std::string> tokens);

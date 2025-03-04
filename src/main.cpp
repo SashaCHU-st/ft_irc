@@ -1,7 +1,7 @@
 #include "Serv.hpp"
 #include <csignal>
 
-static Serv* kuku = NULL;
+static Serv* server = NULL;
 int check_port(int port)
 {
     if(port < 1024 || port > 49151 )
@@ -11,9 +11,9 @@ int check_port(int port)
 
 static void cleanEverything()
 {
-    if (kuku) {
-        delete kuku;
-        kuku = NULL;
+    if (server) {
+        delete server;
+        server = NULL;
     }
 }
 
@@ -43,8 +43,8 @@ int main(int argc, char **argv)
             std::cout << "Error! Port must be from 1024 to 49151"<<std::endl;
             return(1);
         }
-          kuku = new Serv(port, argv[2]);
-        kuku->launch();
+          server = new Serv(port, argv[2]);
+        server->launch();
         cleanEverything();
 
     }
