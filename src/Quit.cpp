@@ -16,13 +16,23 @@ int Serv::quit(int fd)
                 if (!channel->getUsers().empty())
                 {
                     std::vector<Client*> usersInChannel = channel->getUsers();
-                    srand(time(0));
-                    int randomIndex = rand() % usersInChannel.size();
-                    Client* randomUser = usersInChannel[randomIndex];
-                    channel->addOperator(randomUser);
-                    std::string modeMessage = ":" + client->getServerName() + " MODE " + channel->getName() +
-                                " +o " + randomUser->getNickname() + "\r\n";
-                    channel->sendToAll(modeMessage);
+                    if (usersInChannel.size() == 1)
+                    {
+                         channel->addOperator(usersInChannel[0]);
+                        std::string modeMessage = ":" + client->getServerName() + " MODE " + channel->getName() +
+                                    " +o " + usersInChannel[0]->getNickname() + "\r\n";
+                        channel->sendToAll(modeMessage);
+                    }
+                    else 
+                    {
+                        srand(time(0));
+                        int randomIndex = rand() % usersInChannel.size();
+                        Client* randomUser = usersInChannel[randomIndex];
+                        channel->addOperator(randomUser);
+                        std::string modeMessage = ":" + client->getServerName() + " MODE " + channel->getName() +
+                                    " +o " + randomUser->getNickname() + "\r\n";
+                        channel->sendToAll(modeMessage);
+                    }
                 }
             std::string quitMsg = ":" + client->getNickname() + "!" + client->getUsername()
                         + "@" + client->getHostName()+ " QUIT :Lost terminal\r\n";
